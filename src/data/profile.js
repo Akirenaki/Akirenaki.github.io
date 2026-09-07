@@ -4,12 +4,10 @@
 
 export const profile = {
   // Hero: two names, preferred one shown larger (see Hero.jsx / About.jsx).
-  // ASSUMPTION: "legal" is set to the LinkedIn header name (Narendra Maldini)
-  // rather than the full formal name - swap this if you meant the longer one.
-  nameLegal: "Narendra Maldini",
+  nameLegal: "Legal Name: Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
   namePreferred: "Renee Astraea",
   tagline: "May this journey lead us starward!",
-  roleSummary: "Astrophysics student & software developer",
+  roleSummary: "Aspiring astrophysics student & beginner web developer",
 
   location: "Yogyakarta, Indonesia",
 
@@ -17,9 +15,9 @@ export const profile = {
   // to About/Work. Kept honest to what's actually been built, not aspirational.
   coreDomains: [
     "Astronomical Data Pipelines",
-    "Full-Stack Web Systems",
-    "Embedded Systems & IoT",
+    "Full-Stack Web Systems (FastAPI, Next.js)",
     "Applied Statistics & Modelling",
+    "Astrophysics",
   ],
 
   // About bio - reproduced from the LinkedIn "About" section, her own words.
@@ -31,16 +29,18 @@ export const profile = {
 
   // Home summary - shorter restatement for the landing page, not LinkedIn text.
   homeSummary:
-    "I build the software layer underneath observational astronomy: identifier resolution across mismatched catalogues, interactive visualisations for physics education, and the occasional piece of hardware to go with it.",
+    "Aspiring astrophysicist focused on physical systems, computational modelling, statistical inference, and large-scale data analysis to derive insight from complex astronomical datasets. Dedicated to open science, accessible research infrastructure, transparent methodologies, and collaborative knowledge-sharing, while advocating for human rights.",
 
   education: {
     // Left as a placeholder per instruction - fill in your current program.
-    institution: "[INSTITUTION NAME]",
-    degree: "[DEGREE]",
-    graduation: "[EXPECTED GRADUATION DATE]",
+    institution: "SMA Negeri 1 Yogyakarta",
+    degree: "High School Diploma",
+    graduation: "May 2027",
+    image: "/assets/credentials/education-sma-negeri-1-yogyakarta.jpg",
   },
 
   languages: [
+    { name: "Indonesian", level: "Native" },
     { name: "English", level: "Professional working proficiency" },
     { name: "Japanese", level: "Professional working proficiency" },
   ],

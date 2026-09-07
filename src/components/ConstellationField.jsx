@@ -57,7 +57,7 @@ export function ConstellationField({ className = "" }) {
           const b = points[j];
           const dist = Math.hypot(a.x - b.x, a.y - b.y);
           if (dist < LINK_DISTANCE) {
-            ctx.strokeStyle = `rgba(216, 87, 156, ${0.12 * (1 - dist / LINK_DISTANCE)})`;
+            ctx.strokeStyle = `rgba(216, 87, 156, ${0.5 * (1 - dist / LINK_DISTANCE)})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -71,7 +71,7 @@ export function ConstellationField({ className = "" }) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.55;
+        ctx.globalAlpha = 0.8;
         ctx.fill();
         ctx.globalAlpha = 1;
       }

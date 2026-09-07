@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { profile } from "../data/profile";
 import { featuredProjects } from "../data/projects";
 import { ProjectCard } from "../components/ProjectCard";
-import { ConstellationField } from "../components/ConstellationField";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 
 export function Home() {
@@ -10,7 +9,6 @@ export function Home() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-blush/70">
-        <ConstellationField className="absolute inset-0 h-full w-full" />
         <div className="relative mx-auto flex max-w-5xl flex-col gap-10 px-5 py-20 md:flex-row md:items-center md:px-8 md:py-28">
           <div className="max-w-xl">
             <p className="font-body text-sm tracking-wide text-ink-soft">{profile.nameLegal}</p>

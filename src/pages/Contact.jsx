@@ -13,6 +13,38 @@ function buildMailto({ name, email, message }) {
 
 export function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const badges = [
+    {
+      href: `mailto:${profile.contact.email}`,
+      src: "https://img.shields.io/badge/Email-D8579C?style=flat&logo=gmail&logoColor=white",
+      alt: `Email ${profile.contact.email}`,
+    },
+    {
+      href: profile.contact.github.url,
+      src: `https://img.shields.io/badge/GitHub-181717?for-the-badge&logo=github&logoColor=white`,
+      alt: `GitHub ${profile.contact.github.label}`,
+    },
+    {
+      href: profile.contact.linkedin,
+      src: "https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white",
+      alt: "LinkedIn profile",
+    },
+    {
+      href: profile.contact.kaggle.url,
+      src: `https://img.shields.io/badge/Kaggle-20BEFF?style=flat&logo=kaggle&logoColor=white`,
+      alt: `Kaggle ${profile.contact.kaggle.label}`,
+    },
+    {
+      href: profile.contact.instagram.url,
+      src: "https://img.shields.io/badge/Instagram-E4405F?style=flat&logo=instagram&logoColor=white",
+      alt: "Instagram profile",
+    },
+    {
+      href: `https://wa.me/${profile.contact.whatsapp.replace(/\D/g, "")}`,
+      src: "https://img.shields.io/badge/WhatsApp-25D366?style=flat&logo=whatsapp&logoColor=white",
+      alt: "WhatsApp chat",
+    },
+  ];
 
   function handleChange(e) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -29,54 +61,17 @@ export function Contact() {
         <div>
           <h1 className="font-display text-4xl font-medium text-ink">Contact</h1>
           <p className="mt-4 leading-relaxed text-ink-soft">
-            Open to research collaborations, project feedback, or just talking astronomy and software. {profile.location} — replies fastest by email.
+            Open to research collaborations, project feedback, or just casual talking! Replies fastest by WhatsApp.
           </p>
 
-          <dl className="mt-8 flex flex-col gap-4 text-sm">
-            <div>
-              <dt className="text-ink-soft">Email</dt>
-              <dd>
-                <a href={`mailto:${profile.contact.email}`} className="text-accent hover:text-accent-deep">
-                  {profile.contact.email}
+          <dl className="mt-8 flex flex-wrap gap-3">
+            {badges.map((badge) => (
+              <dd key={badge.alt}>
+                <a href={badge.href} target="_blank" rel="noreferrer">
+                  <img src={badge.src} alt={badge.alt} className="h-6" />
                 </a>
               </dd>
-            </div>
-            <div>
-              <dt className="text-ink-soft">GitHub</dt>
-              <dd>
-                <a href={profile.contact.github.url} target="_blank" rel="noreferrer" className="text-accent hover:text-accent-deep">
-                  {profile.contact.github.label}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-ink-soft">LinkedIn</dt>
-              <dd>
-                <a href={profile.contact.linkedin} target="_blank" rel="noreferrer" className="text-accent hover:text-accent-deep">
-                  {profile.namePreferred}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-ink-soft">Kaggle</dt>
-              <dd>
-                <a href={profile.contact.kaggle.url} target="_blank" rel="noreferrer" className="text-accent hover:text-accent-deep">
-                  {profile.contact.kaggle.label}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-ink-soft">Instagram</dt>
-              <dd>
-                <a href={profile.contact.instagram.url} target="_blank" rel="noreferrer" className="text-accent hover:text-accent-deep">
-                  {profile.contact.instagram.label}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-ink-soft">WhatsApp</dt>
-              <dd className="text-ink">{profile.contact.whatsapp}</dd>
-            </div>
+            ))}
           </dl>
         </div>
 

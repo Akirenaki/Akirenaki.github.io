@@ -8,19 +8,18 @@ export const projects = [
     slug: "project-cherenkov",
     title: "Project Cherenkov",
     dateRange: "Jun 2026 - Present",
-    role: "Co-creator (built with a friend)",
-    tags: ["Web App", "Education", "Astronomy"],
+    role: "Co-creator & lead developer",
+    tags: ["Web App", "Education", "Open Source", "Astronomy"],
     featured: true,
-    links: { repo: null, demo: null },
+    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/" },
     summary:
-      "An open-source editorial archive and study planner spanning informatics, physics, and astronomy, built to close a gap in STEM competition preparation: every write-up is paired with a working, bespoke interactive visualisation so students can manipulate variables directly instead of reading about them.",
+      "An open-source editorial archive and study planner spanning informatics, physics, and astronomy; every write-up is paired with a working, bespoke interactive visualisation so students can manipulate variables directly instead of reading about them.",
     stack: {
-      visible: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+      visible: ["Next.js", "TypeScript", "Drizzle ORM", "PostgreSQL"],
       hidden: [
         "shadcn/ui",
-        "Drizzle ORM",
+        "Tailwind CSS",
         "Better Auth",
-        "D3.js",
         "Canvas 2D",
         "KaTeX",
         "Keystatic CMS",
@@ -51,7 +50,7 @@ export const projects = [
     title: "Astronomical Multi-Catalog Identifier Matcher",
     dateRange: "May 2026 - Present",
     role: "Developer (CS50x capstone project)",
-    tags: ["Astronomy", "Backend", "CS50x"],
+    tags: ["Astronomy", "Backend", "CS50x", "FastAPI", "Async Python"],
     featured: true,
     links: {
       repo: "https://github.com/Akirenaki/astronomy-multi-catalog-identifier-matcher",
@@ -66,8 +65,7 @@ export const projects = [
         "Alembic",
         "Gemini API",
         "ADQL / TAP",
-        "bcrypt",
-        "Fernet Encryption",
+        "Uvicorn",
       ],
     },
     caseStudy: [
@@ -159,7 +157,7 @@ export const projects = [
     title: "CORGEIN: Household-Scale Incinerator Filter Prototype (ESP-Based)",
     dateRange: "Jan 2026 - May 2026",
     role: "Team member (3-person team)",
-    tags: ["Hardware", "Sustainability"],
+    tags: ["Hardware", "Sustainability", "Environmental Science"],
     featured: false,
     links: { repo: null, demo: null },
     summary:
@@ -188,7 +186,7 @@ export const projects = [
     title: "Exoplanet Data Insight Assistant Highlighter",
     dateRange: "May 2026",
     role: "Developer",
-    tags: ["AI Agents", "Astronomy"],
+    tags: ["AI Workflow", "Astronomy", "Data Analysis"],
     featured: true,
     links: { repo: null, demo: null },
     summary:
