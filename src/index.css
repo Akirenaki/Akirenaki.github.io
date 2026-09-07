@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens
+   Palette is fixed per brief. Don't add new hues without checking
+   back against these - everything else derives from these five.
+   --------------------------------------------------------------- */
+@theme {
+  --color-paper: #FAF3F7;       /* page background */
+  --color-surface: #FFFBFD;     /* card / raised surface */
+  --color-blush: #EEBCDC;       /* borders, dividers, secondary fills */
+  --color-accent: #D8579C;      /* interactive: links, buttons, active state */
+  --color-accent-deep: #B23E82; /* accent hover/active */
+  --color-ink: #221D2E;         /* body text, structural dark */
+  --color-ink-soft: #5B5468;    /* secondary text on paper */
+  --color-blue: #5F7AC5;        /* reserved: code syntax / chart accent only */
+  --color-blue-deep: #3E3A95;
+
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body: "Karla", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    background-color: var(--color-blush);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
