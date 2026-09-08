@@ -27,7 +27,7 @@ export function PlaceholderImage({ src, alt, aspect = "16/9", label, className =
 
   return (
     <img
-      src={src}
+      src={src?.startsWith("/") ? `${import.meta.env.BASE_URL}${src.slice(1)}` : src}
       alt={alt}
       style={{ aspectRatio: aspect }}
       className={`w-full object-cover ${className}`}
