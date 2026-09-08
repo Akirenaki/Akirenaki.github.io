@@ -5,6 +5,7 @@ import { Work } from "./pages/Work";
 import { ProjectCaseStudy } from "./pages/ProjectCaseStudy";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
+import { PrintCV } from "./pages/PrintCV";
 
 // HashRouter (not BrowserRouter) is deliberate: GitHub Pages serves static
 // files with no server-side rewrite, so a direct link/refresh on a
@@ -16,6 +17,9 @@ export default function App() {
   return (
     <HashRouter>
       <Routes>
+        {/* Standalone - deliberately outside <Layout>, so it renders without
+            Nav/Footer/ConstellationField and prints cleanly on its own. */}
+        <Route path="/print" element={<PrintCV />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<Work />} />

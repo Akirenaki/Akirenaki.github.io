@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { profile } from "../data/profile";
+import { PrintCVButton } from "../components/PrintCVButton";
 
 // Static-site contact form: since there's no backend yet, submitting builds a
 // pre-filled mailto: link rather than posting anywhere. Swap this handler for
@@ -73,6 +74,10 @@ export function Contact() {
               </dd>
             ))}
           </dl>
+
+          <div className="mt-8 border-t border-blush/70 pt-6">
+            <PrintCVButton variant="pill" />
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">

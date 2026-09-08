@@ -3,6 +3,7 @@ import { profile } from "../data/profile";
 import { featuredProjects } from "../data/projects";
 import { ProjectCard } from "../components/ProjectCard";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
+import { PrintCVButton } from "../components/PrintCVButton";
 
 export function Home() {
   return (
@@ -34,6 +35,8 @@ export function Home() {
                 Get in touch
               </Link>
             </div>
+
+            <PrintCVButton variant="link" className="mt-6" />
           </div>
 
           <PlaceholderImage
