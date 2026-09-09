@@ -55,28 +55,44 @@ export function About() {
             </div>
           </div>
 
-          <h3 className="mt-8 text-sm font-medium uppercase tracking-wide text-ink-soft">Certifications</h3>
-          <ul className="mt-3 flex flex-col gap-1.5 text-ink">
-            {certifications.map((c) => (
-              <li key={c.title} className="flex flex-col gap-3 border-b border-blush/60 py-3 sm:flex-row">
-                {c.image && (
-                  <PlaceholderImage
-                    src={c.image}
-                    alt={`${c.title} certificate`}
-                    aspect="4/3"
-                    label={`Certification — ${c.title}`}
-                    className="w-full shrink-0 rounded-sm sm:w-28"
-                  />
-                )}
-                <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-x-4 gap-y-1">
-                  <span>
-                    {c.title} <span className="text-ink-soft">— {c.issuer}</span>
-                  </span>
-                  <span className="text-ink-soft">{c.date}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <>
+            <h3 className="mt-8 text-sm font-medium uppercase tracking-wide text-ink-soft">Certifications</h3>
+            <ul className="mt-3 flex flex-col gap-1.5 text-ink">
+              {certifications.map((c) => (
+                  <li key={c.title} className="flex flex-col gap-3 border-b border-blush/60 py-3 sm:flex-row">
+                    {c.image && (
+                      <PlaceholderImage
+                        src={c.image}
+                        alt={`${c.title} certificate`}
+                        aspect="4/3"
+                        label={`Certification — ${c.title}`}
+                        className="w-full shrink-0 rounded-sm sm:w-40"
+                      />
+                    )}
+                    <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-x-4 gap-y-1">
+                      <div>
+                        <p>
+                          {c.title} <span className="text-ink-soft">— {c.issuer}</span>
+                        </p>
+                        {c.credentialId && c.credentialUrl && (
+                          <p className="mt-1 text-xs text-ink-soft">
+                            <a
+                              href={c.credentialUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="font-mono text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-deep"
+                            >
+                              {c.credentialId}
+                            </a>
+                          </p>
+                        )}
+                      </div>
+                      <span className="text-ink-soft">{c.date}</span>
+                    </div>
+                  </li>
+              ))}
+            </ul>
+          </>
         </div>
 
         {/* Education & Experience */}
