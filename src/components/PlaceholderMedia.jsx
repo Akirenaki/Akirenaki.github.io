@@ -9,7 +9,7 @@
 
 import { useState } from "react";
 
-export function PlaceholderImage({ src, alt, aspect = "16/9", label, className = "" }) {
+export function PlaceholderImage({ src, alt, aspect = "16/9", label, className = "", onError }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
@@ -32,12 +32,15 @@ export function PlaceholderImage({ src, alt, aspect = "16/9", label, className =
       style={{ aspectRatio: aspect }}
       className={`w-full object-cover ${className}`}
       loading="lazy"
-      onError={() => setFailed(true)}
+      onError={() => {
+        setFailed(true);
+        onError?.();
+      }}
     />
   );
 }
 
-export function PlaceholderVideo({ src, aspect = "16/9", label, className = "" }) {
+export function PlaceholderVideo({ src, aspect = "16/9", label, className = "", onError }) {
   const [failed, setFailed] = useState(false);
 
   if (failed || !src) {
@@ -53,11 +56,14 @@ export function PlaceholderVideo({ src, aspect = "16/9", label, className = "" }
 
   return (
     <video
-      src={src}
+      src={src?.startsWith("/") ? `${import.meta.env.BASE_URL}${src.slice(1)}` : src}
       style={{ aspectRatio: aspect }}
       className={`w-full object-cover ${className}`}
       controls
-      onError={() => setFailed(true)}
+      onError={() => {
+        setFailed(true);
+        onError?.();
+      }}
     />
   );
 }

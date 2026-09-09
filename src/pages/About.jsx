@@ -17,8 +17,6 @@ export function About() {
             </p>
           ))}
           <p className="leading-relaxed text-ink-soft">
-            Outside formal coursework, also tinkers with embedded electronics - ESP32-based environmental sensors -
-            when a project calls for a hardware layer.
           </p>
         </div>
 
@@ -38,7 +36,7 @@ export function About() {
           <h2 className="font-display text-2xl font-medium text-ink">Technical stack</h2>
           <div className="mt-5 grid gap-8 sm:grid-cols-2">
             <div>
-              <h3 className="text-sm font-medium uppercase tracking-wide text-ink-soft">Daily</h3>
+              <h3 className="text-sm font-medium uppercase tracking-wide text-ink-soft">Most Frequent</h3>
               <ul className="mt-3 flex flex-col gap-1.5 text-ink">
                 {technicalStack.daily.map((item) => (
                   <li key={item}>{item}</li>
@@ -59,8 +57,19 @@ export function About() {
             <h3 className="mt-8 text-sm font-medium uppercase tracking-wide text-ink-soft">Certifications</h3>
             <ul className="mt-3 flex flex-col gap-1.5 text-ink">
               {certifications.map((c) => (
-                  <li key={c.title} className="flex flex-col gap-3 border-b border-blush/60 py-3 sm:flex-row">
-                    {c.image && (
+                <li key={c.title} className="flex flex-col gap-3 border-b border-blush/60 py-3 sm:flex-row">
+                  {c.image && (
+                    c.credentialUrl ? (
+                      <a href={c.credentialUrl} target="_blank" rel="noreferrer" aria-label={`Open credential for ${c.title}`}>
+                        <PlaceholderImage
+                          src={c.image}
+                          alt={`${c.title} certificate`}
+                          aspect="4/3"
+                          label={`Certification — ${c.title}`}
+                          className="w-full shrink-0 rounded-sm sm:w-40"
+                        />
+                      </a>
+                    ) : (
                       <PlaceholderImage
                         src={c.image}
                         alt={`${c.title} certificate`}
@@ -68,28 +77,30 @@ export function About() {
                         label={`Certification — ${c.title}`}
                         className="w-full shrink-0 rounded-sm sm:w-40"
                       />
-                    )}
-                    <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-x-4 gap-y-1">
-                      <div>
-                        <p>
-                          {c.title} <span className="text-ink-soft">— {c.issuer}</span>
+                    )
+                  )}
+                  <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-x-4 gap-y-1">
+                    <div>
+                      <p>
+                        {c.title} <span className="text-ink-soft">— {c.issuer}</span>
+                      </p>
+                      {c.credentialId && c.credentialUrl && (
+                        <p className="mt-1 text-xs text-ink-soft">
+                          Credential ID:{" "}
+                          <a
+                            href={c.credentialUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="font-mono text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-deep"
+                          >
+                            {c.credentialId}
+                          </a>
                         </p>
-                        {c.credentialId && c.credentialUrl && (
-                          <p className="mt-1 text-xs text-ink-soft">
-                            <a
-                              href={c.credentialUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="font-mono text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-deep"
-                            >
-                              {c.credentialId}
-                            </a>
-                          </p>
-                        )}
-                      </div>
-                      <span className="text-ink-soft">{c.date}</span>
+                      )}
                     </div>
-                  </li>
+                    <span className="text-ink-soft">{c.date}</span>
+                  </div>
+                </li>
               ))}
             </ul>
           </>
@@ -158,13 +169,25 @@ export function About() {
             {awards.map((award) => (
               <div key={award.title} className="flex flex-col gap-4 sm:flex-row">
                 {award.image && (
-                  <PlaceholderImage
-                    src={award.image}
-                    alt={`${award.title} award`}
-                    aspect="4/3"
-                    label={`Award — ${award.title}`}
-                    className="w-full shrink-0 rounded-sm sm:w-36"
-                  />
+                  award.credentialUrl ? (
+                    <a href={award.credentialUrl} target="_blank" rel="noreferrer" aria-label={`Open credential for ${award.title}`}>
+                      <PlaceholderImage
+                        src={award.image}
+                        alt={`${award.title} award`}
+                        aspect="4/3"
+                        label={`Award — ${award.title}`}
+                        className="w-full shrink-0 rounded-sm sm:w-36"
+                      />
+                    </a>
+                  ) : (
+                    <PlaceholderImage
+                      src={award.image}
+                      alt={`${award.title} award`}
+                      aspect="4/3"
+                      label={`Award — ${award.title}`}
+                      className="w-full shrink-0 rounded-sm sm:w-36"
+                    />
+                  )
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
@@ -172,6 +195,19 @@ export function About() {
                     <span className="text-sm text-ink-soft">{award.date}</span>
                   </div>
                   <p className="text-sm text-ink-soft">{award.issuer}</p>
+                  {award.credentialId && award.credentialUrl && (
+                    <p className="mt-1 text-xs text-ink-soft">
+                      Credential ID:{" "}
+                      <a
+                        href={award.credentialUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-accent underline decoration-accent/40 underline-offset-2 hover:text-accent-deep"
+                      >
+                        {award.credentialId}
+                      </a>
+                    </p>
+                  )}
                   {award.detail && <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{award.detail}</p>}
                 </div>
               </div>

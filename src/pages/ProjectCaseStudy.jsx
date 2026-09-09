@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { projects } from "../data/projects";
-import { PlaceholderImage } from "../components/PlaceholderMedia";
+import { ProjectMedia } from "../components/ProjectMedia";
 import { TechStack } from "../components/TechStack";
 
 export function ProjectCaseStudy() {
@@ -64,11 +64,10 @@ export function ProjectCaseStudy() {
           )}
         </div>
 
-        <PlaceholderImage
-          src={`/assets/projects/${project.slug}-hero.jpg`}
-          alt={`${project.title} screenshot`}
+        <ProjectMedia
+          project={project}
+          variant="hero"
           aspect="16/9"
-          label={`Screenshot — ${project.title}`}
           className="mt-10 rounded-sm"
         />
 

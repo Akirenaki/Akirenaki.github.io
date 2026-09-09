@@ -183,6 +183,7 @@ export function PrintCV() {
                 <p className="text-ink">
                   {award.title} <span className="text-ink-soft">— {award.issuer}</span>
                 </p>
+                {award.credentialId && <p className="text-xs text-ink-soft">Credential ID: {award.credentialId}</p>}
                 <p className="whitespace-nowrap text-xs text-ink-soft">{award.date}</p>
               </div>
             ))}

@@ -158,7 +158,7 @@ export const projects = [
     dateRange: "Jan 2026 - May 2026",
     role: "Team member (3-person team)",
     tags: ["Hardware", "Sustainability", "Environmental Science"],
-    featured: false,
+    featured: true,
     links: { repo: null, demo: null },
     summary:
       "An eco-friendly filtration prototype to mitigate hazardous air pollution from incomplete household waste combustion, aligned with UN Sustainable Development Goals for clean air.",

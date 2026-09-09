@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PlaceholderImage } from "./PlaceholderMedia";
+import { ProjectMedia } from "./ProjectMedia";
 import { TechStack } from "./TechStack";
 
 // size="lg" is used for exactly one featured slot per row so the grid reads
@@ -14,11 +14,9 @@ export function ProjectCard({ project, size = "md" }) {
       }`}
     >
       <Link to={`/work/${project.slug}`} className="block">
-        <PlaceholderImage
-          src={`/assets/projects/${project.slug}.jpg`}
-          alt={`${project.title} preview`}
+        <ProjectMedia
+          project={project}
           aspect={isLarge ? "21/9" : "16/9"}
-          label={`Screenshot — ${project.title}`}
         />
       </Link>
 
