@@ -127,12 +127,24 @@ export function PrintCV() {
 
         <section className="mb-8 print:break-inside-avoid">
           <SectionHeading>Education</SectionHeading>
-          <div className="flex items-baseline justify-between gap-4 text-sm">
-            <div>
-              <p className="font-medium text-ink">{profile.education.institution}</p>
-              <p className="text-ink-soft">{profile.education.degree}</p>
+          <div className="flex flex-col gap-1.5 text-sm">
+            <div className="flex items-baseline justify-between gap-4">
+              <div>
+                <p className="font-medium text-ink">{profile.education.institution}</p>
+                <p className="text-ink-soft">{profile.education.degree}</p>
+              </div>
+              <p className="whitespace-nowrap text-ink-soft">{profile.education.graduation}</p>
             </div>
-            <p className="whitespace-nowrap text-ink-soft">{profile.education.graduation}</p>
+            {profile.education.description && (
+              <p className="mt-1 text-sm leading-relaxed text-ink">{profile.education.description}</p>
+            )}
+            {profile.education.bullets && (
+              <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-ink">
+                {profile.education.bullets.map((bullet) => (
+                  <li key={bullet}>{bullet}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
 

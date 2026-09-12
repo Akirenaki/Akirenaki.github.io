@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { profile } from "../data/profile";
-import { featuredProjects } from "../data/projects";
+import { getBigFeaturedProject, getOrderedFeaturedProjects } from "../data/projects";
 import { ProjectCard } from "../components/ProjectCard";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 import { PrintCVButton } from "../components/PrintCVButton";
 
 export function Home() {
+  const orderedFeaturedProjects = getOrderedFeaturedProjects();
+  const bigProject = getBigFeaturedProject();
+
   return (
     <>
       {/* Hero */}
@@ -73,8 +76,12 @@ export function Home() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            {featuredProjects.map((project, i) => (
-              <ProjectCard key={project.slug} project={project} size={i === 0 ? "lg" : "md"} />
+            {orderedFeaturedProjects.map((project) => (
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                size={project.slug === bigProject?.slug ? "lg" : "md"}
+              />
             ))}
           </div>
         </div>

@@ -106,11 +106,10 @@ export function About() {
           </>
         </div>
 
-        {/* Education & Experience */}
+        {/* Education */}
         <div className="mt-16">
-          <h2 className="font-display text-2xl font-medium text-ink">Education &amp; experience</h2>
-
-          <div className="mt-5 border-b border-blush pb-5">
+          <h2 className="font-display text-2xl font-medium text-ink">Education</h2>
+          <div className="mt-5">
             <div className="flex flex-col gap-4 sm:flex-row">
               {profile.education.image && (
                 <PlaceholderImage
@@ -121,16 +120,35 @@ export function About() {
                   className="w-full shrink-0 rounded-sm sm:w-36"
                 />
               )}
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="font-medium text-ink">{profile.education.institution}</p>
                 <p className="text-sm text-ink-soft">
                   {profile.education.degree} · Expected {profile.education.graduation}
                 </p>
+                {profile.education.description && (
+                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+                    {profile.education.description}
+                  </p>
+                )}
+                {profile.education.bullets && (
+                  <ul className="mt-2 flex flex-col gap-1.5 text-sm leading-relaxed text-ink-soft">
+                    {profile.education.bullets.map((bullet, i) => (
+                      <li key={i} className="pl-4 -indent-4">
+                        <span className="mr-2 text-blush">–</span>
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="mt-6 flex flex-col gap-8">
+        {/* Experience */}
+        <div className="mt-16">
+          <h2 className="font-display text-2xl font-medium text-ink">Experience</h2>
+          <div className="mt-5 flex flex-col gap-8">
             {experience.map((role) => (
               <div key={role.title} className="flex flex-col gap-4 sm:flex-row">
                 {role.image && (

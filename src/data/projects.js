@@ -11,6 +11,7 @@ export const projects = [
     role: "Co-creator & lead developer",
     tags: ["Web App", "Education", "Open Source", "Astronomy"],
     featured: true,
+    priority: false,
     links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/" },
     summary:
       "An open-source editorial archive and study planner spanning informatics, physics, and astronomy; every write-up is paired with a working, bespoke interactive visualisation so students can manipulate variables directly instead of reading about them.",
@@ -47,11 +48,12 @@ export const projects = [
   },
   {
     slug: "astronomical-multi-catalog-identifier-matcher",
-    title: "Astronomical Multi-Catalog Identifier Matcher",
+    title: "Taraka Sutra: Astronomy Multi-Catalog Identifier Matcher",
     dateRange: "May 2026 - Present",
     role: "Developer (CS50x capstone project)",
     tags: ["Astronomy", "Backend", "CS50x", "FastAPI", "Async Python"],
     featured: true,
+    priority: true,
     links: {
       repo: "https://github.com/Akirenaki/astronomy-multi-catalog-identifier-matcher",
       demo: null,
@@ -98,6 +100,7 @@ export const projects = [
     role: "Co-developer",
     tags: ["Physics", "Simulation"],
     featured: false,
+    priority: false,
     links: {
       repo: null,
       demo: "https://akirenaki.github.io/Physics-Trebuchet-Simulation-Grade-11/",
@@ -129,7 +132,8 @@ export const projects = [
     dateRange: "Feb 2026 - Jun 2026",
     role: "Researcher & co-author",
     tags: ["Environmental Science", "Field Research"],
-    featured: false,
+    featured: true,
+    priority: false,
     links: { repo: null, demo: null },
     summary:
       "Formulated and evaluated a liquid organic fertiliser derived from fish viscera waste to amend soil chemistry in alkaline karst environments, proposing a circular-economy model for coastal waste.",
@@ -159,6 +163,7 @@ export const projects = [
     role: "Team member (3-person team)",
     tags: ["Hardware", "Sustainability", "Environmental Science"],
     featured: true,
+    priority: false,
     links: { repo: null, demo: null },
     summary:
       "An eco-friendly filtration prototype to mitigate hazardous air pollution from incomplete household waste combustion, aligned with UN Sustainable Development Goals for clean air.",
@@ -187,7 +192,8 @@ export const projects = [
     dateRange: "May 2026",
     role: "Developer",
     tags: ["AI Workflow", "Astronomy", "Data Analysis"],
-    featured: true,
+    featured: false,
+    priority: false,
     links: { repo: null, demo: null },
     summary:
       "An end-to-end AI agent workflow for exoplanet data analysis, built for the IBM SkillsBuild University Education initiative in collaboration with Hacktiv8 - scored 97.50/100 by the programme's judging panel.",
@@ -213,3 +219,15 @@ export const projects = [
 ];
 
 export const featuredProjects = projects.filter((p) => p.featured);
+
+export function getBigFeaturedProject(featuredList = featuredProjects) {
+  if (!featuredList || featuredList.length === 0) return null;
+  const priorityProject = featuredList.find((p) => p.priority);
+  return priorityProject || featuredList[0];
+}
+
+export function getOrderedFeaturedProjects(featuredList = featuredProjects) {
+  const bigProject = getBigFeaturedProject(featuredList);
+  if (!bigProject) return featuredList;
+  return [bigProject, ...featuredList.filter((p) => p.slug !== bigProject.slug)];
+}

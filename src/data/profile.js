@@ -33,10 +33,15 @@ export const profile = {
 
   education: {
     // Left as a placeholder per instruction - fill in your current program.
-    institution: "SMA Negeri 1 Yogyakarta",
+    institution: "SMA Negeri 1 Yogyakarta · AMS Afd. A",
     degree: "High School Diploma",
     graduation: "May 2027",
     image: "/assets/credentials/education-sma-negeri-1-yogyakarta.jpg",
+    description: "Specialising in Mathematics and Natural Sciences (MIPA) with a concentration in astrophysics, advanced mathematics, and computational modelling.",
+    bullets: [
+      "Admitted to the high-performance Astronomy Olympiad class based on competitive placement testing.",
+      "Focused on advanced astronomy theory, astrophysics problem solving, and data analysis beyond standard curriculum."
+    ],
   },
 
   languages: [

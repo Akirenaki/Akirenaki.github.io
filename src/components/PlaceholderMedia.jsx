@@ -25,18 +25,28 @@ export function PlaceholderImage({ src, alt, aspect = "16/9", label, className =
     );
   }
 
+  const resolvedSrc = src?.startsWith("/") ? `${import.meta.env.BASE_URL}${src.slice(1)}` : src;
+  // scripts/build-images.mjs writes every credential/project/portrait image
+  // as a .jpg + .webp pair sharing a basename, so the same source path
+  // always has a same-named .webp sibling - derive it rather than storing
+  // both paths in the data files.
+  const webpSrc = resolvedSrc?.replace(/\.(jpe?g|png)$/i, ".webp");
+
   return (
-    <img
-      src={src?.startsWith("/") ? `${import.meta.env.BASE_URL}${src.slice(1)}` : src}
-      alt={alt}
-      style={{ aspectRatio: aspect }}
-      className={`w-full object-cover ${className}`}
-      loading="lazy"
-      onError={() => {
-        setFailed(true);
-        onError?.();
-      }}
-    />
+    <picture>
+      {webpSrc && webpSrc !== resolvedSrc && <source srcSet={webpSrc} type="image/webp" />}
+      <img
+        src={resolvedSrc}
+        alt={alt}
+        style={{ aspectRatio: aspect }}
+        className={`w-full object-cover ${className}`}
+        loading="lazy"
+        onError={() => {
+          setFailed(true);
+          onError?.();
+        }}
+      />
+    </picture>
   );
 }
 
