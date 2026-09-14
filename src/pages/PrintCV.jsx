@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { profile } from "../data/profile";
 import { experience } from "../data/experience";
 import { awards, certifications, technicalStack } from "../data/awards";
-import { featuredProjects } from "../data/projects";
+import { projects } from "../data/projects";
 import { isLikelyInAppBrowser } from "../utils/browserDetect";
 
 function PrinterIcon({ className = "h-4 w-4" }) {
@@ -170,9 +170,9 @@ export function PrintCV() {
         </section>
 
         <section className="mb-8">
-          <SectionHeading>Selected Projects</SectionHeading>
+          <SectionHeading>Projects</SectionHeading>
           <div className="flex flex-col gap-5">
-            {featuredProjects.map((project) => (
+            {projects.map((project) => (
               <div key={project.slug} className="print:break-inside-avoid">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
                   <p className="font-medium text-ink">
