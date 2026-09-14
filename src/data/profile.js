@@ -3,11 +3,22 @@
 // for the text that appears across Home, About, and Contact.
 
 export const profile = {
-  // Hero: two names, preferred one shown larger (see Hero.jsx / About.jsx).
+  // Four name categories across Home and CV:
+  legalNameHome: "Legal Name: Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
+  preferredNameHome: "Renee Astraea",
+  legalNameCV: "Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
+  preferredNameCV: "Preferred Name: Renee Astraea",
+
+  // Aliases for convenience/backwards compatibility:
+  nameLegalHome: "Legal Name: Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
+  namePreferredHome: "Renee Astraea",
+  nameLegalCV: "Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
+  namePreferredCV: "Preferred Name: Renee Astraea",
   nameLegal: "Legal Name: Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
   namePreferred: "Renee Astraea",
+
   tagline: "May this journey lead us starward!",
-  roleSummary: "Aspiring astrophysics student & beginner web developer",
+  roleSummary: "Aspiring Astrophysicist | Beginner Web Developer | Human Rights Activist",
 
   location: "Yogyakarta, Indonesia",
 
@@ -37,10 +48,10 @@ export const profile = {
     degree: "High School Diploma",
     graduation: "May 2027",
     image: "/assets/credentials/education-sma-negeri-1-yogyakarta.jpg",
-    description: "Specialising in Mathematics and Natural Sciences (MIPA) with a concentration in astrophysics, advanced mathematics, and computational modelling.",
+    description: "Specialising in Mathematics and Natural Sciences (MIPA) with a concentration in physics and mathematics, with additional coursework in computer science, statistics, and astronomy.",
     bullets: [
       "Admitted to the high-performance Astronomy Olympiad class based on competitive placement testing.",
-      "Focused on advanced astronomy theory, astrophysics problem solving, and data analysis beyond standard curriculum."
+      "Focused on astronomy theory, astrophysics problem solving, and data analysis beyond standard curriculum."
     ],
   },
 

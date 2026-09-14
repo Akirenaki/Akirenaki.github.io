@@ -29,7 +29,7 @@ export function PrintCV() {
 
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = `${profile.namePreferred} — CV`;
+    document.title = `${profile.legalNameCV} — CV`;
     return () => {
       document.title = previousTitle;
     };
@@ -101,9 +101,9 @@ export function PrintCV() {
       {/* The document itself */}
       <div className="mx-auto max-w-[210mm] border border-blush/40 bg-white p-10 shadow-sm print:max-w-none print:border-0 print:p-0 print:shadow-none">
         <header className="mb-8 border-b border-blush pb-6 print:break-inside-avoid">
-          <p className="font-body text-sm text-ink-soft">{profile.nameLegal}</p>
+          <p className="font-body text-sm text-ink-soft">{profile.preferredNameCV}</p>
           <h1 className="mt-1 font-display text-4xl font-medium leading-tight text-ink">
-            {profile.namePreferred}
+            {profile.legalNameCV}
           </h1>
           <p className="mt-2 text-base text-ink-soft">{profile.roleSummary}</p>
 

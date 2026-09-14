@@ -15,9 +15,9 @@ export function Home() {
       <section className="relative overflow-hidden border-b border-blush/70">
         <div className="relative mx-auto flex max-w-5xl flex-col gap-10 px-5 py-20 md:flex-row md:items-center md:px-8 md:py-28">
           <div className="max-w-xl">
-            <p className="font-body text-sm tracking-wide text-ink-soft">{profile.nameLegal}</p>
+            <p className="font-body text-sm tracking-wide text-ink-soft">{profile.legalNameHome}</p>
             <h1 className="mt-1 font-display text-5xl font-medium leading-[1.05] text-ink md:text-6xl">
-              {profile.namePreferred}
+              {profile.preferredNameHome}
             </h1>
             <p className="mt-5 text-lg text-ink-soft">{profile.roleSummary}</p>
             <p className="mt-6 font-display text-xl italic text-accent-deep">"{profile.tagline}"</p>
@@ -44,7 +44,7 @@ export function Home() {
 
           <PlaceholderImage
             src="/assets/portrait.jpg"
-            alt={profile.namePreferred}
+            alt={profile.preferredNameHome}
             aspect="4/5"
             label="Portrait — 800×1000"
             className="w-full max-w-[280px] self-center rounded-sm md:ml-auto"

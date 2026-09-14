@@ -23,9 +23,16 @@ export function Footer() {
   return (
     <footer className="border-t border-blush/70 px-5 py-10 md:px-8">
       <div className="mx-auto flex max-w-5xl flex-col gap-3 text-sm text-ink-soft md:flex-row md:items-center md:justify-between">
-        <p>
-          © {year} {profile.namePreferred}. All rights reserved.
-        </p>
+        <div>
+          <p>
+            © {year} {profile.preferredNameHome}. All rights reserved.
+          </p>
+          {typeof __BUILD_DATE__ !== "undefined" && __BUILD_DATE__ && (
+            <p className="mt-0.5 text-xs opacity-60">
+              Last Updated On: {new Date(__BUILD_DATE__).toLocaleString()}
+            </p>
+          )}
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           {badges.map((badge) => (
             <a href={badge.href} target="_blank" rel="noreferrer" key={badge.alt}>
