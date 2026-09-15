@@ -3,12 +3,24 @@
 // as "astronomical" without literally rendering a starfield-on-black cliché -
 // it sits in the light palette and moves at a pace closer to "atmospheric"
 // than "cosmic". Freezes entirely under prefers-reduced-motion.
+//
+// Flicker tuning knobs (adjust these to taste):
+//   FLICKER_CHANCE     – fraction of stars that flicker (0 = none, 1 = all)
+//   FLICKER_SPEED      – how many full cycles per second (higher = faster)
+//   FLICKER_INTENSITY  – how deep the dip goes; 0 = fully transparent at trough,
+//                        1 = no visible flicker (opacity stays at BASE_ALPHA)
+//   BASE_ALPHA         – resting opacity for every star
 
 import { useEffect, useRef } from "react";
 
 const POINT_COUNT = 46;
 const LINK_DISTANCE = 120;
 const COLORS = ["#D8579C", "#EEBCDC", "#5F7AC5"];
+
+const BASE_ALPHA = 0.8;        // base star opacity
+const FLICKER_CHANCE = 0.6;    // 60 % of stars flicker
+const FLICKER_SPEED = 0.8;     // cycles per second
+const FLICKER_INTENSITY = 0.4; // opacity floor = BASE_ALPHA * FLICKER_INTENSITY
 
 export function ConstellationField({ className = "" }) {
   const canvasRef = useRef(null);
@@ -23,23 +35,35 @@ export function ConstellationField({ className = "" }) {
     let height = 0;
     let points = [];
     let frame;
+    let startTime = null;
 
     function resize() {
       const rect = canvas.parentElement.getBoundingClientRect();
       width = canvas.width = rect.width;
       height = canvas.height = rect.height;
       const count = Math.min(POINT_COUNT, Math.floor((width * height) / 14000));
-      points = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        r: Math.random() * 1.6 + 0.6,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      }));
+      points = Array.from({ length: count }, () => {
+        const flickers = Math.random() < FLICKER_CHANCE;
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15,
+          r: Math.random() * 1.6 + 0.6,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          // Flicker: each flickering star gets its own random phase and a slight
+          // frequency jitter so they never pulse in unison.
+          flickers,
+          flickerPhase: Math.random() * Math.PI * 2,
+          flickerFreq: FLICKER_SPEED * (0.7 + Math.random() * 0.6),
+        };
+      });
     }
 
-    function step() {
+    function step(ts) {
+      if (startTime === null) startTime = ts;
+      const elapsed = (ts - startTime) / 1000; // seconds
+
       ctx.clearRect(0, 0, width, height);
 
       for (const p of points) {
@@ -68,10 +92,17 @@ export function ConstellationField({ className = "" }) {
       }
 
       for (const p of points) {
+        let alpha = BASE_ALPHA;
+        if (!reduceMotion && p.flickers) {
+          // Sine oscillates in [-1, 1]; remap to [FLICKER_INTENSITY, 1].
+          const sine = Math.sin(elapsed * p.flickerFreq * Math.PI * 2 + p.flickerPhase);
+          const t = (sine + 1) / 2; // → [0, 1]
+          alpha = BASE_ALPHA * (FLICKER_INTENSITY + (1 - FLICKER_INTENSITY) * t);
+        }
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.8;
+        ctx.globalAlpha = alpha;
         ctx.fill();
         ctx.globalAlpha = 1;
       }
@@ -80,7 +111,7 @@ export function ConstellationField({ className = "" }) {
     }
 
     resize();
-    step();
+    frame = requestAnimationFrame(step);
     window.addEventListener("resize", resize);
 
     return () => {

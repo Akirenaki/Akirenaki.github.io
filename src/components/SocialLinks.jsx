@@ -6,13 +6,9 @@
 // SVGs instead, so they render instantly and never depend on anything
 // outside this build.
 //
-// Brand marks (GitHub, Instagram, Kaggle, WhatsApp) use official path data
-// from the Simple Icons project (CC0-licensed, simpleicons.org) so they're
-// accurate rather than hand-approximated. LinkedIn's mark isn't in that
-// dataset (it's one of the few brands removed from Simple Icons at the
-// trademark holder's request), so it gets a neutral "open profile" glyph
-// instead of a guessed reconstruction of their logo - the visible "LinkedIn"
-// label carries the meaning either way.
+// Brand marks (GitHub, Instagram, Kaggle, WhatsApp, LinkedIn) use official
+// path data from the Simple Icons project (CC0-licensed, simpleicons.org)
+// so they're accurate rather than hand-approximated.
 
 import { profile } from "../data/profile";
 
@@ -25,11 +21,10 @@ function EmailIcon({ className = "h-4 w-4" }) {
   );
 }
 
-function ExternalProfileIcon({ className = "h-4 w-4" }) {
+function LinkedInIcon({ className = "h-4 w-4" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
-      <rect x="4" y="4" width="16" height="16" rx="3" />
-      <path d="M9.5 14.5l5-5M9.5 9.5h5v5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   );
 }
@@ -69,7 +64,7 @@ function WhatsAppIcon({ className = "h-4 w-4" }) {
 const LINKS = [
   { key: "email", label: "Email", detail: profile.contact.email, href: `mailto:${profile.contact.email}`, Icon: EmailIcon },
   { key: "github", label: "GitHub", detail: profile.contact.github.label, href: profile.contact.github.url, Icon: GithubIcon },
-  { key: "linkedin", label: "LinkedIn", detail: null, href: profile.contact.linkedin, Icon: ExternalProfileIcon },
+  { key: "linkedin", label: "LinkedIn", detail: null, href: profile.contact.linkedin, Icon: LinkedInIcon },
   { key: "kaggle", label: "Kaggle", detail: profile.contact.kaggle.label, href: profile.contact.kaggle.url, Icon: KaggleIcon },
   { key: "instagram", label: "Instagram", detail: null, href: profile.contact.instagram.url, Icon: InstagramIcon },
   {
