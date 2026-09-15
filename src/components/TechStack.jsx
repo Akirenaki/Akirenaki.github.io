@@ -17,7 +17,7 @@ export function TechStack({ visible = [], hidden = [] }) {
       {hidden.length > 0 && (
         <details className="group inline-block [&>summary]:list-none">
           <summary
-            className="cursor-pointer rounded-full border border-dashed border-blush bg-transparent px-3 py-1 text-sm text-ink-soft transition-colors hover:border-accent hover:text-accent group-open:hidden"
+            className="cursor-pointer rounded-full border border-dashed border-blush bg-transparent px-3 py-1 text-sm text-ink-soft transition-colors hover:border-accent-deep hover:text-accent-deep group-open:hidden"
           >
             +{hidden.length} more
           </summary>

@@ -91,7 +91,7 @@ export function PrintCV() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-accent-deep"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-accent-deep px-6 py-3 text-sm font-medium text-paper transition hover:brightness-90"
         >
           <PrinterIcon />
           Print / Save as PDF

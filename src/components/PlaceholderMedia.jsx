@@ -4,24 +4,46 @@
 // explicitly so the layout doesn't jump once real media lands (CLS).
 //
 // If the file at `src` is missing (as it will be until you add assets), this
-// renders a labelled placeholder box at the exact same dimensions instead of
-// a broken-image icon - just for a cleaner dev preview.
+// renders a placeholder box at the exact same dimensions instead of a
+// broken-image icon. The box itself stays short and generic (an icon + "Photo
+// pending") regardless of context - the full descriptive alt text is still
+// there for screen readers via aria-label, it just doesn't get crammed as
+// visible copy into what's sometimes a 144px-wide column.
 
 import { useState } from "react";
+
+function PhotoGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="1.6" />
+      <circle cx="8.5" cy="9.5" r="1.5" />
+      <path d="M3 16.5l5-5 4 4 3-3 6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PlaceholderBox({ aspect, className, alt, children }) {
+  return (
+    <div
+      className={`flex flex-col items-center justify-center gap-1.5 border border-dashed border-blush bg-blush/20 text-center text-xs text-ink-soft ${className}`}
+      style={{ aspectRatio: aspect }}
+      role="img"
+      aria-label={alt}
+    >
+      {children}
+    </div>
+  );
+}
 
 export function PlaceholderImage({ src, alt, aspect = "16/9", label, className = "", onError }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
     return (
-      <div
-        className={`flex items-center justify-center border border-dashed border-blush bg-blush/20 text-center text-sm text-ink-soft ${className}`}
-        style={{ aspectRatio: aspect }}
-        role="img"
-        aria-label={alt}
-      >
-        <span className="px-4">{label || alt || "Image placeholder"}</span>
-      </div>
+      <PlaceholderBox aspect={aspect} className={className} alt={alt}>
+        <PhotoGlyph />
+        <span className="px-4">{label || "Photo pending"}</span>
+      </PlaceholderBox>
     );
   }
 
@@ -55,12 +77,10 @@ export function PlaceholderVideo({ src, aspect = "16/9", label, className = "", 
 
   if (failed || !src) {
     return (
-      <div
-        className={`flex items-center justify-center border border-dashed border-blush bg-blush/20 text-center text-sm text-ink-soft ${className}`}
-        style={{ aspectRatio: aspect }}
-      >
-        <span className="px-4">{label || "Video placeholder"}</span>
-      </div>
+      <PlaceholderBox aspect={aspect} className={className}>
+        <PhotoGlyph />
+        <span className="px-4">{label || "Video pending"}</span>
+      </PlaceholderBox>
     );
   }
 

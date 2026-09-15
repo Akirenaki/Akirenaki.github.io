@@ -12,6 +12,10 @@ export function Work() {
   }, []);
 
   const visible = activeTag === "All" ? projects : projects.filter((p) => p.tags.includes(activeTag));
+  // On a 2-column grid, an odd total leaves the last card alone with empty
+  // space beside it - give it the wide "lg" treatment instead so every row
+  // stays full, regardless of how the filtered count comes out.
+  const isLastOdd = (i) => visible.length % 2 === 1 && i === visible.length - 1;
 
   return (
     <section className="px-5 py-16 md:px-8 md:py-24">
@@ -30,8 +34,8 @@ export function Work() {
               onClick={() => setActiveTag(tag)}
               className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 activeTag === tag
-                  ? "border-accent bg-accent text-paper"
-                  : "border-blush text-ink-soft hover:border-accent hover:text-accent"
+                  ? "border-accent-deep bg-accent-deep text-paper"
+                  : "border-blush text-ink-soft hover:border-accent-deep hover:text-accent-deep"
               }`}
               aria-pressed={activeTag === tag}
             >
@@ -41,8 +45,8 @@ export function Work() {
         </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {visible.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {visible.map((project, i) => (
+            <ProjectCard key={project.slug} project={project} size={isLastOdd(i) ? "lg" : "md"} />
           ))}
         </div>
       </div>

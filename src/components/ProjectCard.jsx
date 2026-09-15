@@ -9,7 +9,7 @@ export function ProjectCard({ project, size = "md" }) {
 
   return (
     <article
-      className={`group flex flex-col overflow-hidden border border-blush bg-surface transition-colors hover:border-accent ${
+      className={`group flex flex-col overflow-hidden border border-blush bg-surface transition-colors hover:border-accent-deep ${
         isLarge ? "md:col-span-2" : ""
       }`}
     >
@@ -27,7 +27,7 @@ export function ProjectCard({ project, size = "md" }) {
         </div>
 
         <h3 className={`font-display font-medium text-ink ${isLarge ? "text-2xl" : "text-xl"}`}>
-          <Link to={`/work/${project.slug}`} className="hover:text-accent">
+          <Link to={`/work/${project.slug}`} className="hover:text-accent-deep">
             {project.title}
           </Link>
         </h3>
@@ -39,7 +39,7 @@ export function ProjectCard({ project, size = "md" }) {
         </div>
 
         <div className="mt-auto flex items-center gap-4 pt-3 text-sm">
-          <Link to={`/work/${project.slug}`} className="text-accent hover:text-accent-deep">
+          <Link to={`/work/${project.slug}`} className="text-accent-deep hover:underline">
             Read the case study
           </Link>
           {project.links.demo && (

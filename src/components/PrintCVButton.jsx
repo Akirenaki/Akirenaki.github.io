@@ -19,9 +19,9 @@ function openPrintCv() {
 
 const VARIANT_CLASSES = {
   // Matches the "Get in touch" secondary CTA on Home.
-  pill: "rounded-full border border-ink/20 px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent",
+  pill: "rounded-full border border-ink/20 px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep",
   // A quieter, tertiary treatment for sitting under a hero CTA row.
-  link: "text-sm font-medium text-ink-soft transition-colors hover:text-accent",
+  link: "text-sm font-medium text-ink-soft transition-colors hover:text-accent-deep",
 };
 
 export function PrintCVButton({ variant = "pill", className = "" }) {

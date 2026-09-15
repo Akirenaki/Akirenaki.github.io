@@ -16,7 +16,7 @@ export function Nav() {
     <header className="border-b border-blush/70 bg-paper/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 md:px-8">
         <NavLink to="/" className="font-display text-lg font-medium text-ink" onClick={() => setOpen(false)}>
-          Portfolio
+          {profile.preferredNameHome}
         </NavLink>
 
         {/* Desktop nav */}
@@ -28,7 +28,7 @@ export function Nav() {
               end={link.end}
               className={({ isActive }) =>
                 `text-sm transition-colors ${
-                  isActive ? "text-accent" : "text-ink-soft hover:text-ink"
+                  isActive ? "text-accent-deep" : "text-ink-soft hover:text-ink"
                 }`
               }
             >
@@ -65,7 +65,7 @@ export function Nav() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 `rounded-md px-2 py-3 text-base ${
-                  isActive ? "text-accent" : "text-ink-soft"
+                  isActive ? "text-accent-deep" : "text-ink-soft"
                 }`
               }
             >

@@ -11,7 +11,7 @@ export function ProjectCaseStudy() {
     return (
       <section className="px-5 py-24 text-center md:px-8">
         <h1 className="font-display text-3xl text-ink">Project not found</h1>
-        <Link to="/work" className="mt-4 inline-block text-accent hover:text-accent-deep">
+        <Link to="/work" className="mt-4 inline-block text-accent-deep hover:underline">
           ← Back to work
         </Link>
       </section>
@@ -21,7 +21,7 @@ export function ProjectCaseStudy() {
   return (
     <article className="px-5 py-16 md:px-8 md:py-24">
       <div className="mx-auto max-w-3xl">
-        <Link to="/work" className="text-sm text-ink-soft hover:text-accent">
+        <Link to="/work" className="text-sm text-ink-soft hover:text-accent-deep">
           ← Back to work
         </Link>
 
@@ -47,7 +47,7 @@ export function ProjectCaseStudy() {
               href={project.links.demo}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-accent px-5 py-2 font-medium text-paper hover:bg-accent-deep"
+              className="rounded-full bg-accent-deep px-5 py-2 font-medium text-paper transition hover:brightness-90"
             >
               Live demo
             </a>
@@ -57,7 +57,7 @@ export function ProjectCaseStudy() {
               href={project.links.repo}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-ink/20 px-5 py-2 font-medium text-ink hover:border-accent hover:text-accent"
+              className="rounded-full border border-ink/20 px-5 py-2 font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep"
             >
               Repository
             </a>

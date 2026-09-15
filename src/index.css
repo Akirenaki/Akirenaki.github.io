@@ -25,6 +25,11 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Anchor targets (About page section nav) land clear of content instead
+     of flush against the top edge. */
+  [id] {
+    scroll-margin-top: 1.5rem;
+  }
   body {
     background-color: var(--color-paper);
     color: var(--color-ink);
@@ -43,6 +48,11 @@
     outline-offset: 3px;
     border-radius: 2px;
   }
+}
+
+/* Quiets clashing colour in project thumbnails - see ProjectMedia.jsx. */
+.thumb-tone {
+  filter: saturate(0.75);
 }
 
 @media (prefers-reduced-motion: reduce) {
