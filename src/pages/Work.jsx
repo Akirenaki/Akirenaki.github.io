@@ -1,8 +1,15 @@
 import { useMemo, useState } from "react";
 import { projects } from "../data/projects";
 import { ProjectCard } from "../components/ProjectCard";
+import { useSEO } from "../hooks/useSEO";
 
 export function Work() {
+  useSEO({
+    title: "Work",
+    description:
+      "Selected projects by Renee Astraea spanning astronomical data pipelines, full-stack web systems, and applied statistics.",
+    path: "/work",
+  });
   const [activeTag, setActiveTag] = useState("All");
 
   const tags = useMemo(() => {

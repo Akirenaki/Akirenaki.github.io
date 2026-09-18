@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Routing is BrowserRouter (see src/App.jsx), so every path below is a real
+  URL a crawler can request directly (via the public/404.html fallback) -
+  unlike the old HashRouter setup, where sub-routes were #fragments Google
+  never indexed separately. Add a new <url> entry here whenever a project
+  is added to src/data/projects.js.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/contact</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work/project-cherenkov</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work/astronomical-multi-catalog-identifier-matcher</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work/trebuchet-mechanical-systems</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work/fishcom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work/corgein</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://akirenaki.github.io/Portfolio/work/exoplanet-data-insight-assistant</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>

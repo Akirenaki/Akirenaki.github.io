@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <!--
+      GitHub Pages has no server-side rewrites, so a direct hit or refresh on
+      a route like /Portfolio/work returns this file (its actual 404 page)
+      instead of index.html. This script rewrites the path into a query
+      string on the site root - the one URL GitHub Pages can actually serve
+      a real file for - and the matching script in index.html's <head>
+      converts it back to a clean path via history.replaceState before
+      React Router mounts, so the visitor lands on the right page and never
+      sees a real 404.
+
+      pathSegmentsToKeep = 1: this is a GitHub Pages *project* site
+      (username.github.io/Portfolio/...), so the first path segment
+      ("Portfolio") has to be preserved as the redirect target, not treated
+      as part of the route. It would be 0 for a user/org root site
+      (username.github.io/...).
+    -->
+    <script>
+      var pathSegmentsToKeep = 1;
+      var location = window.location;
+      var pathParts = location.pathname.split("/");
+      var basePath = pathParts.slice(0, 1 + pathSegmentsToKeep).join("/");
+      var routePath = pathParts.slice(1 + pathSegmentsToKeep).join("/");
+
+      location.replace(
+        location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "") +
+        basePath + "/?/" + routePath.replace(/&/g, "~and~") +
+        (location.search ? "&" + location.search.slice(1).replace(/&/g, "~and~") : "") +
+        location.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

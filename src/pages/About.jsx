@@ -2,6 +2,7 @@ import { profile } from "../data/profile";
 import { experience } from "../data/experience";
 import { awards, certifications, technicalStack } from "../data/awards";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
+import { useSEO } from "../hooks/useSEO";
 
 const SECTIONS = [
   { id: "stack", label: "Technical stack" },
@@ -11,6 +12,11 @@ const SECTIONS = [
 ];
 
 export function About() {
+  useSEO({
+    title: "About & Credentials",
+    description: `${profile.roleSummary}. Technical stack, education, experience, and awards.`,
+    path: "/about",
+  });
   return (
     <section className="px-5 py-16 md:px-8 md:py-24">
       <div className="mx-auto max-w-3xl">

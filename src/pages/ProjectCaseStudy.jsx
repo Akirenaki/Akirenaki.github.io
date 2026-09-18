@@ -2,10 +2,20 @@ import { Link, useParams } from "react-router-dom";
 import { projects } from "../data/projects";
 import { ProjectMedia } from "../components/ProjectMedia";
 import { TechStack } from "../components/TechStack";
+import { useSEO } from "../hooks/useSEO";
 
 export function ProjectCaseStudy() {
   const { slug } = useParams();
   const project = projects.find((p) => p.slug === slug);
+
+  // Falls back to the site default title/description when the slug doesn't
+  // match anything, so a mistyped/old link doesn't keep whatever the
+  // previously-viewed page's tags happened to be.
+  useSEO(
+    project
+      ? { title: project.title, description: project.summary, path: `/work/${project.slug}` }
+      : { path: `/work/${slug ?? ""}` }
+  );
 
   if (!project) {
     return (

@@ -2,17 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!--
+      Pairs with public/404.html - decodes the query-string it built back
+      into a clean path, before React Router ever sees the URL. Must run
+      before main.jsx (and ideally before anything else) so React never
+      mounts on the wrong route for one frame.
+    -->
+    <script>
+      (function (location) {
+        if (location.search[1] === "/") {
+          var decoded = location.search
+            .slice(1)
+            .split("&")
+            .map(function (segment) {
+              return segment.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(null, null, location.pathname.slice(0, -1) + decoded + location.hash);
+        }
+      })(window.location);
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Portfolio of Renee Astraea &middot; Raden Bagus Narendra Tsaqiif Aryasuta Maldini</title>
     <meta name="description" content="Portfolio of Renee Astraea (Narendra Maldini) — aspiring astrophysics student and developer building data tools and interactive visualisations for observational astronomy." />
+    <link rel="canonical" href="https://akirenaki.github.io/Portfolio/" />
 
-    <!-- Open Graph: swap /assets/og-image.jpg for a real 1200x630 image before launch -->
+    <!-- These are the tags static link-unfurlers (Slack, Discord, iMessage,
+         most of Twitter/X) actually see, since they fetch raw HTML and never
+         run the JS in src/hooks/useSEO.js. og:image/twitter:image and og:url
+         MUST be absolute - Vite's base:'./' rewrite makes the *built* path
+         relative, which is correct for the <script>/<link> tags the browser
+         resolves, but a relative URL inside a meta content="" string is just
+         a literal string to these crawlers and won't resolve at all. -->
     <meta property="og:title" content="Renee Astraea — Astrophysics & Software" />
     <meta property="og:description" content="Astrophysics student and developer building data tools and interactive visualisations for observational astronomy." />
-    <meta property="og:image" content="/assets/og-image.jpg" />
+    <meta property="og:image" content="https://akirenaki.github.io/Portfolio/assets/og-image.jpg" />
+    <meta property="og:url" content="https://akirenaki.github.io/Portfolio/" />
     <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Renee Astraea — Astrophysics & Software" />
+    <meta name="twitter:description" content="Astrophysics student and developer building data tools and interactive visualisations for observational astronomy." />
+    <meta name="twitter:image" content="https://akirenaki.github.io/Portfolio/assets/og-image.jpg" />
+
+    <!-- Person schema: tells Google this page is about a specific person
+         (not just "a portfolio"), which is what lets a name search surface
+         the right site/knowledge panel rather than nothing in particular. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Renee Astraea",
+        "alternateName": "Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
+        "url": "https://akirenaki.github.io/Portfolio/",
+        "image": "https://akirenaki.github.io/Portfolio/assets/portrait.jpg",
+        "jobTitle": "Aspiring Astrophysicist & Software Developer",
+        "description": "Astrophysics student and developer building data tools and interactive visualisations for observational astronomy.",
+        "sameAs": [
+          "https://github.com/Akirenaki",
+          "https://www.linkedin.com/in/renee-astraea/",
+          "https://www.kaggle.com/reneeastraea",
+          "https://www.instagram.com/heavychainthatdoesfreezemybone/"
+        ]
+      }
+    </script>
+
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -11,11 +11,15 @@ const getBuildDate = () => {
   }
 }
 
-// base: './' keeps built asset paths relative, so the site works whether it
-// ends up at a GitHub Pages project path (username.github.io/repo/) or a
-// custom subdomain later - no need to touch this when the URL changes.
+// base is an absolute path, not './', because BrowserRouter now serves real
+// nested routes like /work/project-cherenkov. A relative base resolves
+// against whatever the current URL happens to be, so it works at the site
+// root but breaks one level down (it would look for assets under
+// /work/assets/... instead of /assets/...). An absolute base always
+// resolves the same way regardless of route depth. This MUST match the
+// `basename` in src/App.jsx and the repo name in public/404.html.
 export default defineConfig({
-  base: './',
+  base: '/Portfolio/',
   plugins: [react(), tailwindcss()],
   define: {
     __BUILD_DATE__: JSON.stringify(getBuildDate()),

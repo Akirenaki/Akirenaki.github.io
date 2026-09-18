@@ -2,6 +2,7 @@ import { useState } from "react";
 import { profile } from "../data/profile";
 import { PrintCVButton } from "../components/PrintCVButton";
 import { SocialLinks } from "../components/SocialLinks";
+import { useSEO } from "../hooks/useSEO";
 
 // Static-site contact form: since there's no backend yet, submitting builds a
 // pre-filled mailto: link rather than posting anywhere. Swap this handler for
@@ -14,6 +15,11 @@ function buildMailto({ name, email, message }) {
 }
 
 export function Contact() {
+  useSEO({
+    title: "Contact",
+    description: "Get in touch with Renee Astraea — email, LinkedIn, GitHub, Kaggle, Instagram, and WhatsApp.",
+    path: "/contact",
+  });
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   function handleChange(e) {

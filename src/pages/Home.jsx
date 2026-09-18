@@ -5,6 +5,7 @@ import { getBigFeaturedProject, getOrderedFeaturedProjects } from "../data/proje
 import { ProjectCard } from "../components/ProjectCard";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 import { PrintCVButton } from "../components/PrintCVButton";
+import { useSEO } from "../hooks/useSEO";
 
 // One deliberate motion moment for the whole site: the hero text and portrait
 // settle in on first load, staggered slightly. Framer Motion was already a
@@ -20,6 +21,10 @@ const portraitVariants = {
 };
 
 export function Home() {
+  // No `title` override - Home uses useSEO's own default (matching the
+  // static index.html tags), but still has to call it explicitly so the
+  // tags reset back to the homepage's after visiting another route.
+  useSEO({ description: profile.homeSummary, path: "/" });
   const orderedFeaturedProjects = getOrderedFeaturedProjects();
   const bigProject = getBigFeaturedProject();
   const prefersReducedMotion = useReducedMotion();
