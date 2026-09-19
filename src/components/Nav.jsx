@@ -13,7 +13,7 @@ export function Nav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="border-b border-blush/70 bg-paper/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-blush/70 bg-paper/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 md:px-8">
         <NavLink to="/" className="font-display text-lg font-medium text-ink" onClick={() => setOpen(false)}>
           {profile.preferredNameHome}
