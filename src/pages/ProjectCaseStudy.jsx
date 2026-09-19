@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router";
 import { projects } from "../data/projects";
 import { ProjectMedia } from "../components/ProjectMedia";
 import { TechStack } from "../components/TechStack";
-import { buildMeta } from "../lib/seo";
+import { buildMeta, breadcrumbJsonLd, pageUrl, SITE_URL } from "../lib/seo";
 
 // meta() gets `params` directly - the same :slug the component reads via
 // useParams() - rather than needing to be a hook, since this now runs
@@ -13,7 +13,18 @@ import { buildMeta } from "../lib/seo";
 export function meta({ params }) {
   const project = projects.find((p) => p.slug === params.slug);
   return project
-    ? buildMeta({ title: project.title, description: project.summary, path: `/work/${project.slug}` })
+    ? buildMeta({
+        title: project.title,
+        description: project.summary,
+        path: `/work/${project.slug}`,
+        jsonLd: [
+          breadcrumbJsonLd([
+            { name: "Home", item: SITE_URL },
+            { name: "Work", item: pageUrl("/work") },
+            { name: project.title, item: pageUrl(`/work/${project.slug}`) },
+          ]),
+        ],
+      })
     : buildMeta({ path: `/work/${params.slug ?? ""}` });
 }
 

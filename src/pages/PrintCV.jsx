@@ -23,11 +23,15 @@ function SectionHeading({ children }) {
   );
 }
 
-// Baked into the prerendered build/client/print/index.html now, so the
-// old useEffect that set document.title on mount (and restored it on
-// unmount) isn't needed any more - this covers it statically instead.
+// Baked into the prerendered build/client/print/index.html. noindex: this
+// page repeats the About content and lists contact details (email, phone,
+// location), so it shouldn't appear in search results. Don't also block it in
+// robots.txt - a crawler has to be able to fetch the page to see the tag.
 export function meta() {
-  return [{ title: `${profile.legalNameCV} — CV` }];
+  return [
+    { title: `${profile.legalNameCV} — CV` },
+    { name: "robots", content: "noindex" },
+  ];
 }
 
 export function PrintCV() {

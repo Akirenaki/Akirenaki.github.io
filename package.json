@@ -6,9 +6,10 @@
   "scripts": {
     "predev": "npm run images",
     "dev": "react-router dev",
-    "prebuild": "npm run images",
+    "prebuild": "npm run images && npm run sitemap",
     "build": "react-router build",
     "images": "node scripts/build-images.mjs",
+    "sitemap": "node scripts/build-sitemap.mjs",
     "lint": "oxlint",
     "preview": "vite preview --outDir build/client"
   },

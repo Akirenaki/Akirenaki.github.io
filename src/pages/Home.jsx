@@ -20,10 +20,15 @@ const portraitVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] } },
 };
 
-// No `title` override - Home uses buildMeta's own default (matching the
-// old static index.html tags).
+// No `title` override - Home uses buildMeta's own default. The description is
+// deliberately not profile.homeSummary: that paragraph is ~300 characters and
+// search results cut snippets off around 155-160.
 export function meta() {
-  return buildMeta({ description: profile.homeSummary, path: "/" });
+  return buildMeta({
+    description:
+      "Aspiring astrophysicist and developer building astronomical data pipelines, statistical models, and interactive tools. Projects, case studies, and CV.",
+    path: "/",
+  });
 }
 
 export function Home() {
@@ -90,6 +95,7 @@ export function Home() {
               src="/assets/portrait.jpg"
               alt={profile.preferredNameHome}
               aspect="4/5"
+              priority
               label="Portrait — 800×1000"
               className="rounded-sm"
             />

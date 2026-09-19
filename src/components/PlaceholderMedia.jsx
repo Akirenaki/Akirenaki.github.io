@@ -35,7 +35,9 @@ function PlaceholderBox({ aspect, className, alt, children }) {
   );
 }
 
-export function PlaceholderImage({ src, alt, aspect = "16/9", label, className = "", onError }) {
+// priority: for the one above-the-fold image per page (the Home portrait).
+// Lazy-loading the largest visible element delays Largest Contentful Paint.
+export function PlaceholderImage({ src, alt, aspect = "16/9", label, className = "", onError, priority = false }) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
@@ -62,7 +64,8 @@ export function PlaceholderImage({ src, alt, aspect = "16/9", label, className =
         alt={alt}
         style={{ aspectRatio: aspect }}
         className={`w-full object-cover ${className}`}
-        loading="lazy"
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : undefined}
         onError={() => {
           setFailed(true);
           onError?.();

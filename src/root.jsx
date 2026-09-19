@@ -1,43 +1,6 @@
 import { StrictMode } from "react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import "./index.css";
-import { SITE_URL, DEFAULT_OG_IMAGE } from "./lib/seo";
-
-// Site-wide tags that don't vary per page - the old static index.html set
-// these once and every route inherited them for free; now that each route
-// is its own prerendered file, they have to be declared explicitly
-// somewhere all routes share. Root's own `meta` export is that place:
-// React Router concatenates every matched route's meta array from root
-// down to the leaf, so these appear on every page alongside whatever
-// title/description the leaf route (see src/lib/seo.js's buildMeta) adds
-// on top - matching what index.html used to do implicitly.
-export function meta() {
-  return [
-    { property: "og:image", content: DEFAULT_OG_IMAGE },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:image", content: DEFAULT_OG_IMAGE },
-    {
-      "script:ld+json": {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        name: "Renee Astraea",
-        alternateName: "Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
-        url: SITE_URL,
-        image: `${SITE_URL}assets/portrait.jpg`,
-        jobTitle: "Aspiring Astrophysicist & Software Developer",
-        description:
-          "Astrophysics student and developer building data tools and interactive visualisations for observational astronomy.",
-        sameAs: [
-          "https://github.com/Akirenaki",
-          "https://www.linkedin.com/in/renee-astraea/",
-          "https://www.kaggle.com/reneeastraea",
-          "https://www.instagram.com/heavychainthatdoesfreezemybone/",
-        ],
-      },
-    },
-  ];
-}
 
 // Layout wraps both the page (the default export below) and any error
 // boundary, so the <html> shell - and everything in <head> - is present
