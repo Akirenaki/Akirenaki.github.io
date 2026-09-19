@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import { Nav } from "./Nav";
 import { Footer } from "./Footer";
 import { ConstellationField } from "./ConstellationField";
@@ -19,3 +19,7 @@ export function Layout() {
     </div>
   );
 }
+
+// Framework-mode route modules (see src/routes.js's layout() call) are
+// resolved by their default export.
+export default Layout;

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://akirenaki.github.io/Portfolio/sitemap.xml
+Sitemap: https://akirenaki.github.io/sitemap.xml

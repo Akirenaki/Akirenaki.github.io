@@ -7,7 +7,7 @@ A static portfolio built with React 19, React Router 7, Tailwind CSS 4, and Fram
 ```bash
 npm install
 npm run dev       # dev server with hot reload (automatically processes new images)
-npm run build     # production build -> dist/
+npm run build     # production build -> build/client/, every route prerendered to a real HTML file
 npm run preview   # serve the production build locally, to sanity-check it
 npm run images    # run image optimization pipeline manually
 ```
@@ -23,7 +23,7 @@ Nothing in this repo needs code changes for routine content updates — it's all
 | `src/data/experience.js` | Experience entries on the About page |
 | `src/data/awards.js` | Awards, certifications, and technical-stack lists |
 
-To add a new project: add an object to the array in `projects.js` with a unique `slug` — a case study page at `/#/work/<slug>` is generated automatically, with no routing code to touch.
+To add a new project: add an object to the array in `projects.js` with a unique `slug` — a case study page at `/work/<slug>` is generated automatically, with no routing code to touch (it's picked up by `react-router.config.js`'s `prerender()` list at build time).
 
 ## Adding and Uploading Media
 
@@ -52,23 +52,25 @@ This repo includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) th
 
 1. On GitHub: **Settings → Pages → Source**, select **GitHub Actions**.
 2. Push to `main` (or run the workflow manually from the **Actions** tab).
-3. Site is live at `https://akirenaki.github.io/Portfolio` within a minute or two.
+3. Site is live at `https://akirenaki.github.io/` within a minute or two.
 
-`vite.config.js` uses a relative base path (`base: './'`), and routing uses `HashRouter` (URLs look like `/#/work/some-project`), ensuring GitHub Pages' lack of server-side rewrites never causes a 404 on direct navigation or page refreshes.
+This repo deploys as a GitHub Pages **User Site** — the repo itself is named `akirenaki.github.io`, so it serves from the domain root rather than a `/<repo-name>/` subpath. That's not just a style choice: `@react-router/dev`'s `ssr:false` prerenderer has an open upstream bug (`remix-run/react-router#14587`) where a non-root `basename` combined with `prerender` breaks the build outright, confirmed by testing it directly against this project. Deploying at the root sidesteps it. `vite.config.js`'s `base` and `react-router.config.js`'s `basename` both reflect this (`/`), as does `SITE_BASE` in `src/lib/seo.js` — if any of the three ever needs to change (e.g. moving to a custom domain), update all three together.
 
-If you later move to a custom domain with server rewrites: add a `CNAME` file to `public/`, point your DNS at GitHub Pages, then optionally switch `HashRouter` to `BrowserRouter` in `src/App.jsx`.
+Every route is a real static file after `npm run build` (`build/client/work/index.html`, `build/client/work/<slug>/index.html`, etc.) — there's no client-side-only routing fallback to configure, and no `404.html` redirect trick, because GitHub Pages always has a matching file to serve.
 
 ## Stack
 
-React 19 · React Router 7 (HashRouter) · Tailwind CSS 4 · Framer Motion · Sharp · Vite 8
+React 19 · React Router 8 (framework mode / SSG, prerendered at build time) · Tailwind CSS 4 · Framer Motion · Sharp · Vite 8
 
 ## Application Structure
 
 ```text
 src/
-   App.jsx                         Main app router (HashRouter setup & page routing)
-   main.jsx                        React application entry point
+   root.jsx                        Root layout - <html>/<head> shell, site-wide meta, Person JSON-LD
+   routes.js                       Route table (framework mode - replaces JSX <Routes>/<Route>)
    index.css                       Global CSS styles & Tailwind configuration
+   lib/
+      seo.js                        buildMeta() helper - each page's `meta` export builds on this
    components/                     Reusable UI components
       ConstellationField.jsx        Interactive canvas constellation background animation
       Footer.jsx                    Global site footer
@@ -84,12 +86,12 @@ src/
       experience.js                 Work and leadership experience entries
       profile.js                    Personal metadata, bio, contact links, and education
       projects.js                   Project card catalog and detailed case-study content
-   pages/                          Top-level page views
+   pages/                          Top-level page views - each exports its own `meta` function
       About.jsx                     About page (bio, experience, skills, credentials grid)
       Contact.jsx                   Contact page with direct messaging links
       Home.jsx                      Landing page (hero header, featured projects, quick bio)
       PrintCV.jsx                   Standalone printable CV layout
-      ProjectCaseStudy.jsx          Detailed per-project case study viewer (/#/work/:slug)
+      ProjectCaseStudy.jsx          Detailed per-project case study viewer (/work/:slug)
       Work.jsx                      Full portfolio projects showcase grid
    utils/                          Utility functions
       browserDetect.js              Browser & device feature detection helpers
@@ -113,10 +115,10 @@ scripts/                           Build tools & automated pipelines
    workflows/
       deploy.yml                   GitHub Actions workflow for automated build & deployment
 
-index.html                         HTML entry point & meta tags
+react-router.config.js             Framework-mode build config - basename, ssr:false, prerender() paths
 package.json                       Node dependencies and script definitions
 package-lock.json                  Locked Node dependency versions
-vite.config.js                     Vite bundler configuration (relative base path)
+vite.config.js                     Vite bundler configuration (root base path)
 .oxlintrc.json                     Oxlint linter configuration
 .gitignore                         Git ignore rules
 README.md                          Project documentation and operating notes

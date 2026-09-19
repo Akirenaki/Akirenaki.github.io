@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { ProjectMedia } from "./ProjectMedia";
 import { TechStack } from "./TechStack";
 

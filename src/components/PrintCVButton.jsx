@@ -2,6 +2,8 @@
 // the destination page and its own in-page browser notice. This component
 // only carries the short heads-up shown *before* the click.
 
+import { SITE_BASE } from "../lib/seo";
+
 function PrinterIcon({ className = "h-4 w-4" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden="true">
@@ -13,10 +15,10 @@ function PrinterIcon({ className = "h-4 w-4" }) {
 }
 
 function openPrintCv() {
-  // App.jsx uses BrowserRouter with basename="/Portfolio", so the route is a
-  // real path (/Portfolio/print), not a #fragment - match that here.
+  // Match the framework router basename so the print page works in every
+  // deployment path.
   const origin = window.location.origin;
-  window.open(`${origin}/Portfolio/print?auto=1`, "_blank", "noopener,noreferrer");
+  window.open(`${origin}${SITE_BASE}/print?auto=1`, "_blank", "noopener,noreferrer");
 }
 
 const VARIANT_CLASSES = {

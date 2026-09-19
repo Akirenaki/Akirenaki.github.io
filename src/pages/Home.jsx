@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "../data/profile";
 import { getBigFeaturedProject, getOrderedFeaturedProjects } from "../data/projects";
 import { ProjectCard } from "../components/ProjectCard";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 import { PrintCVButton } from "../components/PrintCVButton";
-import { useSEO } from "../hooks/useSEO";
+import { buildMeta } from "../lib/seo";
 
 // One deliberate motion moment for the whole site: the hero text and portrait
 // settle in on first load, staggered slightly. Framer Motion was already a
@@ -20,11 +20,13 @@ const portraitVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] } },
 };
 
+// No `title` override - Home uses buildMeta's own default (matching the
+// old static index.html tags).
+export function meta() {
+  return buildMeta({ description: profile.homeSummary, path: "/" });
+}
+
 export function Home() {
-  // No `title` override - Home uses useSEO's own default (matching the
-  // static index.html tags), but still has to call it explicitly so the
-  // tags reset back to the homepage's after visiting another route.
-  useSEO({ description: profile.homeSummary, path: "/" });
   const orderedFeaturedProjects = getOrderedFeaturedProjects();
   const bigProject = getBigFeaturedProject();
   const prefersReducedMotion = useReducedMotion();
@@ -132,3 +134,5 @@ export function Home() {
     </>
   );
 }
+
+export default Home;

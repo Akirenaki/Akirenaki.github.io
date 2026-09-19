@@ -8,9 +8,13 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+build
 dist-ssr
 *.local
+
+# React Router framework-mode generated types (regenerated on every
+# `npm run dev` / `npm run build` - see react-router.config.js)
+.react-router
 
 # Editor directories and files
 .vscode/*

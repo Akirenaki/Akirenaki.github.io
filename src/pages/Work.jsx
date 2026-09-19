@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
 import { projects } from "../data/projects";
 import { ProjectCard } from "../components/ProjectCard";
-import { useSEO } from "../hooks/useSEO";
+import { buildMeta } from "../lib/seo";
 
-export function Work() {
-  useSEO({
+export function meta() {
+  return buildMeta({
     title: "Work",
     description:
       "Selected projects by Renee Astraea spanning astronomical data pipelines, full-stack web systems, and applied statistics.",
     path: "/work",
   });
+}
+
+export function Work() {
   const [activeTag, setActiveTag] = useState("All");
 
   const tags = useMemo(() => {
@@ -60,3 +63,5 @@ export function Work() {
     </section>
   );
 }
+
+export default Work;

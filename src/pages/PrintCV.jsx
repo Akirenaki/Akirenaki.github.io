@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import { profile } from "../data/profile";
 import { experience } from "../data/experience";
 import { awards, certifications, technicalStack } from "../data/awards";
 import { projects } from "../data/projects";
 import { isLikelyInAppBrowser } from "../utils/browserDetect";
+import { SITE_URL } from "../lib/seo";
 
 function PrinterIcon({ className = "h-4 w-4" }) {
   return (
@@ -22,18 +23,17 @@ function SectionHeading({ children }) {
   );
 }
 
+// Baked into the prerendered build/client/print/index.html now, so the
+// old useEffect that set document.title on mount (and restored it on
+// unmount) isn't needed any more - this covers it statically instead.
+export function meta() {
+  return [{ title: `${profile.legalNameCV} — CV` }];
+}
+
 export function PrintCV() {
   const [searchParams] = useSearchParams();
   const hasTriggeredPrint = useRef(false);
   const inAppBrowser = isLikelyInAppBrowser();
-
-  useEffect(() => {
-    const previousTitle = document.title;
-    document.title = `${profile.legalNameCV} — CV`;
-    return () => {
-      document.title = previousTitle;
-    };
-  }, []);
 
   useEffect(() => {
     if (searchParams.get("auto") !== "1" || hasTriggeredPrint.current) return;
@@ -48,7 +48,13 @@ export function PrintCV() {
     }
   }, [searchParams]);
 
-  const generatedFrom = window.location.href.split("#")[0];
+  // Starts at the canonical URL (safe during the prerender pass, which
+  // runs in Node and has no `window`) and swaps in the real address -
+  // query string included - once mounted in an actual browser.
+  const [generatedFrom, setGeneratedFrom] = useState(`${SITE_URL}print`);
+  useEffect(() => {
+    setGeneratedFrom(window.location.href);
+  }, []);
   const generatedOn = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
   return (
@@ -239,3 +245,5 @@ export function PrintCV() {
     </div>
   );
 }
+
+export default PrintCV;

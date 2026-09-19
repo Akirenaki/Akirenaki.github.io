@@ -2,7 +2,7 @@ import { profile } from "../data/profile";
 import { experience } from "../data/experience";
 import { awards, certifications, technicalStack } from "../data/awards";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
-import { useSEO } from "../hooks/useSEO";
+import { buildMeta } from "../lib/seo";
 
 const SECTIONS = [
   { id: "stack", label: "Technical stack" },
@@ -11,12 +11,18 @@ const SECTIONS = [
   { id: "awards", label: "Awards" },
 ];
 
-export function About() {
-  useSEO({
+// Runs during the prerender pass (and only then - see src/lib/seo.js),
+// so these tags land in the static build/client/about/index.html file
+// itself, not just applied client-side after the fact.
+export function meta() {
+  return buildMeta({
     title: "About & Credentials",
     description: `${profile.roleSummary}. Technical stack, education, experience, and awards.`,
     path: "/about",
   });
+}
+
+export function About() {
   return (
     <section className="px-5 py-16 md:px-8 md:py-24">
       <div className="mx-auto max-w-3xl">
@@ -254,3 +260,6 @@ export function About() {
     </section>
   );
 }
+
+// Framework-mode route modules are resolved by their default export.
+export default About;

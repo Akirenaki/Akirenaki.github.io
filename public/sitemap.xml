@@ -8,52 +8,52 @@
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/</loc>
+    <loc>https://akirenaki.github.io/</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work</loc>
+    <loc>https://akirenaki.github.io/work</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/about</loc>
+    <loc>https://akirenaki.github.io/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/contact</loc>
+    <loc>https://akirenaki.github.io/contact</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work/project-cherenkov</loc>
+    <loc>https://akirenaki.github.io/work/project-cherenkov</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work/astronomical-multi-catalog-identifier-matcher</loc>
+    <loc>https://akirenaki.github.io/work/astronomical-multi-catalog-identifier-matcher</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work/trebuchet-mechanical-systems</loc>
+    <loc>https://akirenaki.github.io/work/trebuchet-mechanical-systems</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work/fishcom</loc>
+    <loc>https://akirenaki.github.io/work/fishcom</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work/corgein</loc>
+    <loc>https://akirenaki.github.io/work/corgein</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://akirenaki.github.io/Portfolio/work/exoplanet-data-insight-assistant</loc>
+    <loc>https://akirenaki.github.io/work/exoplanet-data-insight-assistant</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

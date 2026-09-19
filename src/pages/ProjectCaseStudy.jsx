@@ -1,21 +1,25 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import { projects } from "../data/projects";
 import { ProjectMedia } from "../components/ProjectMedia";
 import { TechStack } from "../components/TechStack";
-import { useSEO } from "../hooks/useSEO";
+import { buildMeta } from "../lib/seo";
+
+// meta() gets `params` directly - the same :slug the component reads via
+// useParams() - rather than needing to be a hook, since this now runs
+// once at prerender time per URL in react-router.config.js's prerender()
+// list, not client-side per navigation. Falls back to the site default
+// title/description when the slug doesn't match anything, so a
+// mistyped/old link doesn't keep whatever the previous page's tags were.
+export function meta({ params }) {
+  const project = projects.find((p) => p.slug === params.slug);
+  return project
+    ? buildMeta({ title: project.title, description: project.summary, path: `/work/${project.slug}` })
+    : buildMeta({ path: `/work/${params.slug ?? ""}` });
+}
 
 export function ProjectCaseStudy() {
   const { slug } = useParams();
   const project = projects.find((p) => p.slug === slug);
-
-  // Falls back to the site default title/description when the slug doesn't
-  // match anything, so a mistyped/old link doesn't keep whatever the
-  // previously-viewed page's tags happened to be.
-  useSEO(
-    project
-      ? { title: project.title, description: project.summary, path: `/work/${project.slug}` }
-      : { path: `/work/${slug ?? ""}` }
-  );
 
   if (!project) {
     return (
@@ -93,3 +97,5 @@ export function ProjectCaseStudy() {
     </article>
   );
 }
+
+export default ProjectCaseStudy;
