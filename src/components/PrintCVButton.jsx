@@ -13,8 +13,10 @@ function PrinterIcon({ className = "h-4 w-4" }) {
 }
 
 function openPrintCv() {
-  const base = window.location.href.split("#")[0];
-  window.open(`${base}#/print?auto=1`, "_blank", "noopener,noreferrer");
+  // App.jsx uses BrowserRouter with basename="/Portfolio", so the route is a
+  // real path (/Portfolio/print), not a #fragment - match that here.
+  const origin = window.location.origin;
+  window.open(`${origin}/Portfolio/print?auto=1`, "_blank", "noopener,noreferrer");
 }
 
 const VARIANT_CLASSES = {
