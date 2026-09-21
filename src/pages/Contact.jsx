@@ -1,37 +1,75 @@
 import { useState } from "react";
-import { profile } from "../data/profile";
 import { PrintCVButton } from "../components/PrintCVButton";
 import { SocialLinks } from "../components/SocialLinks";
 import { buildMeta } from "../lib/seo";
 
-// Static-site contact form: since there's no backend yet, submitting builds a
-// pre-filled mailto: link rather than posting anywhere. Swap this handler for
-// a Formspree/EmailJS endpoint later if you want an in-page submit + toast
-// instead of handing off to the visitor's mail client.
-function buildMailto({ name, email, message }) {
-  const subject = encodeURIComponent(`Portfolio contact from ${name || "a visitor"}`);
-  const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-  return `mailto:${profile.contact.email}?subject=${subject}&body=${body}`;
-}
+// Formspree-backed contact form: submissions POST as JSON to your Formspree
+// endpoint instead of building a mailto: link. Formspree handles validation,
+// spam filtering, and email delivery on their side — no server code here.
+//
+// Setup: replace FORMSPREE_FORM_ID below with the ID from your Formspree
+// dashboard (see the setup steps you were given alongside this patch).
+const FORMSPREE_FORM_ID = "mdekgovb";
+const FORMSPREE_ENDPOINT = `https://formspree.io/f/${FORMSPREE_FORM_ID}`;
 
 export function meta() {
   return buildMeta({
     title: "Contact",
-    description: "Get in touch with Renee Astraea — email, LinkedIn, GitHub, Kaggle, Instagram, and WhatsApp.",
+    description: "Get in touch with Renee Astraea! Email, LinkedIn, GitHub, Kaggle, Instagram, and WhatsApp.",
     path: "/contact",
   });
 }
 
 export function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  // status: "idle" | "sending" | "success" | "error"
+  const [status, setStatus] = useState("idle");
 
   function handleChange(e) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    window.location.href = buildMailto(form);
+    setStatus("sending");
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      // Network failure, ad blocker, offline, etc.
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <section className="px-5 py-16 md:px-8 md:py-24">
+        <div className="mx-auto max-w-4xl">
+          <h1 className="font-display text-4xl font-medium text-ink">Message sent</h1>
+          <p className="mt-4 leading-relaxed text-ink-soft">
+            Thanks for reaching out! I'll get back to you soon. Replies fastest by WhatsApp.
+          </p>
+          <button
+            type="button"
+            onClick={() => setStatus("idle")}
+            className="mt-6 rounded-full border border-blush px-5 py-2.5 text-sm text-ink-soft transition-colors hover:border-accent-deep hover:text-accent-deep"
+          >
+            Send another message
+          </button>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -98,13 +136,18 @@ export function Contact() {
 
           <button
             type="submit"
-            className="mt-2 self-start rounded-full bg-accent-deep px-6 py-3 text-sm font-medium text-paper transition hover:brightness-90"
+            disabled={status === "sending"}
+            className="mt-2 self-start rounded-full bg-accent-deep px-6 py-3 text-sm font-medium text-paper transition hover:brightness-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Send message
+            {status === "sending" ? "Sending…" : "Send message"}
           </button>
-          <p className="text-xs text-ink-soft">
-            Opens your email client with this pre-filled — there's no backend wired up yet.
-          </p>
+
+          {status === "error" && (
+            <p role="alert" className="text-xs text-red-600">
+              Something went wrong sending that. Please try again, or email me directly.
+            </p>
+          )}
+          <p className="text-xs text-ink-soft">Sent directly through the form. No email client required.</p>
         </form>
       </div>
     </section>

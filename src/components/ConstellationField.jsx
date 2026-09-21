@@ -110,12 +110,27 @@ export function ConstellationField({ className = "" }) {
       if (!reduceMotion) frame = requestAnimationFrame(step);
     }
 
+    // Browsers already throttle rAF in background tabs, but that's implicit
+    // and inconsistent across engines. Make it explicit: cancel the frame
+    // loop on hide and restart cleanly on show, resetting startTime so the
+    // elapsed-time-based flicker doesn't jump on resume.
+    function handleVisibility() {
+      if (document.hidden) {
+        if (frame) cancelAnimationFrame(frame);
+      } else {
+        startTime = null;
+        frame = requestAnimationFrame(step);
+      }
+    }
+
     resize();
     frame = requestAnimationFrame(step);
     window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", handleVisibility);
       if (frame) cancelAnimationFrame(frame);
     };
   }, []);
