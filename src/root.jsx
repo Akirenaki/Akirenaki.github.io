@@ -1,5 +1,5 @@
-import { StrictMode } from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { StrictMode, useEffect } from "react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
 import "./index.css";
 
 // Layout wraps both the page (the default export below) and any error
@@ -35,9 +35,46 @@ export function Layout({ children }) {
   );
 }
 
+// GoatCounter analytics (cookieless). The script is loaded once, then each
+// route change is counted manually, because React Router navigates without
+// full page loads and GoatCounter would otherwise only see the first page.
+let gcLoader = null;
+let lastCounted = null;
+
+function loadGoatCounter() {
+  if (!gcLoader) {
+    window.goatcounter = { no_onload: true };
+    gcLoader = new Promise((resolve) => {
+      const s = document.createElement("script");
+      s.async = true;
+      s.dataset.goatcounter = "https://renee.goatcounter.com/count";
+      s.src = "https://gc.zgo.at/count.js";
+      s.onload = resolve;
+      s.onerror = resolve; // ad blockers: fail silently
+      document.head.appendChild(s);
+    });
+  }
+  return gcLoader;
+}
+
+function Analytics() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (lastCounted === pathname) return; // avoids double-counting
+    lastCounted = pathname;
+    loadGoatCounter().then(() => {
+      window.goatcounter?.count?.({ path: pathname });
+    });
+  }, [pathname]);
+
+  return null;
+}
+
 export default function Root() {
   return (
     <StrictMode>
+      <Analytics />
       <Outlet />
     </StrictMode>
   );
