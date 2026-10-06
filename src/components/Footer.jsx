@@ -1,5 +1,6 @@
 import { profile } from "../data/profile";
 import { SocialLinks } from "./SocialLinks";
+import { VisitorCount } from "./VisitorCount";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -16,6 +17,7 @@ export function Footer() {
               Last Updated On: {new Date(__BUILD_DATE__).toLocaleString()}
             </p>
           )}
+          <VisitorCount />
         </div>
         <SocialLinks variant="compact" only={["email", "github", "linkedin"]} />
       </div>
