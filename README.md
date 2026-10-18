@@ -35,6 +35,8 @@ All raw, full-resolution image assets belong in `assets-src/`. The project uses 
    - **Case Study Hero Banner:** `assets-src/projects/<slug>-hero.jpg` (e.g., `assets-src/projects/astronomical-multi-catalog-identifier-matcher-hero.jpg`)
    - **Project Card Thumbnail:** `assets-src/projects/<slug>.jpg` (e.g., `assets-src/projects/astronomical-multi-catalog-identifier-matcher.jpg`)
    - **Hero Portrait:** `assets-src/portrait.jpg`
+   - **Navbar Logo:** `assets-src/logo.png` (white background is made transparent automatically)
+   - **Social Share Card:** `assets-src/og-image.jpg`
    - **Credentials / Certificates:** `assets-src/credentials/<category>-<name>.jpg` (e.g. `education-*`, `experience-*`, `award-*`, `certification-*`)
 
    *(Make sure `<slug>` matches the `slug` key in `src/data/projects.js`)*

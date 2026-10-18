@@ -7,11 +7,12 @@ This directory (`/public/assets`) contains **automatically generated output file
 
 When you run `npm run dev`, `npm run build`, or `npm run images`, the image script reads original images from `/assets-src` and writes optimized pairs here:
 - `<filename>.webp` (primary web format, optimized with Sharp)
-- `<filename>.jpg` (fallback format for browsers/crawlers without WebP support)
+- `<filename>.jpg` (fallback format for browsers/crawlers without WebP support; `.png` instead for the transparent logo)
 
 ### Expected Filenames in `/assets-src`
 - `portrait.jpg` (hero portrait)
-- `og-image.jpg` (1200x630, social link preview)
+- `og-image.jpg` (social link preview, resized to 1200px wide; currently 1200x655)
+- `logo.png` (navbar logo, white background in the source; output is transparent)
 - `projects/<slug>.jpg` (project card thumbnail, 16:9)
 - `projects/<slug>-hero.jpg` (case-study banner/hero image, 16:9)
 - `credentials/education-*.jpg` (education credential images)

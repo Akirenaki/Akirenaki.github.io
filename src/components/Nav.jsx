@@ -15,8 +15,27 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-blush/70 bg-paper/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 md:px-8">
-        <NavLink to="/" className="font-display text-lg font-medium text-ink" onClick={() => setOpen(false)}>
-          {profile.preferredNameHome}
+        {/* The logo is pink/purple/pale-blue, so it only reaches ~2.5:1 (pink) and
+            ~2.3:1 (blue) against the pale-pink navbar. On the ink tile the same
+            colours measure ~6:1, ~3.4:1 (purple) and ~6.6:1. The tile is the same
+            44px as the mobile menu button, so the header height doesn't change. */}
+        <NavLink
+          to="/"
+          aria-label={`${profile.preferredNameHome} - home`}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink"
+          onClick={() => setOpen(false)}
+        >
+          <picture>
+            <source srcSet={`${import.meta.env.BASE_URL}assets/logo.webp`} type="image/webp" />
+            <img
+              src={`${import.meta.env.BASE_URL}assets/logo.png`}
+              alt=""
+              width="34"
+              height="34"
+              className="h-[34px] w-[34px]"
+              decoding="async"
+            />
+          </picture>
         </NavLink>
 
         {/* Desktop nav */}

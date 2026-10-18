@@ -93,8 +93,10 @@ export function buildMeta({ title, description, path = "/", noindex = false, jso
     { property: "og:site_name", content: SITE_NAME },
     { property: "og:locale", content: "en_US" },
     { property: "og:image", content: DEFAULT_OG_IMAGE },
+    // Must match the size scripts/build-images.mjs writes for assets-src/og-image.jpg
+    // (1200 wide, source is 1408x768).
     { property: "og:image:width", content: "1200" },
-    { property: "og:image:height", content: "600" },
+    { property: "og:image:height", content: "655" },
     { property: "og:image:alt", content: socialTitle },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: DEFAULT_OG_IMAGE },

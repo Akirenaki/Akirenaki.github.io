@@ -12,6 +12,11 @@
 // the browser is never asked to downscale by a huge ratio in one step -
 // that's what was producing the blocky/blurry look, independent of format.
 //
+// Assets that need real transparency (currently just the navbar logo, which
+// is supplied on a white background) skip the flatten-to-white step. They go
+// through `whiteToAlpha` below and are written as a .png + .webp pair, both
+// with an alpha channel, instead of the usual .jpg + .webp.
+//
 // Re-runs are cheap: a file is only reprocessed if its source is newer than
 // the existing output, so this can safely run before every dev/build.
 
@@ -35,11 +40,59 @@ const WIDTH_RULES = [
   { test: (rel) => rel.startsWith("projects/") && /-hero\.[^.]+$/.test(rel), width: 1536 }, // case-study hero, max-w-3xl container
   { test: (rel) => rel.startsWith("projects/"), width: 1280 }, // project cards
   { test: (rel) => rel === `portrait${extname(rel)}`, width: 640 }, // Home.jsx max-w-[280px]
+  { test: (rel) => rel === `og-image${extname(rel)}`, width: 1200 }, // link-preview card; keep in sync with og:image:width in src/lib/seo.js
+  { test: (rel) => rel === `logo${extname(rel)}`, width: 256 }, // Nav.jsx renders it at ~34px, so ~7x headroom for retina and reuse
   { test: () => true, width: 1280 }, // fallback if something new shows up unclassified
 ];
 
 function widthFor(relPath) {
   return WIDTH_RULES.find((rule) => rule.test(relPath)).width;
+}
+
+// Sources that must keep an alpha channel. Their basenames are matched here
+// so the rest of the pipeline stays unchanged for everything else.
+function needsAlpha(relPath) {
+  return /^logo\.[^.]+$/.test(relPath);
+}
+
+// Anything this close to pure white is treated as background. The logo's
+// white backdrop carries faint compression noise (values like 253-254); without
+// a floor that noise would survive as near-invisible speckle in the alpha channel.
+const WHITE_NOISE_FLOOR = 6;
+
+// A pixel whose darkest channel sits at least this far below 255 counts as
+// solid logo. The thinnest/lightest solid parts of the logo (the pale-blue orbit)
+// are ~90 below white, so this keeps every stroke at full opacity.
+const SOLID_DARKNESS = 90;
+
+// Turns the white backdrop into transparency while keeping each stroke's own
+// colour. Coverage (alpha) comes from how far a pixel is from white; anti-aliased
+// edge pixels are then un-mixed from white so they become "stroke colour at
+// partial opacity" rather than a pale pink fringe. The result composites back
+// onto white almost exactly (max error ~5/255) and, unlike a plain
+// colour-to-alpha pass (which also drops alpha on every light pink/blue pixel
+// and so turns the logo muddy on dark), stays vivid on a dark backdrop.
+async function whiteToAlpha(srcPath) {
+  const { data, info } = await sharp(srcPath)
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const out = Buffer.alloc(info.width * info.height * 4);
+  for (let i = 0, o = 0; i < data.length; i += 3, o += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const darkness = 255 - Math.min(r, g, b);
+    if (darkness < WHITE_NOISE_FLOOR) continue; // leaves the pixel fully transparent
+    const alpha = Math.min(1, darkness / SOLID_DARKNESS);
+    out[o] = Math.min(255, Math.max(0, Math.round(255 + (r - 255) / alpha)));
+    out[o + 1] = Math.min(255, Math.max(0, Math.round(255 + (g - 255) / alpha)));
+    out[o + 2] = Math.min(255, Math.max(0, Math.round(255 + (b - 255) / alpha)));
+    out[o + 3] = Math.round(alpha * 255);
+  }
+
+  return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } });
 }
 
 async function collectImages(dir, baseDir = dir) {
@@ -74,15 +127,26 @@ async function processImage(srcPath) {
   const relDir = dirname(relPath);
   const name = basename(relPath, extname(relPath));
   const outDir = join(OUT_ROOT, relDir === "." ? "" : relDir);
-  const jpgOut = join(outDir, `${name}.jpg`);
+  const alpha = needsAlpha(relPath);
+  // Opaque sources get a .jpg fallback; sources that need transparency get a .png.
+  const fallbackOut = join(outDir, `${name}.${alpha ? "png" : "jpg"}`);
   const webpOut = join(outDir, `${name}.webp`);
 
-  if (!(await isStale(srcPath, [jpgOut, webpOut]))) {
+  if (!(await isStale(srcPath, [fallbackOut, webpOut]))) {
     return { name: relPath, skipped: true };
   }
 
   await mkdir(outDir, { recursive: true });
   const width = widthFor(relPath);
+
+  if (alpha) {
+    const resized = (await whiteToAlpha(srcPath)).resize({ width, withoutEnlargement: true });
+    const [pngInfo, webpInfo] = await Promise.all([
+      resized.clone().png({ compressionLevel: 9 }).toFile(fallbackOut),
+      resized.clone().webp({ quality: WEBP_QUALITY, alphaQuality: 100 }).toFile(webpOut),
+    ]);
+    return { name: relPath, skipped: false, fallbackExt: "png", fallbackInfo: pngInfo, webpInfo };
+  }
 
   const pipeline = sharp(srcPath)
     .resize({ width, withoutEnlargement: true })
@@ -93,11 +157,11 @@ async function processImage(srcPath) {
     .flatten({ background: "#ffffff" });
 
   const [jpgInfo, webpInfo] = await Promise.all([
-    pipeline.clone().jpeg({ quality: JPEG_QUALITY, mozjpeg: true }).toFile(jpgOut),
+    pipeline.clone().jpeg({ quality: JPEG_QUALITY, mozjpeg: true }).toFile(fallbackOut),
     pipeline.clone().webp({ quality: WEBP_QUALITY }).toFile(webpOut),
   ]);
 
-  return { name: relPath, skipped: false, jpgInfo, webpInfo };
+  return { name: relPath, skipped: false, fallbackExt: "jpg", fallbackInfo: jpgInfo, webpInfo };
 }
 
 async function main() {
@@ -110,7 +174,7 @@ async function main() {
   for (const r of processed) {
     const kb = (n) => `${(n / 1024).toFixed(0)}kb`;
     console.log(
-      `  images: ${r.name} -> ${kb(r.jpgInfo.size)} jpg, ${kb(r.webpInfo.size)} webp`
+      `  images: ${r.name} -> ${kb(r.fallbackInfo.size)} ${r.fallbackExt}, ${kb(r.webpInfo.size)} webp`
     );
   }
   console.log(
