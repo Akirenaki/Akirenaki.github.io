@@ -95,7 +95,37 @@ async function whiteToAlpha(srcPath) {
     out[o + 3] = Math.round(alpha * 255);
   }
 
-  return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } });
+  const logo = await sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } })
+    .png()
+    .toBuffer();
+  return trimToSquare(logo);
+}
+
+// The supplied logo has ~7% empty margin on every side. Cropping it away (and
+// padding back to a square, since the glyph isn't perfectly square) means the
+// logo fills whatever box it is displayed in, so it can read larger without
+// making the navbar taller. Expects a PNG buffer with an alpha channel.
+async function trimToSquare(pngBuffer) {
+  const { data, info } = await sharp(pngBuffer)
+    .trim({ threshold: 1 })
+    .toBuffer({ resolveWithObject: true });
+  const side = Math.max(info.width, info.height);
+  const padX = side - info.width;
+  const padY = side - info.height;
+  // sharp applies extend() *after* resize() whatever order they are chained in,
+  // so the padded square is rendered to a buffer here; otherwise later resizes
+  // of this image would be padded afterwards and come out the wrong size.
+  const squared = await sharp(data)
+    .extend({
+      top: Math.floor(padY / 2),
+      bottom: Math.ceil(padY / 2),
+      left: Math.floor(padX / 2),
+      right: Math.ceil(padX / 2),
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+  return sharp(squared);
 }
 
 async function collectImages(dir, baseDir = dir) {
@@ -168,17 +198,18 @@ async function processImage(srcPath) {
 }
 
 // Browser-tab and home-screen icons, generated from the logo so there is a
-// single source of truth. Both sit the logo on the same dark ink tile the
-// navbar uses (the logo's pink/blue are too faint on a light tab).
-//   favicon-48.png        round tile, used by <link rel="icon">. 48px is a
-//                         multiple of 48, which search engines ask for, and
-//                         browsers scale it down for 16/32px tabs.
-//   apple-touch-icon.png  opaque square, no rounding (iOS rounds it itself
-//                         and fills any transparency with black).
-const FAVICON_BG = "#221D2E"; // --color-ink in src/index.css
+// single source of truth.
+//   favicon-48.png        transparent, glyph filling almost the whole canvas so
+//                         it stays legible at 16px. 48 is a multiple of 48,
+//                         which search engines ask for; browsers scale it down.
+//   apple-touch-icon.png  iOS can't show transparency (it fills it with black),
+//                         so this one sits on the site's paper colour, with a
+//                         slightly deeper tone so the pale pink holds up there.
+const PAPER = "#FAF3F7"; // --color-paper in src/index.css
+const CLEAR = { r: 0, g: 0, b: 0, alpha: 0 };
 const FAVICONS = [
-  { file: "favicon-48.png", size: 48, inset: 0.86, round: true },
-  { file: "apple-touch-icon.png", size: 180, inset: 0.7, round: false },
+  { file: "favicon-48.png", size: 48, inset: 0.96, background: CLEAR, deepen: false },
+  { file: "apple-touch-icon.png", size: 180, inset: 0.68, background: PAPER, deepen: true },
 ];
 
 async function buildFavicons(images) {
@@ -192,29 +223,15 @@ async function buildFavicons(images) {
   const logo = await whiteToAlpha(logoSrc);
 
   return Promise.all(
-    FAVICONS.map(async ({ file, size, inset, round }) => {
+    FAVICONS.map(async ({ file, size, inset, background, deepen }) => {
       const inner = Math.round(size * inset);
-      const logoPng = await logo
-        .clone()
-        .resize(inner, inner, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-        .png()
-        .toBuffer();
+      let glyph = logo.clone().resize(inner, inner, { fit: "contain", background: CLEAR });
+      if (deepen) glyph = glyph.modulate({ saturation: 1.3, brightness: 0.9 });
 
-      let tile = await sharp({
-        create: { width: size, height: size, channels: 4, background: FAVICON_BG },
-      })
-        .composite([{ input: logoPng, gravity: "center" }])
-        .png()
-        .toBuffer();
-
-      if (round) {
-        const mask = Buffer.from(
-          `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}"/></svg>`
-        );
-        tile = await sharp(tile).composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
-      }
-
-      const info = await sharp(tile).png({ compressionLevel: 9 }).toFile(join(OUT_ROOT, file));
+      const info = await sharp({ create: { width: size, height: size, channels: 4, background } })
+        .composite([{ input: await glyph.png().toBuffer(), gravity: "center" }])
+        .png({ compressionLevel: 9 })
+        .toFile(join(OUT_ROOT, file));
       return { name: file, size: info.size };
     })
   );
