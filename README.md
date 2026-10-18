@@ -25,6 +25,13 @@ Nothing in this repo needs code changes for routine content updates — it's all
 
 To add a new project: add an object to the array in `projects.js` with a unique `slug` — a case study page at `/work/<slug>` is generated automatically, with no routing code to touch (it's picked up by `react-router.config.js`'s `prerender()` list at build time).
 
+### Filters on `/work`
+
+The Work page filters by four groups: **Framework**, **Language**, **Live** and **Repo**. Options inside a group combine with OR, groups combine with AND, and each option shows how many projects it would leave.
+
+- Framework and Language come from `filters: { framework: [...], language: [...] }` on each project in `projects.js`. The options are built from whatever values appear there, so spell them the same way everywhere (`"Next.js"`, not `"NextJS"`). Leave a list empty when it doesn't apply, for example a hardware prototype has no language.
+- Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough.
+
 ## Adding and Uploading Media
 
 All raw, full-resolution image assets belong in `assets-src/`. The project uses an automated build-time image pipeline ([scripts/build-images.mjs](scripts/build-images.mjs) powered by `sharp`) to resize assets to display targets and generate dual `.webp` (primary) and `.jpg` (fallback) outputs in `public/assets/`.

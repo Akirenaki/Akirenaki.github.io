@@ -2,6 +2,18 @@
 // stack.visible = always-shown chips; stack.hidden = tucked behind "show more".
 // links left null where no repo/demo exists yet - don't fabricate a URL, just
 // fill it in here when one exists and it'll appear automatically.
+//
+// Filters on /work:
+//   filters.framework  frameworks / orchestration libraries the project is built on
+//   filters.language   programming languages the project is written in
+//   Live and Repo are not stored: they come from links.demo and links.repo
+//   (see isLive / hasRepo below), so they can never drift out of sync.
+// Leave a list empty when it doesn't apply (a physical prototype has no
+// language). Keep spellings identical across projects; the filter UI builds
+// its options from whatever values appear here.
+//
+// summary = short card text (what it is + the problem it addresses).
+// caseStudy = the longer write-up; the first block is always "The problem".
 
 export const projects = [
   {
@@ -9,12 +21,12 @@ export const projects = [
     title: "Project Cherenkov",
     dateRange: "Jun 2026 - Present",
     role: "Co-creator & lead developer",
-    tags: ["Web App", "Education", "Open Source", "Astronomy"],
+    filters: { framework: ["Next.js"], language: ["TypeScript"] },
     featured: true,
     priority: false,
     links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/" },
     summary:
-      "An open-source editorial archive and study planner spanning informatics, physics, and astronomy; every write-up is paired with a working, bespoke interactive visualisation so students can manipulate variables directly instead of reading about them.",
+      "Olympiad proofs are easy to read and still hard to understand. Cherenkov pairs every informatics, physics and astronomy editorial with an interactive visualisation you can change yourself, and adds a study planner that schedules reviews around the exam date. Open source, in English and Indonesian.",
     stack: {
       visible: ["Next.js", "TypeScript", "Drizzle ORM", "PostgreSQL"],
       hidden: [
@@ -29,20 +41,32 @@ export const projects = [
     },
     caseStudy: [
       {
+        heading: "The problem",
+        text: "Preparing for the Indonesian Science Olympiad (OSN) in informatics, physics or astronomy means working through proofs and derivations that you can follow line by line without the idea ever clicking. Study time is also short, and it is hard to tell which topic deserves the next hour. We built Cherenkov for students in that position.",
+      },
+      {
+        heading: "What it does for students",
+        text: "Each editorial comes with a visualisation you can operate: step through a graph algorithm or change a projectile's launch conditions and watch what happens. The study planner estimates how well you know each topic from quiz results and builds a calendar of reviews ahead of the exam. When the workload does not fit the time left, it warns you.",
+      },
+      {
         heading: "Full-stack architecture",
-        text: "Built with Next.js 15 (App Router), TypeScript, Tailwind CSS, and shadcn/ui. Neon Serverless Postgres, Drizzle ORM, and Better Auth handle authentication, personalised study plans, and progress tracking.",
+        text: "Built with Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS and shadcn/ui. Neon Serverless Postgres, Drizzle ORM and Better Auth handle authentication, personalised study plans and progress tracking.",
       },
       {
         heading: "Interactive visualisations",
-        text: "Reusable Canvas 2D / D3 visualisation engines - a graph-array stepper, trajectory sandbox, orbital sandbox, and a template-driven composed-scene engine - plus a custom visual scene-builder authoring tool.",
+        text: "Five reusable Canvas 2D and D3 engines: a graph-array stepper, a trajectory sandbox, an orbital sandbox, a template-driven composed-scene engine and a programmable-scene engine. Programmable scenes run in a sandboxed block interpreter that evaluates visual Blockly programs frame by frame, with execution budgets and element caps. A visual scene builder lets writers author new ones.",
       },
       {
-        heading: "Content pipeline & performance",
-        text: "Static compile-time math rendering via KaTeX/Velite with typed MDX schemas, so there's zero runtime math-rendering overhead. Keystatic CMS runs in both local and GitHub-OAuth-backed production modes.",
+        heading: "Adaptive study planner",
+        text: "Topic mastery is estimated with a Bayesian Beta posterior that decays over time to model forgetting. Reviews are scheduled with Region of Proximal Learning principles and anchored to the exam date, and an auto-graded quiz bank updates the estimates according to the difficulty each stage targets.",
       },
       {
-        heading: "Localisation & accessibility",
-        text: "Full internationalisation via next-intl, supporting English and Indonesian (/en, /id).",
+        heading: "Content pipeline and performance",
+        text: "Equations are compiled to static HTML at build time with KaTeX and Velite typed MDX schemas, so readers never wait on client-side math rendering. Keystatic CMS runs in a local mode and a GitHub OAuth mode, with authorization checked in edge middleware.",
+      },
+      {
+        heading: "Localisation",
+        text: "The whole site, including the in-app documentation and the syllabus mapping, is available in English and Indonesian (/en, /id) through next-intl.",
       },
     ],
   },
@@ -51,7 +75,7 @@ export const projects = [
     title: "Taraka Sutra: Astronomy Multi-Catalog Identifier Matcher",
     dateRange: "May 2026 - Present",
     role: "Developer (CS50x capstone project)",
-    tags: ["Astronomy", "Backend", "CS50x", "FastAPI", "Async Python"],
+    filters: { framework: ["FastAPI"], language: ["Python", "JavaScript"] },
     featured: true,
     priority: true,
     links: {
@@ -59,7 +83,7 @@ export const projects = [
       demo: null,
     },
     summary:
-      "An asynchronous Python web application that resolves name-based celestial object identifiers across mismatched external catalogues - SIMBAD and the NASA Exoplanet Archive - built as a CS50x capstone and extended well past the course's scope.",
+      "One star can have several names: 51 Peg is also 51 Pegasi and HD 217014, and searching under the wrong one can miss its planets. Taraka Sutra matches an object across SIMBAD and the NASA Exoplanet Archive by identifier, then says plainly how sure it is of the match.",
     stack: {
       visible: ["FastAPI", "Async Python", "PostgreSQL", "Three.js"],
       hidden: [
@@ -72,24 +96,108 @@ export const projects = [
     },
     caseStudy: [
       {
+        heading: "The problem",
+        text: "Astronomical catalogues each name objects in their own system. The same star can be a Bayer designation in one place and a Henry Draper number in another, so a lookup under the wrong name returns nothing even though the data exists. Sorting out which entries describe the same object takes a lot of manual cross-checking, and that is the gap Taraka Sutra fills for students and hobbyists.",
+      },
+      {
+        heading: "What it does",
+        text: "You enter a name. The app resolves it through SIMBAD, expands the object's known aliases, and looks up matching planet hosts in the NASA Exoplanet Archive. Matching is by identifier and alias, not by position on the sky. Every result carries an explicit confidence state, so an uncertain match never passes for a certain one. Optional plain-language summaries and a 3D coordinate view are there for readers who are not specialists.",
+      },
+      {
         heading: "Asynchronous web architecture",
-        text: "FastAPI, Uvicorn, and httpx execute name-based celestial object resolutions against external astronomical endpoints.",
+        text: "FastAPI, Uvicorn and httpx run the name-based resolutions against external astronomical endpoints without blocking. It started as the CS50x final project, and I pushed it past the course's synchronous Flask and SQLite patterns into async execution, TAP/ADQL queries, client-side 3D rendering and production-style database migrations.",
       },
       {
         heading: "Architectural decoupling",
-        text: "A strict separation between deterministic SQL/ADQL resolution pipelines and non-deterministic presentation layers, so the LLM narrative engine (Gemini API) and the Three.js 3D coordinate visualisation can never modify the underlying scientific data.",
+        text: "Deterministic SQL/ADQL resolution pipelines are kept strictly apart from the presentation layers. The Gemini narrative and the Three.js visualisation sit on the presentation side, so neither can change the scientific data underneath.",
       },
       {
-        heading: "State machine & fault tolerance",
-        text: "An explicit five-state resolution engine - RESOLVED, PARTIAL, AMBIGUOUS, UNRESOLVED, LOOKUP_FAILED - backed by a dual-tier TTL cache (14 days for verified queries, 1 hour for network/transport failures) to isolate upstream outages gracefully.",
+        heading: "State machine and fault tolerance",
+        text: "An explicit five-state resolution engine (RESOLVED, PARTIAL, AMBIGUOUS, UNRESOLVED, LOOKUP_FAILED) sits behind a two-tier TTL cache: 14 days for verified queries and 1 hour for network or transport failures. An upstream outage stays contained, and a failed lookup is retried soon rather than remembered for two weeks.",
       },
       {
-        heading: "Authentication & data protection",
-        text: "Session-based cookie authentication with bcrypt password hashing, CSRF token verification on mutating routes, and Fernet symmetric encryption for personal API keys at rest.",
+        heading: "Authentication and data protection",
+        text: "Session-based cookie authentication with bcrypt password hashing, CSRF verification on every mutating route, and Fernet encryption for users' personal API keys at rest.",
       },
       {
-        heading: "Database modelling & traffic control",
-        text: "An asynchronous relational schema via SQLAlchemy and Alembic migrations, with sliding-window rate limiting via event logging to protect upstream services and govern API consumption.",
+        heading: "Database modelling and traffic control",
+        text: "An asynchronous relational schema built with SQLAlchemy and Alembic migrations. Sliding-window rate limiting, based on event logging, protects the upstream services and caps Gemini API usage.",
+      },
+    ],
+  },
+  {
+    slug: "starship-rocket",
+    title: "Starship Rocket: Unguided Two-Stage Retropropulsive Landing",
+    dateRange: "Aug 2026 - Sep 2026",
+    role: "Co-designer",
+    filters: { framework: [], language: [] },
+    featured: false,
+    priority: false,
+    links: { repo: "https://github.com/Akirenaki/Starship-V3-Rocket", demo: null },
+    summary:
+      "Rockets that land on their engines normally rely on active guidance. For the BIRST 2026 Level 3 challenge we simulated a Falcon 9 Crew-9 launch with no parachutes and no steering, only burns timed in advance, to see what that costs: touchdown at 15 to 17 m/s against a 5 m/s target, and about 0.9 km of wind drift.",
+    stack: {
+      visible: ["OpenRocket", "OpenWind"],
+      hidden: ["OpenEarth / Google Earth", "Retropropulsive landing", "Wind modelling"],
+    },
+    caseStudy: [
+      {
+        heading: "The problem",
+        text: "The BIRST 2026 Level 3 (Falcon Rocket) task is to simulate a Falcon 9 Crew-9 launch from Cape Canaveral, reach a 3,000 m apogee and land both stages on their own engines. We took the strictest version of that: no parachutes, no active stability control, only burns timed in advance. The question was how close fixed timing alone can get to a soft landing.",
+      },
+      {
+        heading: "What we found",
+        text: "Ascent worked. The rocket reached 2,999.97 m against the 3,000.00 m target and peaked at Mach 0.973, so it stayed subsonic. Landing missed the 5.0 m/s speed specification: the upper stage touched down at 16.7 m/s and the booster at 14.9 m/s, because fixed-delay ignition over-corrected the vertical momentum. Uncompensated crosswinds also carried both stages 0.86 to 0.95 km downwind. Better burn timing, different motor choices and launch-angle compensation for wind are the changes we would try next.",
+      },
+      {
+        heading: "Ascent precision",
+        text: "A Loki K627LR ascent motor (1,526 N·s total impulse) puts the apogee within 0.03 m of target. Peak velocity of Mach 0.973 occurs at 421 m.",
+      },
+      {
+        heading: "Launch-site conditions",
+        text: "The Cape Canaveral (SLC-40) site was recreated with OpenWind, using a 30-layer extended ISA wind profile with crosswinds from 3.1 to 14.4 m/s. The trajectories were visualised in 3D in Google Earth through OpenEarth.",
+      },
+      {
+        heading: "Unguided retropropulsion",
+        text: "Timed deceleration burns from an AeroTech HP-H195NT (upper stage) and a Cesaroni 168H410-14A (booster) fire at fixed delays of 51.5 s and 65.0 s after launch. The booster's custom swept fins stand in for Falcon 9's grid fins, and nothing senses or corrects the descent.",
+      },
+    ],
+  },
+  {
+    slug: "astronomy-object-chat-assistant",
+    title: "Astronomy Object Chat Assistant",
+    dateRange: "Aug 2026",
+    role: "Developer",
+    filters: { framework: ["LangChain", "Streamlit"], language: ["Python"] },
+    featured: false,
+    priority: false,
+    links: { repo: "https://github.com/Akirenaki/astronomy-rag-chatbot", demo: null },
+    summary:
+      "General-purpose chatbots can make up details about a specific star. This assistant answers questions about the 50 brightest named stars in the HYG database using only the records it retrieves, and tells you when a star or fact is not in its data.",
+    stack: {
+      visible: ["Python", "LangChain", "Streamlit", "Chroma"],
+      hidden: ["Gemini API", "pandas", "HYG stellar database", "RAG"],
+    },
+    caseStudy: [
+      {
+        heading: "The problem",
+        text: "Ask a language model about a specific star and it can produce a fluent answer that nothing supports. For someone learning astronomy that is hard to spot and easy to repeat. This assistant is built so that every answer comes from a record in its dataset, and a missing record produces an honest \"I don't have that\" instead of a guess.",
+      },
+      {
+        heading: "How a question is answered",
+        text: "The question is embedded with gemini-embedding-001, a local Chroma vector store returns the four most similar star records, and gemini-3.6-flash writes the answer from those records and the recent conversation.",
+      },
+      {
+        heading: "Guardrails against hallucination",
+        text: "Custom system-prompt guardrails restrict responses to the retrieved context, so general knowledge cannot leak in. When the retrieved records do not cover the question, the assistant says so.",
+      },
+      {
+        heading: "Data pipeline",
+        text: "pandas turns a subset of the HYG stellar database into one document per star, converting distance from parsecs to light-years, and Chroma persists the vectors between runs.",
+      },
+      {
+        heading: "Chat interface",
+        text: "A Streamlit chat UI keeps history in session state so follow-up questions have context. The history lives only for the session.",
       },
     ],
   },
@@ -98,7 +206,7 @@ export const projects = [
     title: "Empirical & Theoretical Analysis of Multi-Variable Mechanical Systems",
     dateRange: "May 2026 - Jun 2026",
     role: "Co-developer",
-    tags: ["Physics", "Simulation"],
+    filters: { framework: [], language: ["JavaScript"] },
     featured: false,
     priority: false,
     links: {
@@ -106,23 +214,31 @@ export const projects = [
       demo: "https://akirenaki.github.io/Physics-Trebuchet-Simulation-Grade-11/",
     },
     summary:
-      "A physics and mechanical engineering research project evaluating trebuchet dynamics through both theoretical calculation and physical empirical testing, pairing classical mechanics with a hand-built prototype.",
+      "A trebuchet's range depends on sling length, release angle and counterweight mass, and those interact in ways that are hard to see on paper. We modelled the physics, built a simulator anyone can tune in the browser, and tested a real prototype to find where the energy goes (43.8% efficiency).",
     stack: {
       visible: ["JavaScript", "Physics Modelling"],
       hidden: ["Trajectory Simulation", "Experimental Design"],
     },
     caseStudy: [
       {
+        heading: "The problem",
+        text: "A trebuchet has several variables that affect each other: sling length, launch angle and counterweight mass. Working out their combined effect from equations alone is slow, and a real machine loses energy in ways an ideal model leaves out. For this Grade 11 physics project we wanted a way to explore those trade-offs and to check the theory against measurements from a machine we built.",
+      },
+      {
         heading: "Mathematical modelling",
-        text: "Applied classical mechanics - rotational torque, moment of inertia, conservation of energy, projectile motion - to derive theoretical trajectory and force equations.",
+        text: "Classical mechanics (rotational torque, moment of inertia, conservation of energy and projectile motion) gave the theoretical trajectory and force equations.",
       },
       {
         heading: "Interactive simulation",
-        text: "A web-based JavaScript simulation for real-time parameter tuning (sling length, launch angle, counterweight mass) with trajectory visualisation.",
+        text: "A web-based JavaScript simulation lets anyone change sling length, launch angle and counterweight mass in real time and watch the trajectory update.",
       },
       {
-        heading: "Empirical data & efficiency",
-        text: "Built and tested a physical prototype to collect launch data, analysing system efficiency (η = 43.8%) and the factors behind energy loss.",
+        heading: "Empirical data and efficiency",
+        text: "We built and tested a physical prototype to collect launch data. Analysis gave a system efficiency of η = 43.8% and identified the factors behind the lost energy.",
+      },
+      {
+        heading: "Presentation and dataset",
+        text: "We co-authored a presentation and an analytical dataset that set out the fixed and independent variables and the experimental findings.",
       },
     ],
   },
@@ -131,28 +247,32 @@ export const projects = [
     title: "FISHCOM: Fish Waste Optimisation for Sustainable Agriculture on Alkaline Soils",
     dateRange: "Feb 2026 - Jun 2026",
     role: "Researcher & co-author",
-    tags: ["Environmental Science", "Field Research"],
+    filters: { framework: [], language: [] },
     featured: true,
     priority: false,
     links: { repo: null, demo: null },
     summary:
-      "Formulated and evaluated a liquid organic fertiliser derived from fish viscera waste to amend soil chemistry in alkaline karst environments, proposing a circular-economy model for coastal waste.",
+      "The karst soil of Gunungkidul is alkaline (around pH 8) and poor for crops, while local fishers usually pay to throw away fish remains. FISHCOM ferments that waste into an acidic liquid fertiliser (pH 4) that brought alkaline karst soil toward neutral (pH 7).",
     stack: {
       visible: ["Field Research", "pH Analysis"],
       hidden: ["Borg & Gall R&D Model", "Circular Economy Design"],
     },
     caseStudy: [
       {
+        heading: "The problem",
+        text: "Two local problems sit next to each other. Gunungkidul's karst soil is alkaline, which makes it unsuitable for crops. Meanwhile, the fish processed at the coast leaves viscera and other remains that fishers and fish auction facilities (TPI) usually have to pay to dispose of. FISHCOM asks whether the second problem can be used to treat the first.",
+      },
+      {
         heading: "Methodology",
-        text: "A 9-stage Borg & Gall R&D model, with field sampling across three coastal hydrological zones at Pantai Baron and a 14-day anaerobic fermentation process.",
+        text: "We followed a nine-stage Borg & Gall R&D model, with field sampling across three coastal hydrological zones at Pantai Baron and a 14-day anaerobic fermentation of fish viscera into a liquid organic fertiliser (POC).",
       },
       {
         heading: "Key results",
-        text: "Produced an acidic liquid organic fertiliser (pH 4) that lowered high-alkalinity karst soil (pH 8) toward neutral (pH 7).",
+        text: "The fertiliser came out acidic at pH 4 and lowered high-alkalinity karst soil (pH 8) toward neutral (pH 7).",
       },
       {
-        heading: "Strategic value",
-        text: "A circular-economy model to cut coastal waste-management costs for local fish auction facilities (TPI) while improving nutrient availability in degraded Gunungkidul soils.",
+        heading: "Who benefits",
+        text: "Farmers on degraded Gunungkidul soils would get a fertiliser that improves nutrient availability, made from material that used to be a disposal cost. For fish auction facilities, we propose a circular-economy model that cuts coastal waste-management spending.",
       },
     ],
   },
@@ -161,28 +281,36 @@ export const projects = [
     title: "CORGEIN: Household-Scale Incinerator Filter Prototype (ESP-Based)",
     dateRange: "Jan 2026 - May 2026",
     role: "Team member (3-person team)",
-    tags: ["Hardware", "Sustainability", "Environmental Science"],
+    filters: { framework: [], language: [] },
     featured: true,
     priority: false,
     links: { repo: null, demo: null },
     summary:
-      "An eco-friendly filtration prototype to mitigate hazardous air pollution from incomplete household waste combustion, aligned with UN Sustainable Development Goals for clean air.",
+      "Many households around me burn their trash, and the smoke and ash make people sick, me included. CORGEIN is a filter prototype for small household incinerators: high voltage charges the smoke and fly-ash particles and traps them on collection plates before they reach the air.",
     stack: {
       visible: ["Hardware Prototyping", "Electrostatics"],
       hidden: ["High-Voltage Ionisation", "Design Thinking"],
     },
     caseStudy: [
       {
-        heading: "Innovation & engineering",
-        text: "CORGEIN integrates an Electrostatic Precipitator (ESP) mechanism to trap particulate matter - fly ash and smoke soot - from small-scale incinerators before it escapes into the atmosphere.",
+        heading: "Why we built it",
+        text: "Burning household waste is common in my neighbourhood, especially in lower-income households. I have a dust allergy and get sick easily, so the smoke often affects me directly, and everyone nearby breathes it. My team and I wanted a filter cheap and simple enough for the households doing the burning to actually use.",
+      },
+      {
+        heading: "Innovation and engineering",
+        text: "CORGEIN adds an electrostatic precipitator (ESP) to a small-scale incinerator. It traps particulate matter, meaning fly ash and smoke soot, before the exhaust escapes into the atmosphere.",
       },
       {
         heading: "Technical methodology",
-        text: "High-voltage ionisation principles charge airborne particles and capture them on collection plates, reducing hazardous emissions from domestic open-burning.",
+        text: "High-voltage ionisation charges the airborne particles, and charged plates then capture them. The aim is to cut the hazardous emissions that come from domestic open burning.",
       },
       {
         heading: "Design thinking application",
-        text: "Comprehensive research, structural mapping, and rigorous testing to keep the prototype cost-effective and practical for residential deployment.",
+        text: "We researched the problem, mapped the structure of the system and tested the prototype repeatedly, keeping it cost-effective and practical for residential use. The design is aligned with the UN Sustainable Development Goals for clean air and sustainable communities.",
+      },
+      {
+        heading: "Team and competition",
+        text: "We built the physical prototype as a 3-person team for M-Fest 2026, the national competition run by HMM ITB.",
       },
     ],
   },
@@ -191,32 +319,41 @@ export const projects = [
     title: "Exoplanet Data Insight Assistant Highlighter",
     dateRange: "May 2026",
     role: "Developer",
-    tags: ["AI Workflow", "Astronomy", "Data Analysis"],
+    filters: { framework: ["Langflow"], language: [] },
     featured: false,
     priority: false,
     links: { repo: null, demo: null },
     summary:
-      "An end-to-end AI agent workflow for exoplanet data analysis, built for the IBM SkillsBuild University Education initiative in collaboration with Hacktiv8 - scored 97.50/100 by the programme's judging panel.",
+      "Exoplanet data comes as large tables that take time to analyse by hand. This AI agent workflow, built in Langflow for the IBM SkillsBuild University Education initiative with Hacktiv8, turns raw data inputs into structured analysis automatically. It scored 97.50/100 in the programme's judging.",
     stack: {
       visible: ["Langflow", "AI Agent Orchestration"],
       hidden: ["Prompt Engineering", "System Architecture", "Data Analysis"],
     },
     caseStudy: [
       {
-        heading: "Key achievements",
-        text: "Final score of 97.50/100 - 98.00 in Execution & Functionality, 98.00 in System Design & Architecture, 98.00 in Background & Impact, 96.00 in Creativity & Innovation.",
-      },
-      {
-        heading: "Core competencies",
-        text: "AI agent orchestration, workflow design via Langflow, prompt engineering, system architecture, and data analysis.",
+        heading: "The problem",
+        text: "Raw exoplanet data arrives as big tables of measurements, and getting from there to something a reader can use means repeating the same analysis steps. This workflow automates that path, from raw data input to a structured output.",
       },
       {
         heading: "Impact",
-        text: "Scalable agent logic that streamlines complex data-analysis workflows, bridging raw data inputs with structured, automated outputs.",
+        text: "Scalable agent logic streamlines complex data-analysis workflows by bridging raw data inputs and structured, automated outputs.",
+      },
+      {
+        heading: "Results",
+        text: "Final score of 97.50/100: 98.00 for Execution & Functionality, 98.00 for System Design & Architecture, 98.00 for Background & Impact and 96.00 for Creativity & Innovation.",
+      },
+      {
+        heading: "Core competencies",
+        text: "AI agent orchestration, workflow design in Langflow, prompt engineering, system architecture and data analysis.",
       },
     ],
   },
 ];
+
+// Live / Repo are derived from links so the filter always matches the buttons
+// shown on each card.
+export const isLive = (project) => Boolean(project.links?.demo);
+export const hasRepo = (project) => Boolean(project.links?.repo);
 
 export const featuredProjects = projects.filter((p) => p.featured);
 
