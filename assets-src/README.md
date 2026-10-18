@@ -21,7 +21,7 @@ The build script `scripts/build-images.mjs` (runs automatically on `npm run dev`
 
 - **Navbar Logo:**  
   `assets-src/logo.png` (supplied on a plain white background)  
-  The pipeline turns the white into real transparency and writes `logo.png` + `logo.webp` with an alpha channel. `Nav.jsx` shows it on a dark `bg-ink` tile so the pink/purple stays readable.
+  The pipeline turns the white into real transparency and writes `logo.png` + `logo.webp` with an alpha channel. `Nav.jsx` shows it on a dark `bg-ink` tile so the pink/purple stays readable. The browser-tab and home-screen icons (`public/assets/favicon-48.png`, `apple-touch-icon.png`) are generated from this same file, so replacing the logo updates them too.
 
 - **Social Share Card (link previews):**  
   `assets-src/og-image.jpg` (resized to 1200px wide; if you change its aspect ratio, update `og:image:height` in `src/lib/seo.js`)

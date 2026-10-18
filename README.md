@@ -107,8 +107,8 @@ public/                            Static assets served directly by Vite
    assets/                         Web-ready optimized images (generated automatically by Sharp)
       credentials/                  Resized .jpg & .webp credential image pairs
       projects/                     Resized .jpg & .webp project image pairs
+      favicon-48.png, apple-touch-icon.png   Tab and home-screen icons, generated from assets-src/logo.png
       README.md                     Notes on build pipeline output
-   favicon.svg                     Favicon SVG asset
 
 scripts/                           Build tools & automated pipelines
    build-images.mjs                Sharp-based image optimization & WebP conversion pipeline

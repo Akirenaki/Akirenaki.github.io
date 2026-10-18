@@ -13,6 +13,7 @@ When you run `npm run dev`, `npm run build`, or `npm run images`, the image scri
 - `portrait.jpg` (hero portrait)
 - `og-image.jpg` (social link preview, resized to 1200px wide; currently 1200x655)
 - `logo.png` (navbar logo, white background in the source; output is transparent)
+- `favicon-48.png` and `apple-touch-icon.png` are generated from `logo.png` on a dark tile; there is no separate source for them
 - `projects/<slug>.jpg` (project card thumbnail, 16:9)
 - `projects/<slug>-hero.jpg` (case-study banner/hero image, 16:9)
 - `credentials/education-*.jpg` (education credential images)

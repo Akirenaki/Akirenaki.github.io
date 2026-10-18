@@ -17,6 +17,9 @@
 // through `whiteToAlpha` below and are written as a .png + .webp pair, both
 // with an alpha channel, instead of the usual .jpg + .webp.
 //
+// The favicons are derived from that same logo (see `buildFavicons` below),
+// so they have no source file of their own.
+//
 // Re-runs are cheap: a file is only reprocessed if its source is newer than
 // the existing output, so this can safely run before every dev/build.
 
@@ -164,6 +167,59 @@ async function processImage(srcPath) {
   return { name: relPath, skipped: false, fallbackExt: "jpg", fallbackInfo: jpgInfo, webpInfo };
 }
 
+// Browser-tab and home-screen icons, generated from the logo so there is a
+// single source of truth. Both sit the logo on the same dark ink tile the
+// navbar uses (the logo's pink/blue are too faint on a light tab).
+//   favicon-48.png        round tile, used by <link rel="icon">. 48px is a
+//                         multiple of 48, which search engines ask for, and
+//                         browsers scale it down for 16/32px tabs.
+//   apple-touch-icon.png  opaque square, no rounding (iOS rounds it itself
+//                         and fills any transparency with black).
+const FAVICON_BG = "#221D2E"; // --color-ink in src/index.css
+const FAVICONS = [
+  { file: "favicon-48.png", size: 48, inset: 0.86, round: true },
+  { file: "apple-touch-icon.png", size: 180, inset: 0.7, round: false },
+];
+
+async function buildFavicons(images) {
+  const logoSrc = images.find((p) => /^logo\.[^.]+$/.test(p.slice(SRC_ROOT.length + 1)));
+  if (!logoSrc) return [];
+
+  const outPaths = FAVICONS.map((f) => join(OUT_ROOT, f.file));
+  if (!(await isStale(logoSrc, outPaths))) return [];
+
+  await mkdir(OUT_ROOT, { recursive: true });
+  const logo = await whiteToAlpha(logoSrc);
+
+  return Promise.all(
+    FAVICONS.map(async ({ file, size, inset, round }) => {
+      const inner = Math.round(size * inset);
+      const logoPng = await logo
+        .clone()
+        .resize(inner, inner, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .png()
+        .toBuffer();
+
+      let tile = await sharp({
+        create: { width: size, height: size, channels: 4, background: FAVICON_BG },
+      })
+        .composite([{ input: logoPng, gravity: "center" }])
+        .png()
+        .toBuffer();
+
+      if (round) {
+        const mask = Buffer.from(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}"/></svg>`
+        );
+        tile = await sharp(tile).composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+      }
+
+      const info = await sharp(tile).png({ compressionLevel: 9 }).toFile(join(OUT_ROOT, file));
+      return { name: file, size: info.size };
+    })
+  );
+}
+
 async function main() {
   const images = await collectImages(SRC_ROOT);
   const results = await Promise.all(images.map(processImage));
@@ -180,6 +236,11 @@ async function main() {
   console.log(
     `images: ${processed.length} processed, ${skipped.length} up to date`
   );
+
+  const favicons = await buildFavicons(images);
+  for (const f of favicons) {
+    console.log(`  favicons: ${f.name} -> ${(f.size / 1024).toFixed(0)}kb png`);
+  }
 }
 
 main().catch((err) => {

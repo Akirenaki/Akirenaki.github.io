@@ -14,7 +14,8 @@ export function Layout({ children }) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+        <link rel="icon" type="image/png" sizes="48x48" href={`${import.meta.env.BASE_URL}assets/favicon-48.png`} />
+        <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}assets/apple-touch-icon.png`} />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
