@@ -1,7 +1,8 @@
 import { Link, useParams } from "react-router";
-import { projects } from "../data/projects";
+import { projects, SCALES } from "../data/projects";
 import { ProjectMedia } from "../components/ProjectMedia";
 import { TechStack } from "../components/TechStack";
+import { ScaleBadge } from "../components/ScaleBadge";
 import { buildMeta, breadcrumbJsonLd, pageUrl, SITE_URL } from "../lib/seo";
 
 // meta() gets `params` directly - the same :slug the component reads via
@@ -51,6 +52,7 @@ export function ProjectCaseStudy() {
         </Link>
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
+          <ScaleBadge scale={project.scale} />
           <span>{project.dateRange}</span>
           <span aria-hidden="true">·</span>
           <span>{project.role}</span>
@@ -60,7 +62,13 @@ export function ProjectCaseStudy() {
           {project.title}
         </h1>
 
+        {project.highlight && <p className="mt-4 font-medium text-accent-deep">{project.highlight}</p>}
+
         <p className="mt-5 text-lg leading-relaxed text-ink-soft">{project.summary}</p>
+
+        <p className="mt-3 text-sm italic text-ink-soft">
+          {project.scaleNote ?? SCALES[project.scale]?.description}
+        </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <TechStack visible={project.stack.visible} hidden={project.stack.hidden} />

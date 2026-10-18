@@ -25,12 +25,20 @@ Nothing in this repo needs code changes for routine content updates — it's all
 
 To add a new project: add an object to the array in `projects.js` with a unique `slug` — a case study page at `/work/<slug>` is generated automatically, with no routing code to touch (it's picked up by `react-router.config.js`'s `prerender()` list at build time).
 
-### Filters on `/work`
+### Filters and scale on `/work`
 
-The Work page filters by four groups: **Framework**, **Language**, **Live** and **Repo**. Options inside a group combine with OR, groups combine with AND, and each option shows how many projects it would leave.
+The Work page filters by seven groups in two tiers. Options inside a group combine with OR, groups combine with AND, and each option shows how many projects it would leave.
 
-- Framework and Language come from `filters: { framework: [...], language: [...] }` on each project in `projects.js`. The options are built from whatever values appear there, so spell them the same way everywhere (`"Next.js"`, not `"NextJS"`). Leave a list empty when it doesn't apply, for example a hardware prototype has no language.
-- Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough.
+- **Main tier (always visible):** Scale, Domain, Type.
+- **Tech tier (behind "Tech and links"):** Framework, Language, Live, Repo.
+
+Each project in `projects.js` carries:
+
+- `scale`: `"flagship"`, `"standard"` or `"mini"`. Flagship is a long-running, complex project; Standard is a focused project with a clear goal; Mini is a short build made to test and prove a skill. The scale shows as a badge on the card and case study, and minis get a shorter banner. Keep mini case studies short on purpose. The wording for each scale lives in `SCALES` at the top of `projects.js`.
+- `filters: { domain, type, framework, language }`: lists of strings. A project can have several domains or types. The filter options are built from whatever values appear, so spell them the same way everywhere (`"Next.js"`, not `"NextJS"`). Leave a list empty when it doesn't apply, for example a hardware prototype has no language.
+- Optional `highlight` (one line of recognition on the card, such as a finalist result) and `scaleNote` (one line on the case-study page about why the project is that size).
+
+Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough. Projects are shown in the order of the array, so keep flagships first and minis last.
 
 ## Adding and Uploading Media
 
