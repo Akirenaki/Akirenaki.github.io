@@ -47,7 +47,7 @@ export function ProjectCard({ project, size = "md" }) {
           <TechStack visible={project.stack.visible} hidden={project.stack.hidden} />
         </div>
 
-        <div className="mt-auto flex items-center gap-4 pt-3 text-sm">
+        <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-3 text-sm">
           <Link to={`/work/${project.slug}`} className="text-accent-deep hover:underline">
             Read the case study
           </Link>
@@ -59,6 +59,16 @@ export function ProjectCard({ project, size = "md" }) {
           {project.links.repo && (
             <a href={project.links.repo} target="_blank" rel="noreferrer" className="text-ink-soft hover:text-ink">
               Repository
+            </a>
+          )}
+          {project.links.presentation && (
+            <a href={project.links.presentation} target="_blank" rel="noreferrer" className="text-ink-soft hover:text-ink">
+              Presentation
+            </a>
+          )}
+          {project.links.document && (
+            <a href={project.links.document} target="_blank" rel="noreferrer" className="text-ink-soft hover:text-ink">
+              Document
             </a>
           )}
         </div>

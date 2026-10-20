@@ -11,6 +11,11 @@
 //   filters.language  programming languages it is written in
 //   Live and Repo are not stored: they come from links.demo and links.repo
 //   (see isLive / hasRepo below), so they can never drift out of sync.
+//   links             { repo, demo, presentation, document }; each is an https URL
+//                     or null. A null link renders no button, so a missing link
+//                     never shows as a dead one. `presentation` is a slide deck
+//                     (Google Slides, PDF, ...); `document` is a written report
+//                     or paper (Google Docs, PDF, ...).
 // Leave a list empty when it doesn't apply (a physical prototype has no
 // language). Keep spellings identical across projects; the filter UI builds
 // its options from whatever values appear here.
@@ -53,7 +58,7 @@ export const projects = [
     },
     featured: true,
     priority: false,
-    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/" },
+    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/", presentation: null, document: null },
     summary:
       "Olympiad proofs are easy to read and still hard to understand. Cherenkov pairs every informatics, physics and astronomy editorial with an interactive visualisation you can change yourself, and adds a study planner that schedules reviews around the exam date. Open source, in English and Indonesian.",
     stack: {
@@ -116,6 +121,8 @@ export const projects = [
     links: {
       repo: "https://github.com/Akirenaki/astronomy-multi-catalog-identifier-matcher",
       demo: null,
+      presentation: null,
+      document: null,
     },
     summary:
       "One star can have several names: 51 Peg is also 51 Pegasi and HD 217014, and searching under the wrong one can miss its planets. Taraka Sutra matches an object across SIMBAD and the NASA Exoplanet Archive by identifier, then says plainly how sure it is of the match.",
@@ -174,7 +181,7 @@ export const projects = [
     },
     featured: true,
     priority: false,
-    links: { repo: null, demo: null },
+    links: { repo: null, demo: null, presentation: "https://canva.link/mit94dhb6kk40uk", document: "https://docs.google.com/document/d/1R0dAcxLPMbcEnnX94fn_tGCD5EA6XCZ5N7tAJ9ujUc0/edit?usp=sharing" },
     summary:
       "The karst soil of Gunungkidul is alkaline (around pH 8) and poor for crops, while local fishers usually pay to throw away fish remains. FISHCOM ferments that waste into an acidic liquid fertiliser (pH 4) that brought alkaline karst soil toward neutral (pH 7).",
     stack: {
@@ -202,7 +209,7 @@ export const projects = [
   },
   {
     slug: "corgein",
-    title: "CORGEIN: Household-Scale Incinerator Filter Prototype (ESP-Based)",
+    title: "CORGEIN: Household-Scale Incinerator Filter Prototype Based on Electrostatic Precipitation",
     dateRange: "Jan 2026 - May 2026",
     role: "Team lead (3-person team)",
     scale: "standard",
@@ -215,7 +222,7 @@ export const projects = [
     featured: true,
     priority: false,
     highlight: "Top 5 finalist out of about 200 teams, M-Fest 2026 STEM Competition",
-    links: { repo: null, demo: null },
+    links: { repo: null, demo: null, presentation: "https://canva.link/p34z80qun2pxlha", document: null },
     summary:
       "Where I live, a lot of people burn their trash, and the smoke hits me hard: I have a dust allergy and a body that gets sick easily. CORGEIN is a filter for small household incinerators. It charges smoke and fly-ash particles with high voltage and catches them on plates before they reach the air.",
     stack: {
@@ -242,6 +249,43 @@ export const projects = [
     ],
   },
   {
+    slug: "starship-rocket",
+    title: "Starship Rocket: Unguided Two-Stage Retropropulsive Landing",
+    dateRange: "Aug 2026 - Sep 2026",
+    role: "Co-designer",
+    scale: "standard",
+    filters: {
+      domain: ["Aerospace", "Physics", "Engineering"],
+      type: ["Simulation"],
+      framework: [],
+      language: [],
+    },
+    featured: true,
+    priority: false,
+    scaleNote: "A focused simulation project with a clear question: how close can pre-timed burns alone get to a soft landing? Made for the BIRST 2026 Level 3 challenge.",
+    links: { repo: "https://github.com/Akirenaki/Starship-V3-Rocket", demo: null, presentation: null, document: null },
+    summary:
+      "Rockets that land on their engines normally rely on active guidance. For the BIRST 2026 Level 3 challenge we simulated a Falcon 9 Crew-9 launch with no parachutes and no steering, only burns timed in advance, to see what that costs: touchdown at 15 to 17 m/s against a 5 m/s target, and about 0.9 km of wind drift.",
+    stack: {
+      visible: ["OpenRocket", "OpenWind"],
+      hidden: ["OpenEarth / Google Earth", "Retropropulsive landing", "Wind modelling"],
+    },
+    caseStudy: [
+      {
+        heading: "The question",
+        text: "The BIRST 2026 Level 3 (Falcon Rocket) task is to simulate a Falcon 9 Crew-9 launch from Cape Canaveral, reach a 3,000 m apogee and land both stages on their own engines. We took the strictest version of that: no parachutes, no active stability control, only burns timed in advance. How close can fixed timing alone get to a soft landing?",
+      },
+      {
+        heading: "What we found",
+        text: "Ascent worked. The rocket reached 2,999.97 m against the 3,000.00 m target and peaked at Mach 0.973, so it stayed subsonic. Landing missed the 5.0 m/s speed specification: the upper stage touched down at 16.7 m/s and the booster at 14.9 m/s, because fixed-delay ignition over-corrected the vertical momentum. Uncompensated crosswinds also carried both stages 0.86 to 0.95 km downwind. Better burn timing, different motor choices and launch-angle compensation for wind are the changes we would try next.",
+      },
+      {
+        heading: "How it was built",
+        text: "A Loki K627LR ascent motor (1,526 N·s) set the apogee. The Cape Canaveral (SLC-40) site was recreated in OpenWind with a 30-layer extended ISA wind profile (crosswinds of 3.1 to 14.4 m/s), and the trajectories were viewed in Google Earth through OpenEarth. Burns from an AeroTech HP-H195NT (upper stage) and a Cesaroni 168H410-14A (booster) fire at fixed delays of 51.5 s and 65.0 s after launch, with custom swept fins standing in for Falcon 9's grid fins.",
+      },
+    ],
+  },
+  {
     slug: "trebuchet-mechanical-systems",
     title: "Empirical & Theoretical Analysis of Multi-Variable Mechanical Systems",
     dateRange: "May 2026 - Jun 2026",
@@ -259,6 +303,8 @@ export const projects = [
     links: {
       repo: null,
       demo: "https://akirenaki.github.io/Physics-Trebuchet-Simulation-Grade-11/",
+      presentation: "https://canva.link/dsrlnulr2c1mef4",
+      document: null,
     },
     summary:
       "A trebuchet's range depends on sling length, release angle and counterweight mass, and those interact in ways that are hard to see on paper. We modelled the physics, built a simulator anyone can tune in the browser, and tested a real prototype to find where the energy goes (43.8% efficiency).",
@@ -301,7 +347,7 @@ export const projects = [
     priority: false,
     highlight: "Scored 97.50/100 in the programme's judging",
     scaleNote: "A one-month build to test designing an AI agent workflow in Langflow.",
-    links: { repo: null, demo: null },
+    links: { repo: null, demo: null, presentation: null, document: null },
     summary:
       "Exoplanet data comes as large tables that take time to analyse by hand. This AI agent workflow, built in Langflow for the IBM SkillsBuild University Education initiative with Hacktiv8, turns raw data inputs into structured analysis automatically.",
     stack: {
@@ -320,43 +366,6 @@ export const projects = [
     ],
   },
   {
-    slug: "starship-rocket",
-    title: "Starship Rocket: Unguided Two-Stage Retropropulsive Landing",
-    dateRange: "Aug 2026 - Sep 2026",
-    role: "Co-designer",
-    scale: "mini",
-    filters: {
-      domain: ["Aerospace", "Physics"],
-      type: ["Simulation"],
-      framework: [],
-      language: [],
-    },
-    featured: false,
-    priority: false,
-    scaleNote: "A short build to test rocket simulation and retropropulsion modelling, made for the BIRST 2026 Level 3 challenge.",
-    links: { repo: "https://github.com/Akirenaki/Starship-V3-Rocket", demo: null },
-    summary:
-      "Rockets that land on their engines normally rely on active guidance. For the BIRST 2026 Level 3 challenge we simulated a Falcon 9 Crew-9 launch with no parachutes and no steering, only burns timed in advance, to see what that costs: touchdown at 15 to 17 m/s against a 5 m/s target, and about 0.9 km of wind drift.",
-    stack: {
-      visible: ["OpenRocket", "OpenWind"],
-      hidden: ["OpenEarth / Google Earth", "Retropropulsive landing", "Wind modelling"],
-    },
-    caseStudy: [
-      {
-        heading: "The question",
-        text: "The BIRST 2026 Level 3 (Falcon Rocket) task is to simulate a Falcon 9 Crew-9 launch from Cape Canaveral, reach a 3,000 m apogee and land both stages on their own engines. We took the strictest version of that: no parachutes, no active stability control, only burns timed in advance. How close can fixed timing alone get to a soft landing?",
-      },
-      {
-        heading: "What we found",
-        text: "Ascent worked. The rocket reached 2,999.97 m against the 3,000.00 m target and peaked at Mach 0.973, so it stayed subsonic. Landing missed the 5.0 m/s speed specification: the upper stage touched down at 16.7 m/s and the booster at 14.9 m/s, because fixed-delay ignition over-corrected the vertical momentum. Uncompensated crosswinds also carried both stages 0.86 to 0.95 km downwind. Better burn timing, different motor choices and launch-angle compensation for wind are the changes we would try next.",
-      },
-      {
-        heading: "How it was built",
-        text: "A Loki K627LR ascent motor (1,526 N·s) set the apogee. The Cape Canaveral (SLC-40) site was recreated in OpenWind with a 30-layer extended ISA wind profile (crosswinds of 3.1 to 14.4 m/s), and the trajectories were viewed in Google Earth through OpenEarth. Burns from an AeroTech HP-H195NT (upper stage) and a Cesaroni 168H410-14A (booster) fire at fixed delays of 51.5 s and 65.0 s after launch, with custom swept fins standing in for Falcon 9's grid fins.",
-      },
-    ],
-  },
-  {
     slug: "astronomy-object-chat-assistant",
     title: "Astronomy Object Chat Assistant",
     dateRange: "Aug 2026",
@@ -371,7 +380,7 @@ export const projects = [
     featured: false,
     priority: false,
     scaleNote: "A short build to test a full retrieval-augmented generation (RAG) pipeline from data to chat interface.",
-    links: { repo: "https://github.com/Akirenaki/astronomy-rag-chatbot", demo: null },
+    links: { repo: "https://github.com/Akirenaki/astronomy-rag-chatbot", demo: null, presentation: null, document: null },
     summary:
       "General-purpose chatbots can make up details about a specific star. This assistant answers questions about the 50 brightest named stars in the HYG database using only the records it retrieves, and tells you when a star or fact is not in its data.",
     stack: {

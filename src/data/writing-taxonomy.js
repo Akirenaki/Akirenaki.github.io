@@ -64,8 +64,11 @@ export const FACETS = [
           { id: "emptiness", label: "Emptiness", original: "Śūnyatā", originalLang: "sa-Latn" },
           { id: "estuarine-circulation", label: "Estuarine circulation" },
           { id: "falsifiability", label: "Falsifiability" },
+          { id: "fermi-paradox", label: "Fermi paradox" },
           { id: "functionalism", label: "Functionalism" },
           { id: "gender", label: "Gender" },
+          { id: "hard-problem-of-consciousness", label: "Hard problem of consciousness" },
+          { id: "kardashev-scale", label: "Kardashev scale" },
           { id: "integrated-information-theory", label: "Integrated information theory" },
           { id: "madhyamaka-buddhism", label: "Madhyamaka Buddhism" },
           { id: "moral-status", label: "Moral status" },
@@ -90,7 +93,10 @@ export const FACETS = [
       {
         key: "characterFictional",
         label: "Fictional",
-        tags: [{ id: "il-dottore", label: "Il Dottore" }],
+        tags: [
+          { id: "il-dottore", label: "Il Dottore" },
+          { id: "zarathustra", label: "Zarathustra" }
+        ],
       },
       {
         key: "characterReal",
@@ -101,6 +107,7 @@ export const FACETS = [
           { id: "dennett", label: "Daniel Dennett" },
           { id: "ibn-kathir", label: "Ibn Kathir" },
           { id: "kim", label: "Jaegwon Kim" },
+          { id: "karl-marx", label: "Karl Marx" },
           { id: "koch", label: "Christof Koch" },
           { id: "nietzsche", label: "Friedrich Nietzsche" },
           { id: "pliny-the-elder", label: "Pliny the Elder" },

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { profile } from "../data/profile";
 import { experience } from "../data/experience";
-import { awards, certifications, technicalStack } from "../data/awards";
+import { awards, certifications, technicalStack, testScores } from "../data/awards";
 import { projects } from "../data/projects";
 import { writing } from "../data/writing";
 import { TAGS_BY_ID } from "../data/writing-taxonomy";
@@ -139,24 +139,46 @@ export function PrintCV() {
 
         <section className="mb-8 print:break-inside-avoid">
           <SectionHeading>Education</SectionHeading>
-          <div className="flex flex-col gap-1.5 text-sm">
-            <div className="flex items-baseline justify-between gap-4">
-              <div>
-                <p className="font-medium text-ink">{profile.education.institution}</p>
-                <p className="text-ink-soft">{profile.education.degree}</p>
+          <div className="flex flex-col gap-4">
+            {profile.education.map((edu) => (
+              <div key={edu.institution} className="flex flex-col gap-1.5 text-sm">
+                <div className="flex items-baseline justify-between gap-4">
+                  <div>
+                    <p className="font-medium text-ink">{edu.institution}</p>
+                    <p className="text-ink-soft">{edu.degree}</p>
+                  </div>
+                  <p className="whitespace-nowrap text-ink-soft">{edu.graduation}</p>
+                </div>
+                {edu.description && <p className="mt-1 text-sm leading-relaxed text-ink">{edu.description}</p>}
+                {edu.bullets && (
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-ink">
+                    {edu.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              <p className="whitespace-nowrap text-ink-soft">{profile.education.graduation}</p>
-            </div>
-            {profile.education.description && (
-              <p className="mt-1 text-sm leading-relaxed text-ink">{profile.education.description}</p>
-            )}
-            {profile.education.bullets && (
-              <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-ink">
-                {profile.education.bullets.map((bullet) => (
-                  <li key={bullet}>{bullet}</li>
-                ))}
-              </ul>
-            )}
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-8 print:break-inside-avoid">
+          <SectionHeading>Test Scores</SectionHeading>
+          <div className="flex flex-col gap-2 text-sm">
+            {testScores.map((test) => (
+              <div key={test.name} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+                <p className="text-ink">
+                  <span className="font-medium">{test.name}</span>{" "}
+                  <span className="text-ink-soft">— {test.fullName}</span>
+                </p>
+                <p className="whitespace-nowrap text-xs text-ink-soft">
+                  {test.value.toFixed(test.decimals)} / {test.max.toFixed(test.decimals)} · {test.date}
+                </p>
+                <p className="w-full text-xs text-ink-soft">
+                  {test.sections.map((section) => `${section.label}: ${section.value.toFixed(section.decimals)}`).join(" · ")}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 

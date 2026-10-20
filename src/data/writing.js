@@ -35,6 +35,10 @@
 //                `url` is not rendered, so a missing link never shows as a dead
 //                one. embedUrl is a Google Docs "Publish to web" link; when set,
 //                the live text is embedded and labelled as the current text.
+//   googleDocUrl  https link to the piece as a Google Doc, or null. When set, the
+//                entry page shows an "Online document" section under the PDF,
+//                saying the online copy may be the more current or relevant one.
+//                When null the section is not rendered (no dead links).
 //   sources      four or five key references, plain text. Omitted from the page
 //                when empty.
 //   rights       one-line notice; keep in step with the site footer unless a
@@ -75,11 +79,12 @@ export const writing = [
     tags: {
       subject: ["philosophy"],
       topic: ["self-surpassing"],
-      characterFictional: ["il-dottore"],
+      characterFictional: ["il-dottore", "zarathustra"], 
       characterReal: ["nietzsche"],
     },
     pdf: { path: "/essays/self-surpassing-il-dottore.pdf", lastEdited: "2026-10-20T00:18:44+07:00" },
     otherVersions: [],
+    googleDocUrl: null,
     sources: [
       "Friedrich Nietzsche, Thus Spake Zarathustra, Part II, ‘Self-Surpassing’, translated by Thomas Common (Project Gutenberg, eBook no. 1998)",
       "HoYoverse, ‘Where Our Space and Time Intersect’, Genshin Impact, Version Luna IV",
@@ -106,6 +111,7 @@ export const writing = [
     },
     pdf: { path: "/essays/gender-analysis-middle-way.pdf", lastEdited: "2026-07-26T18:51:12+07:00" },
     otherVersions: [],
+    googleDocUrl: null,
     // The supplied document has no reference list, so there is nothing to show yet.
     sources: [],
     rights: "All rights reserved",
@@ -136,6 +142,7 @@ export const writing = [
     },
     pdf: { path: "/essays/quran-barrier-between-two-seas.pdf", lastEdited: "2026-10-20T00:22:36+07:00" },
     otherVersions: [],
+    googleDocUrl: null,
     sources: [
       "Qur’an 55:19–20 and 25:53, on the two seas and the barzakh",
       "NOAA Ocean Service, on estuaries",
@@ -165,12 +172,14 @@ export const writing = [
         "integrated-information-theory",
         "zombie-argument",
         "moral-status",
+        "hard-problem-of-consciousness",
       ],
       characterFictional: [],
       characterReal: ["putnam", "chalmers", "dennett", "searle", "kim", "tononi", "koch", "bentham"],
     },
     pdf: { path: "/essays/artificial-consciousness-nature-of-mind.pdf", lastEdited: "2026-10-20T00:37:26+07:00" },
     otherVersions: [],
+    googleDocUrl: null,
     sources: [
       "H. Putnam, Mind, Language and Reality (1975)",
       "D. J. Chalmers, The Conscious Mind: In Search of a Fundamental Theory (1996)",
@@ -180,41 +189,28 @@ export const writing = [
     ],
     rights: "All rights reserved",
   },
-
-  // ---------------------------------------------------------------------------
-  // HELD, not published: the response to the "Seven Heavens" presentation.
-  //
-  // The supplied document names the presenter and the programme in its subtitle
-  // line. (The body's redactions have been replaced by "Anda" in a re-saved copy
-  // of the document.) Under rule 4 of the brief it stays out until the author
-  // confirms that line. To publish it: confirm or
-  // remove that line in the document, re-export the PDF, uncomment this entry
-  // and the tag records below, and set `status`. Everything here is a draft for
-  // approval, as are the title and tags.
-  //
-  // {
-  //   slug: "response-seven-heavens-universe-of-angels",
-  //   title: "A Response to ‘The Secret of the Seven Heavens and the Universe of Angels’",
-  //   section: "academic",
-  //   status: "finished",
-  //   featured: false,
-  //   wordCount: 1067, // Indonesian text, after the redactions became "Anda"; excludes the title, the source line and the closing reading list
-  //   language: "Indonesian",
-  //   summary:
-  //     "This essay responds to a presentation that tries to reconcile Islamic cosmology with science, linking the seven heavens, the angels and the Isra’ Mi’raj to the Fermi paradox and the Kardashev scale. It argues that the case rests on a category error (applying a scale for physical civilisations to metaphysical beings), on equivocation over words such as energy and dimension, and on an argument from ignorance. It adds that the central claims are unfalsifiable and that the reading of the number seven is inconsistent. It closes by suggesting the presentation answers a sincere wish to hold faith and reason together, but does so at the cost of both.",
-  //   tags: {
-  //     subject: ["philosophy", "religious-studies"],
-  //     topic: ["fermi-paradox", "kardashev-scale", "falsifiability", "scientific-miracle-claims"],
-  //     characterFictional: [],
-  //     characterReal: ["karl-marx"],
-  //   },
-  //   // Taxonomy additions needed: topic { id: "fermi-paradox", label: "Fermi paradox" },
-  //   // topic { id: "kardashev-scale", label: "Kardashev scale" }, characterReal { id: "karl-marx", label: "Karl Marx" }
-  //   pdf: { path: "/essays/response-seven-heavens-universe-of-angels.pdf", lastEdited: "2026-10-20T00:27:34+07:00" },
-  //   otherVersions: [],
-  //   sources: [],
-  //   rights: "All rights reserved",
-  // },
+  {
+    slug: "response-seven-heavens-universe-of-angels",
+    title: "A Response to ‘The Secret of the Seven Heavens and the Universe of Angels’",
+    section: "academic",
+    status: "finished",
+    featured: false,
+    wordCount: 1067, // Indonesian text, after the redactions became "Anda"; excludes the title, the source line and the closing reading list
+    language: "Indonesian",
+    summary:
+      "This essay responds to a presentation that tries to reconcile Islamic cosmology with science, linking the seven heavens, the angels and the Isra’ Mi’raj to the Fermi paradox and the Kardashev scale. It argues that the case rests on a category error (applying a scale for physical civilisations to metaphysical beings), on equivocation over words such as energy and dimension, and on an argument from ignorance. It adds that the central claims are unfalsifiable and that the reading of the number seven is inconsistent. It closes by suggesting the presentation answers a sincere wish to hold faith and reason together, but does so at the cost of both.",
+    tags: {
+      subject: ["philosophy", "religious-studies"],
+      topic: ["fermi-paradox", "kardashev-scale", "falsifiability", "scientific-miracle-claims", "kardashev-scale"],
+      characterFictional: [],
+      characterReal: ["karl-marx"],
+    },
+    pdf: { path: "/essays/response-seven-heavens-universe-of-angels.pdf", lastEdited: "2026-10-20T00:27:34+07:00" },
+    otherVersions: [],
+    googleDocUrl: null,
+    sources: [],
+    rights: "All rights reserved",
+  },
 ];
 
 // ---- ordering and Home, mirroring projects.js ------------------------------
@@ -300,6 +296,9 @@ export function entryMeta(entry) {
         if (!tag) throw new Error(`${where}: tag "${id}" is not defined in writing-taxonomy.js`);
         if (tag.group !== key) throw new Error(`${where}: tag "${id}" belongs under "${tag.group}", not "${key}"`);
       }
+    }
+    if (w.googleDocUrl !== null && w.googleDocUrl !== undefined && !/^https:\/\/(docs|drive)\.google\.com\//.test(w.googleDocUrl)) {
+      throw new Error(`${where}: googleDocUrl must be an https://docs.google.com/ (or drive.google.com) link, or null`);
     }
     for (const v of w.otherVersions ?? []) {
       if (!v.label || !v.language || !v.note) throw new Error(`${where}: each otherVersions item needs label, language and note`);

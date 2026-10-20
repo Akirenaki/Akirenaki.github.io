@@ -62,3 +62,36 @@ export const technicalStack = {
     "ESP32 / embedded sensors",
   ],
 };
+
+// Standardised tests, shown in the "Test scores" section of the About page.
+// `value` and `max` are numbers (they size the small bars); `decimals` is how
+// many decimal places to show, so IELTS reads 7.5 / 9.0 and the SAT reads
+// 1440 / 1600. Each section carries its own `max`.
+export const testScores = [
+  {
+    name: "SAT",
+    fullName: "Scholastic Assessment Test",
+    date: "Oct 2026",
+    value: 1440,
+    max: 1600,
+    decimals: 0,
+    sections: [
+      { label: "Reading & Writing", value: 720, max: 800, decimals: 0 },
+      { label: "Math", value: 720, max: 800, decimals: 0 },
+    ],
+  },
+  {
+    name: "IELTS Academic",
+    fullName: "International English Language Testing System",
+    date: "Sep 2026",
+    value: 7.5,
+    max: 9,
+    decimals: 1,
+    sections: [
+      { label: "Reading", value: 8.5, max: 9, decimals: 1 },
+      { label: "Listening", value: 8.0, max: 9, decimals: 1 },
+      { label: "Writing", value: 7.0, max: 9, decimals: 1 },
+      { label: "Speaking", value: 6.5, max: 9, decimals: 1 },
+    ],
+  },
+];

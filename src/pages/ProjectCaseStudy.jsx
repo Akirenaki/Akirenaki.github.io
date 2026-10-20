@@ -74,7 +74,7 @@ export function ProjectCaseStudy() {
           <TechStack visible={project.stack.visible} hidden={project.stack.hidden} />
         </div>
 
-        <div className="mt-4 flex gap-4 text-sm">
+        <div className="mt-4 flex flex-wrap gap-3 text-sm">
           {project.links.demo && (
             <a
               href={project.links.demo}
@@ -93,6 +93,26 @@ export function ProjectCaseStudy() {
               className="rounded-full border border-ink/20 px-5 py-2 font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep"
             >
               Repository
+            </a>
+          )}
+          {project.links.presentation && (
+            <a
+              href={project.links.presentation}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-ink/20 px-5 py-2 font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep"
+            >
+              Presentation
+            </a>
+          )}
+          {project.links.document && (
+            <a
+              href={project.links.document}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-ink/20 px-5 py-2 font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep"
+            >
+              Document
             </a>
           )}
         </div>

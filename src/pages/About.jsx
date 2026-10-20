@@ -1,12 +1,13 @@
 import { profile } from "../data/profile";
 import { experience } from "../data/experience";
-import { awards, certifications, technicalStack } from "../data/awards";
+import { awards, certifications, technicalStack, testScores } from "../data/awards";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 import { buildMeta } from "../lib/seo";
 
 const SECTIONS = [
   { id: "stack", label: "Technical stack" },
   { id: "education", label: "Education" },
+  { id: "test-scores", label: "Test scores" },
   { id: "experience", label: "Experience" },
   { id: "awards", label: "Awards" },
 ];
@@ -17,7 +18,7 @@ const SECTIONS = [
 export function meta() {
   return buildMeta({
     title: "About & Credentials",
-    description: `${profile.roleSummary}. Technical stack, education, experience, and awards.`,
+    description: `${profile.roleSummary}. Technical stack, education, test scores, experience, and awards.`,
     path: "/about",
   });
 }
@@ -48,8 +49,8 @@ export function About() {
           </span>
         </div>
 
-        {/* This page runs long (Technical stack -> Education -> Experience ->
-            Awards, each with its own list of entries), so a jump nav earns
+        {/* This page runs long (Technical stack -> Education -> Test scores ->
+            Experience -> Awards, each with its own list of entries), so a jump nav earns
             its keep here in a way it wouldn't on the shorter pages. */}
         <nav aria-label="On this page" className="mt-10 flex flex-wrap gap-2 border-y border-blush/70 py-3">
           {SECTIONS.map((s) => (
@@ -125,42 +126,87 @@ export function About() {
           </ul>
         </div>
 
-        {/* Education */}
+        {/* Education - current programme first, then completed courses. */}
         <div id="education" className="mt-16">
           <h2 className="font-display text-2xl font-medium text-ink">Education</h2>
-          <div className="mt-5">
-            <div className="flex flex-col gap-4 sm:flex-row">
-              {profile.education.image && (
-                <PlaceholderImage
-                  src={profile.education.image}
-                  alt={`${profile.education.institution} education photo`}
-                  aspect="4/3"
-                  className="w-full shrink-0 rounded-sm sm:w-36"
-                />
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-ink">{profile.education.institution}</p>
-                <p className="text-sm text-ink-soft">
-                  {profile.education.degree} · Expected {profile.education.graduation}
-                </p>
-                {profile.education.description && (
-                  <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                    {profile.education.description}
+          <div className="mt-5 flex flex-col gap-8">
+            {profile.education.map((edu) => (
+              <div key={edu.institution} className="flex flex-col gap-4 sm:flex-row">
+                {edu.image && (
+                  <PlaceholderImage
+                    src={edu.image}
+                    alt={`${edu.institution} education photo`}
+                    aspect="4/3"
+                    className="w-full shrink-0 rounded-sm sm:w-36"
+                  />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-ink">{edu.institution}</p>
+                  <p className="text-sm text-ink-soft">
+                    {edu.degree} · {edu.dateLabel}
                   </p>
-                )}
-                {profile.education.bullets && (
-                  <ul className="mt-2 flex flex-col gap-1.5 text-sm leading-relaxed text-ink-soft">
-                    {profile.education.bullets.map((bullet, i) => (
-                      <li key={i} className="pl-4 -indent-4">
-                        <span className="mr-2 text-blush">–</span>
-                        {bullet}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  {edu.description && (
+                    <p className="mt-2 text-sm leading-relaxed text-ink-soft">{edu.description}</p>
+                  )}
+                  {edu.bullets && (
+                    <ul className="mt-2 flex flex-col gap-1.5 text-sm leading-relaxed text-ink-soft">
+                      {edu.bullets.map((bullet, i) => (
+                        <li key={i} className="pl-4 -indent-4">
+                          <span className="mr-2 text-blush">–</span>
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
+        </div>
+
+        {/* Test scores. Each score sits beside a bar sized to score / maximum so
+            the result reads at a glance; the numbers carry the meaning, the bar
+            is hidden from assistive technology. */}
+        <div id="test-scores" className="mt-16">
+          <h2 className="font-display text-2xl font-medium text-ink">Test scores</h2>
+          <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+            {testScores.map((test) => (
+              <li key={test.name} className="flex flex-col border border-blush/70 bg-surface p-5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="font-medium text-ink">{test.name}</h3>
+                  <span className="text-sm text-ink-soft">{test.date}</span>
+                </div>
+                <p className="text-xs text-ink-soft">{test.fullName}</p>
+
+                <p className="mt-4 font-display text-4xl font-medium leading-none text-accent-deep">
+                  {test.value.toFixed(test.decimals)}
+                  <span className="ml-2 text-base font-normal text-ink-soft">
+                    / {test.max.toFixed(test.decimals)}
+                  </span>
+                </p>
+
+                <dl className="mt-5 flex flex-col gap-3 border-t border-blush/70 pt-4 text-sm">
+                  {test.sections.map((section) => (
+                    <div key={section.label}>
+                      <div className="flex items-baseline justify-between gap-3">
+                        <dt className="text-ink-soft">{section.label}</dt>
+                        <dd className="font-medium text-ink">
+                          {section.value.toFixed(section.decimals)}
+                          <span className="font-normal text-ink-soft"> / {section.max.toFixed(section.decimals)}</span>
+                        </dd>
+                      </div>
+                      <div className="mt-1.5 h-1 w-full bg-blush/40" aria-hidden="true">
+                        <div
+                          className="h-full bg-accent-deep"
+                          style={{ width: `${(section.value / section.max) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </dl>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Experience - genuinely chronological, so a connecting line +

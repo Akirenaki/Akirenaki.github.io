@@ -18,12 +18,12 @@ Nothing in this repo needs code changes for routine content updates — it's all
 
 | File | What it controls |
 |---|---|
-| `src/data/profile.js` | Names, tagline, bio, contact links, languages, education |
+| `src/data/profile.js` | Names, tagline, bio, contact links, languages, education (a list: current programme first, then completed courses) |
 | `src/data/projects.js` | Every project card + its case-study page |
 | `src/data/writing.js` | Every piece on `/writing`, its page and its place in the sitemap |
 | `src/data/writing-taxonomy.js` | The tags (subject, topic, character) and the filter built from them |
 | `src/data/experience.js` | Experience entries on the About page |
-| `src/data/awards.js` | Awards, certifications, and technical-stack lists |
+| `src/data/awards.js` | Awards, certifications, test scores (SAT, IELTS), and technical-stack lists |
 
 To add a new project: add an object to the array in `projects.js` with a unique `slug` — a case study page at `/work/<slug>` is generated automatically, with no routing code to touch (it's picked up by `react-router.config.js`'s `prerender()` list at build time).
 
@@ -40,13 +40,17 @@ Each project in `projects.js` carries:
 - `filters: { domain, type, framework, language }`: lists of strings. A project can have several domains or types. The filter options are built from whatever values appear, so spell them the same way everywhere (`"Next.js"`, not `"NextJS"`). Leave a list empty when it doesn't apply, for example a hardware prototype has no language.
 - Optional `highlight` (one line of recognition on the card, such as a finalist result) and `scaleNote` (one line on the case-study page about why the project is that size).
 
-Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough. Projects are shown in the order of the array, so keep flagships first and minis last.
+Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough.
+
+Each project's `links` object has four slots: `repo`, `demo`, `presentation` (a slide deck) and `document` (a written report or paper). Fill in an https URL and the matching button (Repository, Live demo, Presentation, Document) appears on the card and the case study; leave it `null` and nothing is shown. Presentation and Document are not filters on `/work`. Projects are shown in the order of the array, so keep flagships first and minis last.
 
 ## Writing
 
 `/writing` lists the essays in two sections, **Academic writing** and **Creative writing** (a section with no entries is not shown), with a tag filter. `/writing/<slug>` is one page per piece. Like projects, everything comes from one data file: an entry in `src/data/writing.js` is routed, prerendered and added to the sitemap with no other code to touch (`react-router.config.js` and `scripts/build-sitemap.mjs` both read it).
 
 All site text is English, including titles, summaries, tags and labels, even when the full text of a piece is in another language. `language` records the language of the full text; the documents themselves are never edited by the site.
+
+Each entry can also carry `googleDocUrl`, a link to the piece as a Google Doc. When it is set, the entry page shows an **Online document** section under the PDF, with a line saying the online copy may be more up to date and so more relevant, and an "Open in Google Docs" button. When it is `null` the section is not rendered. The build stops if the value is not an `https://docs.google.com/` (or `drive.google.com`) link.
 
 To add a piece:
 
@@ -124,7 +128,7 @@ src/
       profile.js                    Personal metadata, bio, contact links, and education
       projects.js                   Project card catalog and detailed case-study content
    pages/                          Top-level page views - each exports its own `meta` function
-      About.jsx                     About page (bio, experience, skills, credentials grid)
+      About.jsx                     About page (bio, skills, education, test scores, experience, awards)
       Contact.jsx                   Contact page with direct messaging links
       Home.jsx                      Landing page (hero header, featured projects, quick bio)
       PrintCV.jsx                   Standalone printable CV layout

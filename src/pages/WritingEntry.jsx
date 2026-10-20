@@ -169,6 +169,25 @@ export function WritingEntry() {
           Last edited: <time dateTime={entry.pdf.lastEdited}>{formatLastEdited(entry.pdf.lastEdited)}</time>
         </p>
 
+        {entry.googleDocUrl && (
+          <section aria-labelledby="online-document" className="mt-14">
+            <h2 id="online-document" className="font-display text-[22px] font-medium text-ink">
+              Online document
+            </h2>
+            <p className="mt-3 leading-relaxed text-ink-soft">
+              The online document below may be more up to date, and so more relevant, than the PDF above.
+            </p>
+            <a
+              href={entry.googleDocUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-block rounded-full border border-ink/20 px-5 py-2 text-sm font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep"
+            >
+              Open in Google Docs →
+            </a>
+          </section>
+        )}
+
         {versions.length > 0 && (
           <section aria-labelledby="other-versions" className="mt-14">
             <h2 id="other-versions" className="font-display text-[22px] font-medium text-ink">
