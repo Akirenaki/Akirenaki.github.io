@@ -4,6 +4,8 @@ import { profile } from "../data/profile";
 import { experience } from "../data/experience";
 import { awards, certifications, technicalStack } from "../data/awards";
 import { projects } from "../data/projects";
+import { writing } from "../data/writing";
+import { TAGS_BY_ID } from "../data/writing-taxonomy";
 import { isLikelyInAppBrowser } from "../utils/browserDetect";
 import { SITE_URL } from "../lib/seo";
 
@@ -182,18 +184,51 @@ export function PrintCV() {
         <section className="mb-8">
           <SectionHeading>Projects</SectionHeading>
           <div className="flex flex-col gap-5">
-            {projects.map((project) => (
-              <div key={project.slug} className="print:break-inside-avoid">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                  <p className="font-medium text-ink">
-                    {project.title} <span className="font-normal text-ink-soft">— {project.role}</span>
-                  </p>
-                  <p className="whitespace-nowrap text-xs text-ink-soft">{project.dateRange}</p>
+            {projects
+              .filter((project) => project.scale === "flagship" || project.scale === "standard")
+              .map((project) => (
+                <div key={project.slug} className="print:break-inside-avoid">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+                    <p className="font-medium text-ink">
+                      {project.title} <span className="font-normal text-ink-soft">— {project.role}</span>
+                    </p>
+                    <p className="whitespace-nowrap text-xs text-ink-soft">{project.dateRange}</p>
+                  </div>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink">{project.summary}</p>
+                  <p className="mt-1.5 text-xs text-ink-soft">{project.stack.visible.join(" · ")}</p>
                 </div>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink">{project.summary}</p>
-                <p className="mt-1.5 text-xs text-ink-soft">{project.stack.visible.join(" · ")}</p>
-              </div>
-            ))}
+              ))}
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <SectionHeading>Writings</SectionHeading>
+          <div className="flex flex-col gap-5">
+            {writing.map((entry) => {
+              const subjects = (entry.tags?.subject ?? [])
+                .map((id) => TAGS_BY_ID.get(id)?.label || id)
+                .join(" · ");
+
+              return (
+                <div key={entry.slug} className="print:break-inside-avoid">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
+                    <p className="font-medium text-ink">{entry.title}</p>
+                    <p className="whitespace-nowrap text-xs text-ink-soft">
+                      {[
+                        entry.section === "academic" ? "Academic Essay" : "Creative Writing",
+                        entry.status === "finished" ? "Finished" : "Ongoing",
+                        `${entry.wordCount} words`,
+                        entry.language,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  </div>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink">{entry.summary}</p>
+                  {subjects && <p className="mt-1.5 text-xs text-ink-soft">{subjects}</p>}
+                </div>
+              );
+            })}
           </div>
         </section>
 

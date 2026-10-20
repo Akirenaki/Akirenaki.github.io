@@ -29,10 +29,10 @@ To add a new project: add an object to the array in `projects.js` with a unique 
 
 ### Filters and scale on `/work`
 
-The Work page filters by seven groups in two tiers. Options inside a group combine with OR, groups combine with AND, and each option shows how many projects it would leave.
+The Work page keeps the primary Scale filter visible and places the supporting filters behind a single **Filters** control. Options inside a group combine with OR, groups combine with AND, and each option shows how many projects it would leave. Active choices remain visible as removable chips below the toolbar.
 
-- **Main tier (always visible):** Scale, Domain, Type.
-- **Tech tier (behind "Tech and links"):** Framework, Language, Live, Repo.
+- **Primary filter (always visible):** Scale.
+- **Supporting filters (behind "Filters"):** Domain, Type, Framework, Language, Live, Repo.
 
 Each project in `projects.js` carries:
 
@@ -160,4 +160,3 @@ vite.config.js                     Vite bundler configuration (root base path)
 .gitignore                         Git ignore rules
 README.md                          Project documentation and operating notes
 ```
-

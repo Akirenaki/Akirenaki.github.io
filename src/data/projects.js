@@ -246,7 +246,8 @@ export const projects = [
     title: "Empirical & Theoretical Analysis of Multi-Variable Mechanical Systems",
     dateRange: "May 2026 - Jun 2026",
     role: "Co-developer",
-    scale: "standard",
+    scale: "mini",
+    scaleNote: "A focused Grade 11 physics build pairing classical mechanics theory with an interactive simulator and an empirical prototype.",
     filters: {
       domain: ["Engineering", "Physics"],
       type: ["Prototype", "Research", "Simulation"],
