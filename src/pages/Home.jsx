@@ -2,7 +2,9 @@ import { Link } from "react-router";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "../data/profile";
 import { getBigFeaturedProject, getOrderedFeaturedProjects } from "../data/projects";
+import { getBigFeaturedWriting, getOrderedFeaturedWriting } from "../data/writing";
 import { ProjectCard } from "../components/ProjectCard";
+import { WritingCard } from "../components/WritingCard";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 import { PrintCVButton } from "../components/PrintCVButton";
 import { buildMeta } from "../lib/seo";
@@ -46,6 +48,14 @@ export function Home() {
   const remainingCount = orderedFeaturedProjects.length - 1;
   const isLastOdd = (i) =>
     i > 0 && remainingCount % 2 === 1 && i === orderedFeaturedProjects.length - 1;
+
+  // Featured writing follows the same rules as featured work (same ordering,
+  // same big slot, same odd-one-out fix). It only appears once an entry in
+  // src/data/writing.js has featured: true.
+  const orderedFeaturedWriting = getOrderedFeaturedWriting();
+  const bigWriting = getBigFeaturedWriting();
+  const remainingWriting = orderedFeaturedWriting.length - 1;
+  const isLastOddWriting = (i) => i > 0 && remainingWriting % 2 === 1 && i === orderedFeaturedWriting.length - 1;
 
   return (
     <>
@@ -137,6 +147,31 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* Featured writing */}
+      {orderedFeaturedWriting.length > 0 && (
+        <section className="px-5 pb-16 md:px-8 md:pb-24">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-10 flex items-end justify-between gap-4">
+              <h2 className="font-display text-3xl font-medium text-ink">Featured writing</h2>
+              <Link to="/writing" className="text-sm text-accent-deep hover:underline">
+                View all writing →
+              </Link>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {orderedFeaturedWriting.map((entry, i) => (
+                <WritingCard
+                  key={entry.slug}
+                  entry={entry}
+                  variant="card"
+                  size={entry.slug === bigWriting?.slug || isLastOddWriting(i) ? "lg" : "md"}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

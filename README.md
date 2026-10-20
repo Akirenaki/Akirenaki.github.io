@@ -1,6 +1,6 @@
 # Portfolio — Renee Astraea
 
-A static portfolio built with React 19, React Router 7, Tailwind CSS 4, and Framer Motion. Features Home, Work (with per-project case-study pages), About & Credentials, Contact, and a printable CV page (`/print`).
+A static portfolio built with React 19, React Router 7, Tailwind CSS 4, and Framer Motion. Features Home, Work (with per-project case-study pages), Writing (essays, each with its own page and PDF), About & Credentials, Contact, and a printable CV page (`/print`).
 
 ## Running it locally
 
@@ -20,6 +20,8 @@ Nothing in this repo needs code changes for routine content updates — it's all
 |---|---|
 | `src/data/profile.js` | Names, tagline, bio, contact links, languages, education |
 | `src/data/projects.js` | Every project card + its case-study page |
+| `src/data/writing.js` | Every piece on `/writing`, its page and its place in the sitemap |
+| `src/data/writing-taxonomy.js` | The tags (subject, topic, character) and the filter built from them |
 | `src/data/experience.js` | Experience entries on the About page |
 | `src/data/awards.js` | Awards, certifications, and technical-stack lists |
 
@@ -39,6 +41,24 @@ Each project in `projects.js` carries:
 - Optional `highlight` (one line of recognition on the card, such as a finalist result) and `scaleNote` (one line on the case-study page about why the project is that size).
 
 Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough. Projects are shown in the order of the array, so keep flagships first and minis last.
+
+## Writing
+
+`/writing` lists the essays in two sections, **Academic writing** and **Creative writing** (a section with no entries is not shown), with a tag filter. `/writing/<slug>` is one page per piece. Like projects, everything comes from one data file: an entry in `src/data/writing.js` is routed, prerendered and added to the sitemap with no other code to touch (`react-router.config.js` and `scripts/build-sitemap.mjs` both read it).
+
+All site text is English, including titles, summaries, tags and labels, even when the full text of a piece is in another language. `language` records the language of the full text; the documents themselves are never edited by the site.
+
+To add a piece:
+
+1. Export the PDF to `public/essays/<slug>.pdf` (not `public/assets/`).
+2. Add an object to `writing` in `src/data/writing.js`. The field-by-field notes are at the top of that file. `wordCount` is the body including headings, excluding the title, the reference list and URLs. `pdf.lastEdited` is an ISO 8601 stamp with the `+07:00` offset and is shown as, for example, "17 October 2026, 14:30 WIB".
+3. Use tags by id. New tags (and whole new facets) are added in `src/data/writing-taxonomy.js` only. Terms with a useful original-language form carry `original` and `originalLang`; Sanskrit uses IAST.
+
+Pieces are shown in the order of the array within their section, as projects are. `featured: true` also lists a piece under "Featured writing" on Home, ordered like featured work (a `priority` entry takes the large first slot). Nothing appears on Home until at least one entry is featured.
+
+The build stops with a plain message if an entry uses an unknown tag, files a tag under the wrong group, repeats a slug or has a malformed timestamp. It only *warns* (`npm run essays`) when an entry's PDF is not yet in `public/essays/`, because the Open and Download buttons would 404 until it is.
+
+On `/writing`, tags within one facet combine with OR and facets combine with AND. The selection lives in the URL (`/writing?subject=philosophy&topic=gender`), so filtered views can be linked; the prerendered page is always the unfiltered list. On an entry page the PDF embed is mounted only on wide screens (1024px and up), so phones never fetch it; "Other versions" lists translations or alternative drafts by Google Docs link, and embeds the live text when an `embedUrl` ("Publish to web") is given.
 
 ## Adding and Uploading Media
 

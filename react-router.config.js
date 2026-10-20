@@ -1,4 +1,5 @@
 import { projects } from "./src/data/projects.js";
+import { writing } from "./src/data/writing.js";
 
 // Framework-mode build config, sitting alongside vite.config.js.
 // appDirectory keeps route modules resolving from src/ instead of the
@@ -25,6 +26,15 @@ export default {
   // deployment - matches how GitHub Pages already serves this site.
   ssr: false,
   async prerender() {
-    return ["/", "/work", "/about", "/contact", "/print", ...projects.map((p) => `/work/${p.slug}`)];
+    return [
+      "/",
+      "/work",
+      "/writing",
+      "/about",
+      "/contact",
+      "/print",
+      ...projects.map((p) => `/work/${p.slug}`),
+      ...writing.map((w) => `/writing/${w.slug}`),
+    ];
   },
 };

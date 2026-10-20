@@ -72,6 +72,28 @@ export function breadcrumbJsonLd(crumbs) {
   };
 }
 
+// Article markup for a /writing/<slug> page. dateModified comes from the
+// entry's own last-edited stamp (ISO 8601 with its +07:00 offset). No
+// datePublished: the site doesn't record one, and inventing it would be worse
+// than leaving it out.
+export function articleJsonLd({ headline, description, path, inLanguage, wordCount, dateModified }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${pageUrl(path)}#article`,
+    headline,
+    description,
+    inLanguage,
+    wordCount,
+    dateModified,
+    url: pageUrl(path),
+    mainEntityOfPage: pageUrl(path),
+    author: { "@id": `${SITE_URL}#person` },
+    publisher: { "@id": `${SITE_URL}#person` },
+    isPartOf: { "@id": `${SITE_URL}#website` },
+  };
+}
+
 // Called from each route's `meta` export, so the tags below are baked into
 // that route's prerendered HTML (link unfurlers and crawlers never run our JS).
 //   noindex - adds <meta name="robots" content="noindex"> (used for /print)

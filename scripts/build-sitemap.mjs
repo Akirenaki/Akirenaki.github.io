@@ -1,5 +1,5 @@
 // Writes public/sitemap.xml from the same sources the prerenderer uses, so a
-// new project in src/data/projects.js shows up in the sitemap automatically
+// new project in src/data/projects.js (or piece in src/data/writing.js) shows up in the sitemap automatically
 // and the hand-maintained list can't drift out of date. Runs as part of
 // `npm run build` (see "prebuild" in package.json).
 //
@@ -9,9 +9,18 @@
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { projects } from "../src/data/projects.js";
+import { writing } from "../src/data/writing.js";
 import { pageUrl } from "../src/lib/seo.js";
 
-const paths = ["/", "/work", "/about", "/contact", ...projects.map((p) => `/work/${p.slug}`)];
+const paths = [
+  "/",
+  "/work",
+  "/writing",
+  "/about",
+  "/contact",
+  ...projects.map((p) => `/work/${p.slug}`),
+  ...writing.map((w) => `/writing/${w.slug}`),
+];
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
