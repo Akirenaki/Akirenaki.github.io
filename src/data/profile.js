@@ -36,6 +36,7 @@ export const profile = {
     "I am an aspiring astrophysicist dedicated to investigating physical systems through computational modelling, statistical inference, and large-scale data analysis. My objective is to contribute to observational and computational research by leveraging quantitative methodologies to extract insights from complex astronomical datasets.",
     "Driven by a commitment to open science and the democratisation of research, I advocate for accessible scientific data infrastructure, transparent methodologies, and collaborative knowledge-sharing. I also engage in philosophy and human rights advocacy, focusing on gender equity, LGBTQ+ rights, and racial justice.",
     "Alongside my core scientific and social focus, I specialise in information architecture and structural synthesis, regularly aggregating, cross-referencing, and reconciling disparate qualitative data sources to build unified, logically coherent systems, which strengthens my pattern recognition, systematic literature review, and technical documentation.",
+    "Though I am legally known as Raden Bagus Narendra Tsaqiif Aryasuta Maldini, I operate professionally and academically as Renee Astraea.",
   ],
 
   // Home summary - shorter restatement for the landing page, not LinkedIn text.
@@ -61,7 +62,7 @@ export const profile = {
       ],
     },
     {
-      institution: "Harvard Online",
+      institution: "HarvardX - CS50x",
       degree: "Certificate in CS50x: Introduction to Computer Science",
       graduation: "2026",
       dateLabel: "Completed 2026",

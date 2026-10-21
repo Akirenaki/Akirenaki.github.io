@@ -14,7 +14,11 @@ export function Layout({ children }) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* Declared explicitly so the site-root /favicon.ico convention and the
+            declared icons agree. Google wants a multiple of 48px (48 and 192 here). */}
+        <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.ico`} sizes="48x48" />
         <link rel="icon" type="image/png" sizes="48x48" href={`${import.meta.env.BASE_URL}assets/favicon-48.png`} />
+        <link rel="icon" type="image/png" sizes="192x192" href={`${import.meta.env.BASE_URL}assets/favicon-192.png`} />
         <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}assets/apple-touch-icon.png`} />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />

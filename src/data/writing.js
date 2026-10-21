@@ -77,8 +77,8 @@ export const writing = [
     slug: "self-surpassing-il-dottore",
     title: "Can the Pursuit of Power Constitute Self-Surpassing? A Nietzschean Reading of Il Dottore",
     section: "academic",
-    status: "ongoing",
-    featured: false,
+    status: "finished",
+    featured: true,
     wordCount: 514,
     language: "English",
     summary:
@@ -91,7 +91,7 @@ export const writing = [
     },
     pdf: { path: "/essays/self-surpassing-il-dottore.pdf", lastEdited: "2026-10-20T00:18:44+07:00" },
     otherVersions: [],
-    googleDocUrl: null,
+    googleDocUrl: "https://docs.google.com/document/d/1qHWl1sN_JsuE7DShMLS1vEAlYCR2y7oR056npxRXBRY/edit?usp=sharing",
     sources: [
       "Friedrich Nietzsche, Thus Spake Zarathustra, Part II, ‘Self-Surpassing’, translated by Thomas Common (Project Gutenberg, eBook no. 1998)",
       "HoYoverse, ‘Where Our Space and Time Intersect’, Genshin Impact, Version Luna IV",
@@ -105,7 +105,7 @@ export const writing = [
     title: "Gender Analysis using the Lens of the Middle Way",
     section: "academic",
     status: "finished",
-    featured: false,
+    featured: true,
     wordCount: 586,
     language: "English",
     summary:
@@ -118,7 +118,7 @@ export const writing = [
     },
     pdf: { path: "/essays/gender-analysis-middle-way.pdf", lastEdited: "2026-07-26T18:51:12+07:00" },
     otherVersions: [],
-    googleDocUrl: null,
+    googleDocUrl: "https://docs.google.com/document/d/1vZzpQCYP4Pf7bGEqacgNBI1Z3k7A5ZqZMwfuJf_-_nI/edit?usp=sharing",
     // The supplied document has no reference list, so there is nothing to show yet.
     sources: [],
     rights: "All rights reserved",
@@ -149,7 +149,7 @@ export const writing = [
     },
     pdf: { path: "/essays/quran-barrier-between-two-seas.pdf", lastEdited: "2026-10-20T00:22:36+07:00" },
     otherVersions: [],
-    googleDocUrl: null,
+    googleDocUrl: "https://docs.google.com/document/d/1ogOESmXupjeYzunMsS6iAylaFLQGwHfcPnSUIqPyV3s/edit?usp=sharing",
     sources: [
       "Qur’an 55:19–20 and 25:53, on the two seas and the barzakh",
       "NOAA Ocean Service, on estuaries",
@@ -186,7 +186,7 @@ export const writing = [
     },
     pdf: { path: "/essays/artificial-consciousness-nature-of-mind.pdf", lastEdited: "2026-10-20T00:37:26+07:00" },
     otherVersions: [],
-    googleDocUrl: null,
+    googleDocUrl: "https://docs.google.com/document/d/1DHRelYJpTI59vQfC_IhLoOCGT2rbiB3navop-PFjpIw/edit?usp=sharing",
     sources: [
       "H. Putnam, Mind, Language and Reality (1975)",
       "D. J. Chalmers, The Conscious Mind: In Search of a Fundamental Theory (1996)",
@@ -201,7 +201,7 @@ export const writing = [
     title: "A Response to ‘The Secret of the Seven Heavens and the Universe of Angels’",
     section: "academic",
     status: "finished",
-    featured: false,
+    featured: true,
     wordCount: 1067, // Indonesian text, after the redactions became "Anda"; excludes the title, the source line and the closing reading list
     language: "Indonesian",
     summary:
@@ -214,7 +214,7 @@ export const writing = [
     },
     pdf: { path: "/essays/response-seven-heavens-universe-of-angels.pdf", lastEdited: "2026-10-20T00:27:34+07:00" },
     otherVersions: [],
-    googleDocUrl: null,
+    googleDocUrl: 'https://docs.google.com/document/d/13gl4IWrYuKGjJxRLMHAtM5eb5-O1INSBP-TUfWEV7yY/edit?usp=sharing',
     sources: [],
     rights: "All rights reserved",
   },

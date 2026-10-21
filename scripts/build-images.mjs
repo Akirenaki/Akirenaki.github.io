@@ -23,7 +23,7 @@
 // Re-runs are cheap: a file is only reprocessed if its source is newer than
 // the existing output, so this can safely run before every dev/build.
 
-import { readdir, mkdir, stat } from "node:fs/promises";
+import { readdir, mkdir, stat, writeFile } from "node:fs/promises";
 import { join, dirname, basename, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -207,34 +207,92 @@ async function processImage(srcPath) {
 //                         slightly deeper tone so the pale pink holds up there.
 const PAPER = "#FAF3F7"; // --color-paper in src/index.css
 const CLEAR = { r: 0, g: 0, b: 0, alpha: 0 };
+//   favicon-192.png       same transparent glyph at 192px (4 x 48). Search engines
+//                         accept any multiple of 48 and prefer the larger one when
+//                         they can get it; it is also what Android/PWA expects.
+//   favicon.ico           lives at the SITE ROOT (public/favicon.ico), not in
+//                         /assets. Crawlers and browsers request /favicon.ico by
+//                         convention when a page's <link rel="icon"> is missed or
+//                         fails, and without this file that request returns a 404.
 const FAVICONS = [
   { file: "favicon-48.png", size: 48, inset: 0.96, background: CLEAR, deepen: false },
+  { file: "favicon-192.png", size: 192, inset: 0.96, background: CLEAR, deepen: false },
   { file: "apple-touch-icon.png", size: 180, inset: 0.68, background: PAPER, deepen: true },
 ];
+
+// Sizes packed into favicon.ico. Same transparent, near-full-bleed treatment
+// as favicon-48.png so the tab icon looks identical whichever file is used.
+const ICO_SIZES = [16, 32, 48];
+const ICO_OUT = join(__dirname, "..", "public", "favicon.ico");
+
+// Renders the logo glyph centred on a size x size canvas, as a PNG buffer.
+async function renderIcon(logo, { size, inset, background, deepen }) {
+  const inner = Math.round(size * inset);
+  let glyph = logo.clone().resize(inner, inner, { fit: "contain", background: CLEAR });
+  if (deepen) glyph = glyph.modulate({ saturation: 1.3, brightness: 0.9 });
+
+  return sharp({ create: { width: size, height: size, channels: 4, background } })
+    .composite([{ input: await glyph.png().toBuffer(), gravity: "center" }])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+}
+
+// sharp can't write .ico, so this packs PNG frames into the ICO container by
+// hand. Since Windows Vista an ICO entry may hold a PNG as-is, and every
+// current browser reads it. Layout: 6-byte header, one 16-byte directory entry
+// per image, then the image data.
+function packIco(frames) {
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type 1 = icon
+  header.writeUInt16LE(frames.length, 4);
+
+  let offset = 6 + 16 * frames.length;
+  const entries = frames.map(({ size, data }) => {
+    const e = Buffer.alloc(16);
+    e.writeUInt8(size >= 256 ? 0 : size, 0); // width (0 means 256)
+    e.writeUInt8(size >= 256 ? 0 : size, 1); // height
+    e.writeUInt8(0, 2); // palette colours
+    e.writeUInt8(0, 3); // reserved
+    e.writeUInt16LE(1, 4); // colour planes
+    e.writeUInt16LE(32, 6); // bits per pixel
+    e.writeUInt32LE(data.length, 8); // image size in bytes
+    e.writeUInt32LE(offset, 12); // image offset
+    offset += data.length;
+    return e;
+  });
+
+  return Buffer.concat([header, ...entries, ...frames.map((f) => f.data)]);
+}
 
 async function buildFavicons(images) {
   const logoSrc = images.find((p) => /^logo\.[^.]+$/.test(p.slice(SRC_ROOT.length + 1)));
   if (!logoSrc) return [];
 
-  const outPaths = FAVICONS.map((f) => join(OUT_ROOT, f.file));
+  const outPaths = [...FAVICONS.map((f) => join(OUT_ROOT, f.file)), ICO_OUT];
   if (!(await isStale(logoSrc, outPaths))) return [];
 
   await mkdir(OUT_ROOT, { recursive: true });
   const logo = await whiteToAlpha(logoSrc);
 
-  return Promise.all(
-    FAVICONS.map(async ({ file, size, inset, background, deepen }) => {
-      const inner = Math.round(size * inset);
-      let glyph = logo.clone().resize(inner, inner, { fit: "contain", background: CLEAR });
-      if (deepen) glyph = glyph.modulate({ saturation: 1.3, brightness: 0.9 });
-
-      const info = await sharp({ create: { width: size, height: size, channels: 4, background } })
-        .composite([{ input: await glyph.png().toBuffer(), gravity: "center" }])
-        .png({ compressionLevel: 9 })
-        .toFile(join(OUT_ROOT, file));
-      return { name: file, size: info.size };
+  const pngs = await Promise.all(
+    FAVICONS.map(async (spec) => {
+      const data = await renderIcon(logo, spec);
+      await writeFile(join(OUT_ROOT, spec.file), data);
+      return { name: spec.file, size: data.length };
     })
   );
+
+  const frames = await Promise.all(
+    ICO_SIZES.map(async (size) => ({
+      size,
+      data: await renderIcon(logo, { size, inset: 0.96, background: CLEAR, deepen: false }),
+    }))
+  );
+  const ico = packIco(frames);
+  await writeFile(ICO_OUT, ico);
+
+  return [...pngs, { name: "favicon.ico", size: ico.length }];
 }
 
 async function main() {
@@ -256,7 +314,7 @@ async function main() {
 
   const favicons = await buildFavicons(images);
   for (const f of favicons) {
-    console.log(`  favicons: ${f.name} -> ${(f.size / 1024).toFixed(0)}kb png`);
+    console.log(`  favicons: ${f.name} -> ${(f.size / 1024).toFixed(1)}kb`);
   }
 }
 
