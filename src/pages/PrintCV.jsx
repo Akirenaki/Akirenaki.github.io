@@ -19,6 +19,15 @@ function PrinterIcon({ className = "h-4 w-4" }) {
   );
 }
 
+// The three labelled lines shown under each project on the CV, in order. The
+// text comes from `project.cv` in projects.js; a project without it falls back
+// to its card summary.
+const CV_PROJECT_LINES = [
+  { key: "problem", label: "Problem" },
+  { key: "approach", label: "Approach" },
+  { key: "impact", label: "Impact" },
+];
+
 function SectionHeading({ children }) {
   return (
     <h2 className="font-display text-lg font-medium text-ink border-b border-blush pb-1.5 mb-3">{children}</h2>
@@ -216,8 +225,20 @@ export function PrintCV() {
                     </p>
                     <p className="whitespace-nowrap text-xs text-ink-soft">{project.dateRange}</p>
                   </div>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink">{project.summary}</p>
-                  <p className="mt-1.5 text-xs text-ink-soft">{project.stack.visible.join(" · ")}</p>
+                  {project.cv ? (
+                    <div className="mt-1.5 flex flex-col gap-1.5 text-sm leading-relaxed text-ink">
+                      {CV_PROJECT_LINES.map(({ key, label }) => (
+                        <p key={key}>
+                          <span className="font-medium">{`${label}.`}</span> {project.cv[key]}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-1.5 text-sm leading-relaxed text-ink">{project.summary}</p>
+                  )}
+                  <p className="mt-1.5 text-xs text-ink-soft">
+                    {[...project.stack.visible, ...project.stack.hidden].join(" · ")}
+                  </p>
                 </div>
               ))}
           </div>

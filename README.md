@@ -39,6 +39,8 @@ Each project in `projects.js` carries:
 - `scale`: `"flagship"`, `"standard"` or `"mini"`. Flagship is a long-running, complex project; Standard is a focused project with a clear goal; Mini is a short build made to test and prove a skill. The scale shows as a badge on the card and case study, and minis get a shorter banner. Keep mini case studies short on purpose. The wording for each scale lives in `SCALES` at the top of `projects.js`.
 - `filters: { domain, type, framework, language }`: lists of strings. A project can have several domains or types. The filter options are built from whatever values appear, so spell them the same way everywhere (`"Next.js"`, not `"NextJS"`). Leave a list empty when it doesn't apply, for example a hardware prototype has no language.
 - Optional `highlight` (one line of recognition on the card, such as a finalist result) and `scaleNote` (one line on the case-study page about why the project is that size).
+- `caseStudy`: the write-up on `/work/<slug>`, as `{ heading, text }` blocks. Aim for the problem, what was done about it, and the difference it makes or could make, in that order. Headings must be unique within a project.
+- `cv`: `{ problem, approach, impact }`, the same three answers compressed for the printable CV at `/print`, which shows them as three labelled lines for flagship and standard projects. A project without `cv` falls back to its `summary`. Keep personal details out of it, since the CV is a document people forward.
 
 Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough.
 
