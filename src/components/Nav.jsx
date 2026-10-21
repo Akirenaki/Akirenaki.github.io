@@ -14,7 +14,7 @@ export function Nav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-blush/70 bg-paper/90 backdrop-blur">
+    <header className="sticky top-0 z-50 print:hidden border-b border-blush/70 bg-paper/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 md:px-8">
         {/* Bare logo, no tile or frame: both made it smaller and paler. The pink
             and pale blue are faint on the pale navbar, so the filter deepens the

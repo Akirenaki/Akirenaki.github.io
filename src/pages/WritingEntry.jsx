@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   LANGUAGE_CODES,
@@ -10,6 +9,7 @@ import {
 } from "../data/writing";
 import { FACETS, TAGS_BY_ID } from "../data/writing-taxonomy";
 import { TagLabel } from "../components/TagLabel";
+import { essayHtml } from "../lib/essay-text";
 import { articleJsonLd, breadcrumbJsonLd, pageUrl, SITE_URL, buildMeta } from "../lib/seo";
 
 // Same pattern as ProjectCaseStudy: meta() reads the :slug from `params`, so the
@@ -41,29 +41,10 @@ export function meta({ params }) {
   });
 }
 
-// The PDF embed is for wide screens only. It is mounted from an effect, not
-// hidden with CSS, so on a phone the file is never requested at all (it would
-// download the whole PDF and phones often can't scroll it anyway). The Open and
-// Download buttons are the way in everywhere.
-const EMBED_MIN_WIDTH = 1024;
-
-function useIsWide() {
-  const [wide, setWide] = useState(false);
-  useEffect(() => {
-    const query = window.matchMedia(`(min-width: ${EMBED_MIN_WIDTH}px)`);
-    const update = () => setWide(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-  return wide;
-}
-
 const withBase = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 
 export function WritingEntry() {
   const { slug } = useParams();
-  const isWide = useIsWide();
   const entry = writing.find((w) => w.slug === slug);
 
   if (!entry) {
@@ -83,6 +64,7 @@ export function WritingEntry() {
   const next = siblings[at + 1];
 
   const pdfHref = withBase(entry.pdf.path);
+  const textHtml = essayHtml(entry.slug);
   const facts = [SECTIONS[entry.section].label, ...entryMeta(entry)];
   const versions = entry.otherVersions.filter((v) => v.url);
 
@@ -98,13 +80,13 @@ export function WritingEntry() {
   );
 
   return (
-    <article className="px-5 py-16 md:px-8 md:py-24">
-      <div className="mx-auto max-w-3xl">
-        <Link to="/writing" className="text-sm text-ink-soft hover:text-accent-deep">
+    <article className="px-5 py-16 md:px-8 md:py-24 print:p-0">
+      <div className="mx-auto max-w-3xl print:max-w-none">
+        <Link to="/writing" className="text-sm text-ink-soft hover:text-accent-deep print:hidden">
           ← Back to writing
         </Link>
 
-        <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
+        <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft print:hidden">
           {facts.map((item, i) => (
             <span key={item} className="flex items-center gap-3">
               {i > 0 && <span aria-hidden="true">·</span>}
@@ -113,11 +95,11 @@ export function WritingEntry() {
           ))}
         </p>
 
-        <h1 className="mt-2 font-display text-4xl font-medium leading-[1.15] text-ink md:text-[44px]">{entry.title}</h1>
-        <p className="mt-5 text-lg leading-relaxed text-ink-soft">{entry.summary}</p>
+        <h1 className="mt-2 font-display text-4xl font-medium leading-[1.15] text-ink md:text-[44px] print:mt-0 print:text-[22pt]!">{entry.title}</h1>
+        <p className="mt-5 text-lg leading-relaxed text-ink-soft print:hidden">{entry.summary}</p>
 
         {tagRows.length > 0 && (
-          <div className="mt-6 flex flex-col gap-2.5" role="group" aria-label="Tags">
+          <div className="mt-6 flex flex-col gap-2.5 print:hidden" role="group" aria-label="Tags">
             {tagRows.map((row) => (
               <div key={row.key} className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-3">
                 <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-ink-soft sm:w-40">
@@ -140,7 +122,7 @@ export function WritingEntry() {
           </div>
         )}
 
-        <div className="mt-6 flex flex-wrap gap-4 text-sm">
+        <div className="mt-6 flex flex-wrap gap-4 text-sm print:hidden">
           <a
             href={pdfHref}
             target="_blank"
@@ -158,24 +140,29 @@ export function WritingEntry() {
           </a>
         </div>
 
-        {isWide && (
-          <iframe
-            src={`${pdfHref}#view=FitH`}
-            title={`PDF of “${entry.title}”`}
-            className="mt-8 h-[70vh] min-h-[520px] w-full rounded-sm border border-blush bg-surface"
-          />
-        )}
-        <p className={`${isWide ? "mt-2.5" : "mt-5"} text-[13px] text-ink-soft`}>
+        <p className="mt-5 text-[13px] text-ink-soft print:mt-3 print:text-[10pt]!">
+          <span className="hidden print:inline">Renee Astraea · </span>
           Last edited: <time dateTime={entry.pdf.lastEdited}>{formatLastEdited(entry.pdf.lastEdited)}</time>
         </p>
 
+        {textHtml && (
+          <section
+            aria-label="Full text"
+            lang={LANGUAGE_CODES[entry.language]}
+            className="mt-10 border-t border-blush pt-10 print:mt-6 print:border-t-0 print:pt-0"
+          >
+            {/* Trusted: rendered at build time from our own Markdown files (src/lib/essay-text.js). */}
+            <div className="essay-prose" dangerouslySetInnerHTML={{ __html: textHtml }} />
+          </section>
+        )}
+
         {entry.googleDocUrl && (
-          <section aria-labelledby="online-document" className="mt-14">
+          <section aria-labelledby="online-document" className="mt-14 print:hidden">
             <h2 id="online-document" className="font-display text-[22px] font-medium text-ink">
               Online document
             </h2>
             <p className="mt-3 leading-relaxed text-ink-soft">
-              The online document below may be more up to date, and so more relevant, than the PDF above.
+              The online document below may be more up to date, and so more relevant, than the text on this page and the PDF.
             </p>
             <a
               href={entry.googleDocUrl}
@@ -189,7 +176,7 @@ export function WritingEntry() {
         )}
 
         {versions.length > 0 && (
-          <section aria-labelledby="other-versions" className="mt-14">
+          <section aria-labelledby="other-versions" className="mt-14 print:hidden">
             <h2 id="other-versions" className="font-display text-[22px] font-medium text-ink">
               Other versions
             </h2>
@@ -221,7 +208,7 @@ export function WritingEntry() {
         )}
 
         {entry.sources.length > 0 && (
-          <section aria-labelledby="key-sources" className="mt-12">
+          <section aria-labelledby="key-sources" className="mt-12 print:hidden">
             <h2 id="key-sources" className="font-display text-[22px] font-medium text-ink">
               Key sources
             </h2>
@@ -233,7 +220,11 @@ export function WritingEntry() {
           </section>
         )}
 
-        <p className="mt-12 text-sm leading-relaxed text-ink-soft">
+        <p className="hidden text-[9pt] leading-relaxed text-ink-soft print:mt-8 print:block">
+          {entry.rights.replace(/\.$/, "")}. Source and later versions: {pageUrl(`/writing/${entry.slug}`)}
+        </p>
+
+        <p className="mt-12 text-sm leading-relaxed text-ink-soft print:hidden">
           {entry.rights.replace(/\.$/, "")}. Responses and objections are welcome through{" "}
           <Link to="/contact" className="text-accent-deep hover:underline">
             Contact
@@ -244,7 +235,7 @@ export function WritingEntry() {
         {(previous || next) && (
           <nav
             aria-label={`More in ${SECTIONS[entry.section].label}`}
-            className="mt-10 flex justify-between gap-6 border-t border-blush pt-6 text-sm"
+            className="mt-10 flex justify-between gap-6 border-t border-blush pt-6 text-sm print:hidden"
           >
             {previous ? (
               <Link to={`/writing/${previous.slug}`} rel="prev" className="max-w-[46%] text-accent-deep hover:underline">

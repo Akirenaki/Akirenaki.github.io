@@ -19,7 +19,7 @@ export function meta() {
   return buildMeta({
     title: "Writing",
     description:
-      "Essays by Renee Astraea on philosophy of mind, Madhyamaka, evidence and science, and literature. Each piece has a summary and the full text as a PDF.",
+      "Essays by Renee Astraea on philosophy of mind, Madhyamaka, evidence and science, and literature. Each piece has a summary and the full text on the page, with a PDF to download.",
     path: "/writing",
   });
 }
@@ -94,8 +94,7 @@ export function Writing() {
       <div className="mx-auto max-w-5xl">
         <h1 className="font-display text-4xl font-medium text-ink">Writing</h1>
         <p className="mt-3 max-w-xl text-ink-soft">
-          Essays on evidence, minds and meaning. Each entry gives the argument in brief; open it for the full text as a
-          PDF.
+          Essays on evidence, minds and meaning. Each entry gives the argument in brief; open it for the full text.
         </p>
 
         {TREE.length > 0 && (

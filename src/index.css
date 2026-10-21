@@ -50,6 +50,120 @@
   }
 }
 
+/* Self-hosted Arabic face (Amiri, SIL Open Font License; licence text beside the
+   file). Used for the Arabic words in essays - see .essay-prose [lang="ar"]. It is
+   the Arabic subset only, and unicode-range means a page downloads it only when it
+   actually shows Arabic. Self-hosted rather than from Google Fonts so the PDFs made
+   at build time don't depend on whatever fonts the build machine has. */
+@font-face {
+  font-family: "Amiri";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/amiri-arabic-400-normal.woff2") format("woff2");
+  unicode-range: U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;
+}
+
+/* ---------------------------------------------------------------
+   Essay text (rendered from src/essays/*.md - see lib/essay-text.js).
+   Tailwind's typography plugin isn't installed, so the few elements
+   an essay can contain are styled here.
+   --------------------------------------------------------------- */
+@layer components {
+  .essay-prose {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-ink);
+  }
+  .essay-prose > * + * {
+    margin-top: 1.15em;
+  }
+  .essay-prose h2,
+  .essay-prose h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.3;
+    margin-top: 2.2em;
+  }
+  .essay-prose h2 {
+    font-size: 1.4rem;
+  }
+  .essay-prose h3 {
+    font-size: 1.15rem;
+  }
+  .essay-prose h2 + *,
+  .essay-prose h3 + * {
+    margin-top: 0.6em;
+  }
+  .essay-prose a {
+    color: var(--color-accent-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere; /* long DOI/URL lines must not push a phone sideways */
+  }
+  .essay-prose a:hover {
+    text-decoration-thickness: 2px;
+  }
+  .essay-prose strong {
+    font-weight: 600;
+  }
+  .essay-prose ol,
+  .essay-prose ul {
+    padding-left: 1.5em;
+  }
+  .essay-prose ol {
+    list-style: decimal;
+  }
+  .essay-prose ul {
+    list-style: disc;
+  }
+  .essay-prose li + li {
+    margin-top: 0.4em;
+  }
+  /* Arabic has no italics: keep it upright, on a right-to-left run, in a face
+     that carries the diacritics. System fonts only; add a web font later if wanted. */
+  .essay-prose [lang="ar"] {
+    font-style: normal;
+    unicode-bidi: isolate;
+    font-family: "Amiri", "Geeza Pro", "Noto Naskh Arabic", "Segoe UI", serif;
+    font-size: 1.15em;
+  }
+}
+
+/* Printing an essay (Ctrl+P, and scripts/build-pdfs.mjs, which prints the entry
+   page to make each essay's PDF). The site chrome and the extra sections are
+   hidden with print: classes in the components; this sets the text itself. */
+@media print {
+  .essay-prose {
+    font-family: var(--font-display);
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #000;
+  }
+  .essay-prose > * + * {
+    margin-top: 0.9em;
+  }
+  .essay-prose h2 {
+    font-size: 13pt;
+    margin-top: 1.8em;
+    break-after: avoid;
+  }
+  .essay-prose h3 {
+    font-size: 11.5pt;
+    break-after: avoid;
+  }
+  .essay-prose p {
+    orphans: 3;
+    widows: 3;
+  }
+  .essay-prose li {
+    break-inside: avoid;
+  }
+  .essay-prose a {
+    color: inherit;
+  }
+}
+
 /* Quiets clashing colour in project thumbnails - see ProjectMedia.jsx. */
 .thumb-tone {
   filter: saturate(0.75);

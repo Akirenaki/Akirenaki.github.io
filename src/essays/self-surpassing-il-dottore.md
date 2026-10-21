@@ -1,0 +1,23 @@
+# **Can the Pursuit of Power Constitute Self-Surpassing? A Nietzschean Reading of Il Dottore**
+
+In “Self-Surpassing”, Zarathustra treats the will to truth as a form of will to power: the knower wants the world to become intelligible and submit to their understanding (Nietzsche, 1999, Part II, ch. XXXIV). He describes life as continually surpassing itself, even turning against its own creations. Dottore’s pursuit of knowledge appears to change his relationship with identity and mortality, yet research remains his aim. So, does he change through that pursuit, or merely become more ruthless in serving it?
+
+Dottore tells the Traveler that once ethical frameworks are discarded, mutual benefit is the only bond between people (HoYoverse, 2026b). His unsentimental account of human nature also justifies his self-interest. Zarathustra suggests that even the will to truth shapes the world according to the knower’s will. Dottore rejects accepted values while treating his own view of human relationships as a plain fact. He questions conventional morality without examining the assumptions behind his own.
+
+Zandik created the Segments to preserve perspectives from different stages of his life (HoYoverse, 2022). Later, Dottore, the “most selfish segment”, agrees to erase them for the Electro Gnosis. He reasons, “if each Segment is equally him, none of them are truly me”, and admits that Nahida was right that he needed “an opportunity to eliminate myself” (HoYoverse, 2026a). This recalls Zarathustra’s claim that creators must eventually turn against what they create: “Whatever I create ... soon must I be adverse to it” (Nietzsche, 1999, Part II, ch. XXXIV). Dottore treats versions of himself as expendable, though the Gnosis may simply matter more to him. His choice reveals a shift in priorities, but does not prove that his understanding of himself has changed.
+
+Zarathustra also presents self-command as difficult, where whoever commands themselves must answer to their own law. Dottore claims he no longer gets angry at setbacks, comparing himself to a rich man who need not quarrel with the poor (HoYoverse, 2026b). This may indicate greater emotional control, but his analogy sounds like contempt for someone he considers beneath him. He may have learned to control his response, or he may have simply stopped taking the Traveler seriously.
+
+His final experiment complicates the picture. Dottore says he has abandoned fear and that the experimental process itself matters as much as its results (HoYoverse, 2026a). Yet he also says that limited time has made him cherish his time in the world, while Pantalone suspects he merely refuses to admit defeat. Dottore may value the time available for inquiry without valuing survival for its own sake. At the experiment’s end, he says he could have conducted more experiments but calls the outcome “certainly not the worst”. He appears able to accept an ending he cannot control, though he still judges it by the possibilities it offered.
+
+Dottore’s pursuit of power provides some evidence of self-surpassing. He questions his identity and appears more willing to accept the end of his experiment, but research still explains his choices. His story suggests that self-surpassing need not require abandoning an aim, while leaving unresolved whether that aim has changed him or absorbed even the prospect of failure.
+
+## **References**
+
+HoYoverse (2022) ‘Where the Boat of Consciousness Lies’, *Genshin Impact*, Version 3.2, Archon Quest, Chapter III, Act V \[Video game\]. Transcript available at: [https\://genshin-impact.fandom.com/wiki/Where\_the\_Boat\_of\_Consciousness\_Lies](https://genshin-impact.fandom.com/wiki/Where_the_Boat_of_Consciousness_Lies) (Accessed: 17 October 2026).
+
+HoYoverse (2026a) ‘Truth Amongst the Pages of Purana’, *Genshin Impact*, Version Luna VII \[Video game\]. Transcript available at: [https\://genshin-impact.fandom.com/wiki/Truth\_Amongst\_the\_Pages\_of\_Purana\_(Quest)](https://genshin-impact.fandom.com/wiki/Truth_Amongst_the_Pages_of_Purana_\(Quest\)) (Accessed: 19 October 2026).
+
+HoYoverse (2026b) ‘Where Our Space and Time Intersect’, *Genshin Impact*, Version Luna IV \[Video game\]. Transcript available at: [https\://genshin-impact.fandom.com/wiki/Where\_Our\_Space\_and\_Time\_Intersect](https://genshin-impact.fandom.com/wiki/Where_Our_Space_and_Time_Intersect) (Accessed: 17 October 2026).
+
+Nietzsche, F. (1999) *Thus Spake Zarathustra: A Book for All and None*. Translated by T. Common, revised by R. Tonsing. Project Gutenberg, eBook no. 1998\. Available at: [https\://www\.gutenberg.org/ebooks/1998](https://www.gutenberg.org/ebooks/1998) (Accessed: 19 October 2026). Original work published 1883–1885.

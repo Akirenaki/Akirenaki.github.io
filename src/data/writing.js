@@ -28,8 +28,15 @@
 //   tags         ids from writing-taxonomy.js, filed under the group keys defined
 //                there: { subject, topic, characterFictional, characterReal }.
 //                Shown on the entry page, deliberately not on the index.
-//   pdf          { path, lastEdited }. path lives under public/essays/ and is a
-//                site path; lastEdited is ISO 8601 with the +07:00 (WIB) offset.
+//   pdf          { path, lastEdited }. The downloadable copy. path is a site path
+//                under /essays/. For an essay with a Markdown file, scripts/build-pdfs.mjs
+//                generates that PDF at build time (nothing to commit); an entry with no
+//                Markdown file needs its PDF committed under public/essays/. lastEdited
+//                is ISO 8601 with the +07:00 (WIB) offset and is the "Last edited" stamp.
+//
+// The full text is not a field here: it is src/essays/<slug>.md, a Markdown
+// export of the Google Doc, rendered on the entry page (see lib/essay-text.js).
+// wordCount is checked against that file by scripts/check-essays.mjs.
 //   otherVersions  [{ label, language, url, embedUrl?, note }]. Versions not shown
 //                above (translations, alternative drafts). A version without a
 //                `url` is not rendered, so a missing link never shows as a dead
@@ -118,11 +125,11 @@ export const writing = [
   },
   {
     slug: "quran-barrier-between-two-seas",
-    title: "Analysing Scientific Miracles in the Quran: A Barrier Between Two Seas",
+    title: "Analysing Scientific Miracles in the Qur’an: A Barrier Between Two Seas",
     section: "academic",
     status: "finished",
     featured: false,
-    wordCount: 2369,
+    wordCount: 2363,
     language: "English",
     summary:
       "Fresh and salt water really can stratify, but a real phenomenon is not a prediction. This essay asks whether the “two seas” verses (Qur’an 55:19–20 and 25:53) are specific and non-obvious enough to count as scientific foreknowledge, and finds that the modern reading supplies most of the detail itself. It tests the claim against what ancient observers could see for themselves, against classical exegesis such as Ibn Kathir’s geographical reading of the separation, and against the meaning of barzakh, which is far broader than “halocline”. It concludes that the verses can reasonably be read as theological description of the natural world that is compatible with oceanography without predicting it.",
