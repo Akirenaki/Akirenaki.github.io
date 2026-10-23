@@ -72,6 +72,9 @@ export function Home() {
             <h1 className="mt-1 font-display text-5xl font-medium leading-[1.05] text-ink md:text-6xl">
               {profile.preferredNameHome}
             </h1>
+            {profile.pronouns && (
+              <p className="mt-1.5 font-body text-sm tracking-wide text-ink-soft">{profile.pronouns}</p>
+            )}
             <p className="mt-5 text-lg text-ink-soft">{profile.roleSummary}</p>
             <p className="mt-6 font-display text-xl italic text-accent-deep">"{profile.tagline}"</p>
 

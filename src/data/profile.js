@@ -17,6 +17,10 @@ export const profile = {
   nameLegal: "Legal Name: Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
   namePreferred: "Renee Astraea",
 
+  // Shown on Home, About and the printable CV. One value, so the three
+  // pages cannot drift apart. Delete this line to remove it everywhere.
+  pronouns: "she/her",
+
   tagline: "Faith offers no refuge to those lost in ignorance",
   roleSummary: "Aspiring Astrophysicist | Beginner Web Developer | Human Rights Activist",
 

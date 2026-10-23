@@ -40,6 +40,7 @@ export function About() {
 
         <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1 text-sm text-ink-soft">
           <span>{profile.location}</span>
+          {profile.pronouns && <span>Pronouns: {profile.pronouns}</span>}
           <span className="flex gap-3">
             {profile.languages.map((l) => (
               <span key={l.name}>
