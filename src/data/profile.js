@@ -19,7 +19,7 @@ export const profile = {
 
   // Shown on Home, About and the printable CV. One value, so the three
   // pages cannot drift apart. Delete this line to remove it everywhere.
-  pronouns: "she/they",
+  pronouns: "she/they/he",
 
   tagline: "Faith offers no refuge to those lost in ignorance",
   roleSummary: "Aspiring Astrophysicist | Independent Web Developer | Human Rights Activist",
