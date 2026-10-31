@@ -1,168 +1,304 @@
-# Portfolio — Renee Astraea
+# Renee Astraea — Portfolio
 
-A static portfolio built with React 19, React Router 7, Tailwind CSS 4, and Framer Motion. Features Home, Work (with per-project case-study pages), Writing (essays, each with its own page and PDF), About & Credentials, Contact, and a printable CV page (`/print`).
+This repository contains the personal portfolio and online CV of Renee
+Astraea, legally known as Raden Bagus Narendra Tsaqiif Aryasuta Maldini,an aspiring astrophysicist, independent web developer, and human
+rights activist. The site presents research-oriented software projects,
+technical case studies, essays, credentials, contact links, and a
+print-friendly CV.
 
-## Running it locally
+The application is a statically generated React site. There is no runtime
+server or database: content is stored in source files under `src/data/`,
+Markdown essays live in `src/essays/`, and the build produces deployable HTML
+files and assets under `build/client/`.
+
+## Table of contents
+
+1. [Short description](#i-short-description)
+2. [Tech stack](#ii-tech-stack)
+3. [Pages and features](#iii-pages-and-features)
+   - [Home — `/`](#a-home---)
+   - [About — `/about`](#b-about---about)
+   - [Work — `/work`](#c-work---work)
+   - [Writing — `/writing`](#d-writing---writing)
+   - [Contact — `/contact`](#e-contact---contact)
+   - [Print CV — `/print`](#f-print-cv---print)
+4. [How to run and what to understand](#iv-how-to-run-and-what-to-understand)
+   - [Local commands](#local-commands)
+   - [Content workflow](#content-workflow)
+   - [Build and deployment pipelines](#build-and-deployment-pipelines)
+   - [Project structure](#project-structure)
+5. [Legal notes](#v-legal-notes)
+
+## I. Short description
+
+The portfolio is designed as both a public introduction and a maintainable
+content system:
+
+- The home page introduces the person and highlights selected work and
+  writing.
+- Work pages explain projects through searchable/filterable cards and
+  detailed case studies.
+- Writing pages provide summaries, taxonomy filters, full essay text, and PDF
+  versions.
+- The About page collects biography and credentials in one long-form view.
+- Contact provides social links and a Formspree-backed message form.
+- The print page turns the same profile and project data into a printable CV
+  or a browser-generated PDF.
+
+## II. Tech stack
+
+### Application
+
+- **React 19** and **React DOM 19** for the UI.
+- **React Router 8 framework mode** for route definitions, static
+  prerendering, and dynamic project/essay routes.
+- **Vite 8** as the build tool.
+- **Tailwind CSS 4** for styling, with global rules in
+  [`src/index.css`](src/index.css).
+- **Framer Motion** for the small amount of motion used on the home hero.
+- **Marked** for converting trusted, repository-owned Markdown essays into
+  HTML at build time.
+- **Oxlint** for linting.
+
+### Build and media tooling
+
+- **Sharp** resizes source images and creates WebP/JPEG (or transparent
+  PNG/WebP) output pairs.
+- **Playwright Chromium** prints prerendered essay pages to tagged A4 PDFs.
+- **GitHub Actions** builds and deploys the static output to GitHub Pages.
+
+The project intentionally uses static generation (`ssr: false`). The
+production site is a collection of HTML files, not a Node server that must
+run after deployment.
+
+## III. Pages and features
+
+### A. Home — `/`
+
+The landing page combines the primary introduction with quick paths into the
+rest of the site:
+
+1. A hero section shows the preferred/legal name presentation, pronouns,
+   role summary, tagline, portrait, and a short profile summary.
+2. Calls to action link to the project catalogue and contact page.
+3. A “Working across” strip summarizes the core domains from
+   [`src/data/profile.js`](src/data/profile.js).
+4. Featured projects are selected from `src/data/projects.js`. A priority
+   project receives the large card treatment.
+5. Featured writing appears when at least one writing entry has
+   `featured: true`.
+6. The **Print CV** action opens `/print?auto=1` in a new tab. The print page
+   then waits for fonts and invokes the browser print dialog.
+
+The hero animation respects `prefers-reduced-motion`.
+
+### B. About — `/about`
+
+About is the long-form biography and credentials page. It reads from the
+profile, experience, awards, and technical-stack data modules rather than
+duplicating those values in JSX.
+
+The page contains:
+
+1. Biography, location, pronouns, and language proficiency.
+2. A jump navigation for the long page.
+3. Technical stack split into frequently used tools and other experience.
+4. Certifications, with optional credential links and images.
+5. Education entries, including descriptions and supporting bullets.
+6. Test scores, work/leadership experience, awards, and recognition.
+
+Update the corresponding files in `src/data/` when credentials change. The
+page also publishes descriptive metadata during prerendering.
+
+### C. Work — `/work`
+
+Work is the project catalogue for software, astronomy, statistics, and
+hardware/engineering projects.
+
+1. Each project is defined once in
+   [`src/data/projects.js`](src/data/projects.js).
+2. A project has a unique `slug`; its card and case study are available at
+   `/work/<slug>` without adding a route manually.
+3. The visible **Scale** filter distinguishes Flagship, Standard, and Mini
+   projects.
+4. Supporting filters cover domain, type, framework, language, live demo, and
+   repository availability.
+5. Options within one filter group use OR logic; different groups use AND
+   logic. Active filters appear as removable chips.
+6. Cards can expose repository, live demo, presentation, and document links.
+7. Case studies describe the problem, approach, and impact. Optional
+   `cv.problem`, `cv.approach`, and `cv.impact` values provide concise lines
+   for the printable CV.
+
+The prerender list reads project slugs from the same data file, so adding a
+project does not require maintaining a second route list.
+
+### D. Writing — `/writing`
+
+Writing is an essay catalogue organized into **Academic writing** and
+**Creative writing**. It supports both discovery and reading:
+
+1. Entries are defined in
+   [`src/data/writing.js`](src/data/writing.js), with full text in
+   `src/essays/<slug>.md`.
+2. Each entry has its own prerendered page at `/writing/<slug>`.
+3. The list can be filtered by subject, topic, and thinker/character tags.
+   Tags within one facet use OR logic, while facets use AND logic.
+4. Filter state is kept in the URL, so a filtered view can be shared.
+5. An entry page shows its summary, metadata, taxonomy links, full text, last
+   edited time, and Open/Download PDF controls.
+6. Optional Google Docs links expose an “Online document” section when a
+   potentially newer version exists.
+7. Optional alternative versions and published embeds can be listed from the
+   entry data.
+8. On sufficiently wide screens, the PDF is embedded in the page; mobile
+   visitors are not forced to fetch the embedded document.
+
+The PDF conversion pipeline prints the same prerendered essay page with
+Chromium, including print styles, headings, references, source information,
+page numbers, accessibility tagging, and bookmarks. In CI, a PDF failure
+fails the build so a deployment cannot silently publish incomplete essay
+downloads.
+
+### E. Contact — `/contact`
+
+Contact provides several ways to connect and repeats the CV entry point:
+
+1. Social links are rendered from the contact data in `profile.js`.
+2. The form collects name, email, and message.
+3. Form submissions are sent as JSON to Formspree; no application server or
+   email credentials are stored in this repository.
+4. The UI shows sending, success, and error states and allows a successful
+   visitor to send another message.
+5. The page includes the same **Print CV** control used on the home page.
+
+The Formspree form ID is configured in `src/pages/Contact.jsx`. If the
+endpoint changes, update it there and test both success and failure states.
+
+### F. Print CV — `/print`
+
+`/print` is a standalone document view intentionally outside the normal
+navigation/footer layout so that it prints cleanly.
+
+It composes the CV from the same source data used elsewhere:
+
+- profile summary and contact details;
+- education and test scores;
+- technical skills, experience, awards, and certifications;
+- selected projects with compact Problem/Approach/Impact lines;
+- selected writing and other relevant portfolio information.
+
+The page is styled for A4 output and hides browser-only notices and controls
+when printing. Visitors can click **Print / Save as PDF**, choose a printer,
+or choose “Save as PDF”. Links from Home and Contact open it in a new tab;
+`?auto=1` triggers the print dialog after web fonts are ready. The page has a
+`noindex` meta tag because it repeats personal contact and CV information.
+
+## IV. How to run and what to understand
+
+### Local commands
+
+Use Node.js 22 (the deployment workflow uses Node 22), then install the
+locked dependencies:
 
 ```bash
-npm install
-npm run dev       # dev server with hot reload (automatically processes new images)
-npm run build     # production build -> build/client/, every route prerendered to a real HTML file
-npm run preview   # serve the production build locally, to sanity-check it
-npm run images    # run image optimization pipeline manually
+npm ci
+npm run dev       # development server with hot reload
+npm run lint      # Oxlint
+npm run build     # production build, sitemap/checks, and essay PDFs
+npm run preview   # preview build/client/
+npm run images    # run the image pipeline directly
+npm run sitemap   # regenerate public/sitemap.xml
+npm run essays    # check essay files and word counts
+npm run pdfs      # generate PDFs after a production build
 ```
 
-## Editing content
+`npm run build` runs the `prebuild` hook first. PDF generation needs a
+Playwright Chromium installation:
 
-Nothing in this repo needs code changes for routine content updates — it's all in `src/data/`:
+```bash
+npx playwright install chromium
+```
 
-| File | What it controls |
-|---|---|
-| `src/data/profile.js` | Names, tagline, bio, contact links, languages, education (a list: current programme first, then completed courses) |
-| `src/data/projects.js` | Every project card + its case-study page |
-| `src/data/writing.js` | Every piece on `/writing`, its page and its place in the sitemap |
-| `src/data/writing-taxonomy.js` | The tags (subject, topic, character) and the filter built from them |
-| `src/data/experience.js` | Experience entries on the About page |
-| `src/data/awards.js` | Awards, certifications, test scores (SAT, IELTS), and technical-stack lists |
+The deployment workflow installs Chromium with system dependencies.
 
-To add a new project: add an object to the array in `projects.js` with a unique `slug` — a case study page at `/work/<slug>` is generated automatically, with no routing code to touch (it's picked up by `react-router.config.js`'s `prerender()` list at build time).
+### Content workflow
 
-### Filters and scale on `/work`
+Routine content changes should normally touch only `src/data/`:
 
-The Work page keeps the primary Scale filter visible and places the supporting filters behind a single **Filters** control. Options inside a group combine with OR, groups combine with AND, and each option shows how many projects it would leave. Active choices remain visible as removable chips below the toolbar.
+| File | Content |
+| --- | --- |
+| `src/data/profile.js` | Names, bio, contact links, languages, and education |
+| `src/data/projects.js` | Project cards, filters, case studies, links, and CV summaries |
+| `src/data/writing.js` | Essay metadata, ordering, PDFs, featured flags, and related versions |
+| `src/data/writing-taxonomy.js` | Writing facets and tag definitions |
+| `src/data/experience.js` | Experience and leadership entries |
+| `src/data/awards.js` | Awards, certifications, scores, and technical-stack lists |
+| `src/essays/` | Markdown source for essays with generated text/PDF output |
 
-- **Primary filter (always visible):** Scale.
-- **Supporting filters (behind "Filters"):** Domain, Type, Framework, Language, Live, Repo.
+For a new project, add a unique slug and its data object. For a new essay,
+add the Markdown file, metadata object, taxonomy IDs, and a PDF path. The
+essay checker warns about missing Markdown/PDF files and mismatched word
+counts; malformed writing metadata and unknown tags are rejected by the
+build-time validation used by the application.
 
-Each project in `projects.js` carries:
+### Build and deployment pipelines
 
-- `scale`: `"flagship"`, `"standard"` or `"mini"`. Flagship is a long-running, complex project; Standard is a focused project with a clear goal; Mini is a short build made to test and prove a skill. The scale shows as a badge on the card and case study, and minis get a shorter banner. Keep mini case studies short on purpose. The wording for each scale lives in `SCALES` at the top of `projects.js`.
-- `filters: { domain, type, framework, language }`: lists of strings. A project can have several domains or types. The filter options are built from whatever values appear, so spell them the same way everywhere (`"Next.js"`, not `"NextJS"`). Leave a list empty when it doesn't apply, for example a hardware prototype has no language.
-- Optional `highlight` (one line of recognition on the card, such as a finalist result) and `scaleNote` (one line on the case-study page about why the project is that size).
-- `caseStudy`: the write-up on `/work/<slug>`, as `{ heading, text }` blocks. Aim for the problem, what was done about it, and the difference it makes or could make, in that order. Headings must be unique within a project.
-- `cv`: `{ problem, approach, impact }`, the same three answers compressed for the printable CV at `/print`, which shows them as three labelled lines for flagship and standard projects. A project without `cv` falls back to its `summary`. Keep personal details out of it, since the CV is a document people forward.
+1. **Image pipeline:** `assets-src/` stores high-resolution originals.
+   `scripts/build-images.mjs` uses Sharp to resize them into
+   `public/assets/` and creates WebP plus browser fallback formats. The logo
+   is converted from a white background to transparency, and favicons are
+   derived from it.
+2. **Route prerendering:** `react-router.config.js` lists the static pages
+   and derives project/essay detail paths from their data arrays.
+3. **Sitemap:** `scripts/build-sitemap.mjs` uses the same route sources to
+   write `public/sitemap.xml`. `/print` is intentionally excluded because it
+   is `noindex`.
+4. **Essay checks:** `scripts/check-essays.mjs` checks Markdown presence,
+   committed fallback PDFs, and recorded word counts.
+5. **Essay PDF generation:** `scripts/build-pdfs.mjs` starts a temporary local
+   server over `build/client/`, opens each essay with JavaScript disabled, and
+   prints the resulting page to `build/client/essays/<slug>.pdf`.
+6. **Deployment:** `.github/workflows/deploy.yml` runs on pushes to `main` or
+   manual dispatch, installs dependencies and Chromium, runs the build, uploads
+   `build/client/` as a Pages artifact, and deploys it to
+   `https://akirenaki.github.io/`.
 
-Live and Repo are not stored. A project counts as Live when `links.demo` is set and as having a Repo when `links.repo` is set, so adding the link is enough.
+The site is a GitHub Pages **User Site**, so the base path is `/`. Keep the
+base/basename values in `vite.config.js`, `react-router.config.js`, and
+`src/lib/seo.js` consistent if the deployment domain changes.
 
-Each project's `links` object has four slots: `repo`, `demo`, `presentation` (a slide deck) and `document` (a written report or paper). Fill in an https URL and the matching button (Repository, Live demo, Presentation, Document) appears on the card and the case study; leave it `null` and nothing is shown. Presentation and Document are not filters on `/work`. Projects are shown in the order of the array, so keep flagships first and minis last.
-
-## Writing
-
-`/writing` lists the essays in two sections, **Academic writing** and **Creative writing** (a section with no entries is not shown), with a tag filter. `/writing/<slug>` is one page per piece. Like projects, everything comes from one data file: an entry in `src/data/writing.js` is routed, prerendered and added to the sitemap with no other code to touch (`react-router.config.js` and `scripts/build-sitemap.mjs` both read it).
-
-All site text is English, including titles, summaries, tags and labels, even when the full text of a piece is in another language. `language` records the language of the full text; the documents themselves are never edited by the site.
-
-Each entry can also carry `googleDocUrl`, a link to the piece as a Google Doc. When it is set, the entry page shows an **Online document** section under the PDF, with a line saying the online copy may be more up to date and so more relevant, and an "Open in Google Docs" button. When it is `null` the section is not rendered. The build stops if the value is not an `https://docs.google.com/` (or `drive.google.com`) link.
-
-To add a piece:
-
-1. Export the PDF to `public/essays/<slug>.pdf` (not `public/assets/`).
-2. Add an object to `writing` in `src/data/writing.js`. The field-by-field notes are at the top of that file. `wordCount` is the body including headings, excluding the title, the reference list and URLs. `pdf.lastEdited` is an ISO 8601 stamp with the `+07:00` offset and is shown as, for example, "17 October 2026, 14:30 WIB".
-3. Use tags by id. New tags (and whole new facets) are added in `src/data/writing-taxonomy.js` only. Terms with a useful original-language form carry `original` and `originalLang`; Sanskrit uses IAST.
-
-Pieces are shown in the order of the array within their section, as projects are. `featured: true` also lists a piece under "Featured writing" on Home, ordered like featured work (a `priority` entry takes the large first slot). Nothing appears on Home until at least one entry is featured.
-
-The build stops with a plain message if an entry uses an unknown tag, files a tag under the wrong group, repeats a slug or has a malformed timestamp. It only *warns* (`npm run essays`) when an entry's PDF is not yet in `public/essays/`, because the Open and Download buttons would 404 until it is.
-
-On `/writing`, tags within one facet combine with OR and facets combine with AND. The selection lives in the URL (`/writing?subject=philosophy&topic=gender`), so filtered views can be linked; the prerendered page is always the unfiltered list. On an entry page the PDF embed is mounted only on wide screens (1024px and up), so phones never fetch it; "Other versions" lists translations or alternative drafts by Google Docs link, and embeds the live text when an `embedUrl` ("Publish to web") is given.
-
-## Adding and Uploading Media
-
-All raw, full-resolution image assets belong in `assets-src/`. The project uses an automated build-time image pipeline ([scripts/build-images.mjs](scripts/build-images.mjs) powered by `sharp`) to resize assets to display targets and generate dual `.webp` (primary) and `.jpg` (fallback) outputs in `public/assets/`.
-
-### How to Upload/Add Images Yourself:
-
-1. **Add your original high-res image (`.jpg` or `.png`) into `assets-src/`**:
-   - **Case Study Hero Banner:** `assets-src/projects/<slug>-hero.jpg` (e.g., `assets-src/projects/astronomical-multi-catalog-identifier-matcher-hero.jpg`)
-   - **Project Card Thumbnail:** `assets-src/projects/<slug>.jpg` (e.g., `assets-src/projects/astronomical-multi-catalog-identifier-matcher.jpg`)
-   - **Hero Portrait:** `assets-src/portrait.jpg`
-   - **Navbar Logo:** `assets-src/logo.png` (white background is made transparent automatically)
-   - **Social Share Card:** `assets-src/og-image.jpg`
-   - **Credentials / Certificates:** `assets-src/credentials/<category>-<name>.jpg` (e.g. `education-*`, `experience-*`, `award-*`, `certification-*`)
-
-   *(Make sure `<slug>` matches the `slug` key in `src/data/projects.js`)*
-
-2. **Process the images**:
-   - Run `npm run images` in your terminal to process immediately.
-   - Or simply run `npm run dev` or `npm run build` — pre-build hooks automatically run `npm run images` whenever source images are missing or updated.
-
-3. **Automatic Fallbacks**:
-   - Until a real image is placed in `assets-src/`, the site renders a styled, labeled placeholder box without breaking layout.
-
-## Deploying to GitHub Pages
-
-This repo includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that builds and deploys on every push to `main`. One-time setup after pushing to a new GitHub repo:
-
-1. On GitHub: **Settings → Pages → Source**, select **GitHub Actions**.
-2. Push to `main` (or run the workflow manually from the **Actions** tab).
-3. Site is live at `https://akirenaki.github.io/` within a minute or two.
-
-This repo deploys as a GitHub Pages **User Site** — the repo itself is named `akirenaki.github.io`, so it serves from the domain root rather than a `/<repo-name>/` subpath. That's not just a style choice: `@react-router/dev`'s `ssr:false` prerenderer has an open upstream bug (`remix-run/react-router#14587`) where a non-root `basename` combined with `prerender` breaks the build outright, confirmed by testing it directly against this project. Deploying at the root sidesteps it. `vite.config.js`'s `base` and `react-router.config.js`'s `basename` both reflect this (`/`), as does `SITE_BASE` in `src/lib/seo.js` — if any of the three ever needs to change (e.g. moving to a custom domain), update all three together.
-
-Every route is a real static file after `npm run build` (`build/client/work/index.html`, `build/client/work/<slug>/index.html`, etc.) — there's no client-side-only routing fallback to configure, and no `404.html` redirect trick, because GitHub Pages always has a matching file to serve.
-
-## Stack
-
-React 19 · React Router 8 (framework mode / SSG, prerendered at build time) · Tailwind CSS 4 · Framer Motion · Sharp · Vite 8
-
-## Application Structure
+### Project structure
 
 ```text
 src/
-   root.jsx                        Root layout - <html>/<head> shell, site-wide meta, Person JSON-LD
-   routes.js                       Route table (framework mode - replaces JSX <Routes>/<Route>)
-   index.css                       Global CSS styles & Tailwind configuration
-   lib/
-      seo.js                        buildMeta() helper - each page's `meta` export builds on this
-   components/                     Reusable UI components
-      ConstellationField.jsx        Interactive canvas constellation background animation
-      Footer.jsx                    Global site footer
-      Layout.jsx                    Page layout shell (Nav + Canvas + Page Content + Footer)
-      Nav.jsx                       Top navigation bar with routes and status indicators
-      PlaceholderMedia.jsx          Image & video renderer with WebP fallbacks and placeholders
-      PrintCVButton.jsx             Interactive button for triggering window print / CV export
-      ProjectCard.jsx               Card component for project grid items
-      ProjectMedia.jsx              Media resolver helper for project thumbnails & hero banners
-      TechStack.jsx                 Categorized skill tags and tech stack badge lists
-   data/                           Content data sources (edit here for content updates)
-      awards.js                     Certifications, awards, and technical skill lists
-      experience.js                 Work and leadership experience entries
-      profile.js                    Personal metadata, bio, contact links, and education
-      projects.js                   Project card catalog and detailed case-study content
-   pages/                          Top-level page views - each exports its own `meta` function
-      About.jsx                     About page (bio, skills, education, test scores, experience, awards)
-      Contact.jsx                   Contact page with direct messaging links
-      Home.jsx                      Landing page (hero header, featured projects, quick bio)
-      PrintCV.jsx                   Standalone printable CV layout
-      ProjectCaseStudy.jsx          Detailed per-project case study viewer (/work/:slug)
-      Work.jsx                      Full portfolio projects showcase grid
-   utils/                          Utility functions
-      browserDetect.js              Browser & device feature detection helpers
-
-assets-src/                        Raw, high-resolution source images (git-tracked)
-   credentials/                    Original certificate & credential images
-   projects/                       Original project thumbnails & hero banners
-   portrait.jpg                    Original hero portrait image
-
-public/                            Static assets served directly by Vite
-   assets/                         Web-ready optimized images (generated automatically by Sharp)
-      credentials/                  Resized .jpg & .webp credential image pairs
-      projects/                     Resized .jpg & .webp project image pairs
-      favicon-48.png, apple-touch-icon.png   Tab and home-screen icons, generated from assets-src/logo.png
-      README.md                     Notes on build pipeline output
-
-scripts/                           Build tools & automated pipelines
-   build-images.mjs                Sharp-based image optimization & WebP conversion pipeline
-
-.github/
-   workflows/
-      deploy.yml                   GitHub Actions workflow for automated build & deployment
-
-react-router.config.js             Framework-mode build config - basename, ssr:false, prerender() paths
-package.json                       Node dependencies and script definitions
-package-lock.json                  Locked Node dependency versions
-vite.config.js                     Vite bundler configuration (root base path)
-.oxlintrc.json                     Oxlint linter configuration
-.gitignore                         Git ignore rules
-README.md                          Project documentation and operating notes
+  components/       Shared layout, navigation, cards, media, and CV controls
+  data/             Single-source content modules
+  essays/           Markdown essay sources
+  lib/              SEO, essay rendering, filtering, and shared helpers
+  pages/            Route-level page components
+  routes.js         React Router route table
+  root.jsx          Document shell and site-wide metadata
+  index.css         Tailwind and global styles
+assets-src/         Original images, not deployed directly
+public/             Static files and generated web assets
+scripts/             Image, sitemap, essay-check, and PDF build tools
+.github/workflows/  GitHub Pages deployment workflow
 ```
+
+## V. Legal notes
+
+- This repository does not currently include a `LICENSE` file. Do not assume
+  that the source code, writing, photography, credentials, or personal
+  information may be reused without permission.
+- Essay text, profile information, project descriptions, and visual assets are
+  personal or third-party material. Confirm ownership and attribution before
+  copying or redistributing them.
+- External links (including Formspree, Google Docs, social networks, project
+  demos, and repositories) are third-party services. Their availability,
+  privacy practices, and terms are outside this repository.
+- The contact form sends submitted information to Formspree for processing.
+  Avoid submitting sensitive information through it.
+- Generated files in `public/assets/`, `public/sitemap.xml`, and
+  `build/client/` are build products. Edit their source data or scripts rather
+  than hand-editing generated output.
