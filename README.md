@@ -22,6 +22,7 @@ files and assets under `build/client/`.
    - [Writing — `/writing`](#d-writing---writing)
    - [Contact — `/contact`](#e-contact---contact)
    - [Print CV — `/print`](#f-print-cv---print)
+   - [Heimarmene, the floating guide](#g-heimarmene-the-floating-guide)
 4. [How to run and what to understand](#iv-how-to-run-and-what-to-understand)
    - [Local commands](#local-commands)
    - [Content workflow](#content-workflow)
@@ -194,6 +195,53 @@ or choose “Save as PDF”. Links from Home and Contact open it in a new tab;
 `?auto=1` triggers the print dialog after web fonts are ready. The page has a
 `noindex` meta tag because it repeats personal contact and CV information.
 
+### G. Heimarmene, the floating guide
+
+Heimarmene is a small draggable companion that appears on every page inside the
+normal layout (so not on `/print`). It is an interactive FAQ, not a chatbot:
+nothing is generated, nothing is sent anywhere, and there is no server.
+
+- **Questions tab.** About a dozen pre-written questions in four groups
+  (About, Projects, Writing, Contact). Picking one shows the answer, links to
+  the relevant page, and up to three related follow-up questions.
+- **Settings tab.** Size (small, medium, large), rotation (automatic, 3D,
+  flat), reset position, and hide.
+- **Hiding.** Hiding Heimarmene (from Settings or the small × on the mascot) is
+  remembered on the visitor's device. While hidden, a small button with the
+  mascot appears in the footer, beside the email, GitHub and LinkedIn links;
+  clicking it brings Heimarmene back.
+- **Moving it.** Drag the mascot, or focus it and use the arrow keys (Shift for
+  bigger steps). The position is stored as a fraction of the screen, so
+  resizing or rotating a phone never leaves it off-screen. On screens under
+  640px wide the panel opens as a bottom sheet.
+- **Panel sizing.** Drag any panel edge or corner to resize it from the
+  corresponding direction. On narrow screens, the bottom sheet can be resized
+  vertically. The chosen dimensions are remembered on that device, while the
+  panel continues to follow Heimarmene when the mascot is moved.
+- **Motion.** The lattice is rotated in 3D by a small `requestAnimationFrame`
+  loop. In *automatic* rotation, if the frame rate stays below about 28 fps for
+  two consecutive windows, it drops to a flat CSS-only spin for the rest of the
+  tab session. `prefers-reduced-motion` shows one still frame.
+- **Editing the questions.** All questions and answers live in
+  `src/data/companion.js`. Most answers are built from `profile.js`,
+  `projects.js`, `writing.js` and `awards.js`, so figures and titles follow the
+  rest of the site. Add a question by adding an object to
+  `COMPANION_QUESTIONS` with an `id`, `group`, `question`, up to three `related`
+  ids, and an `answer()` that returns `{ text, links }`. The text is plain; a
+  link is `{ label, to }` for a page on this site or `{ label, href }` for an
+  external address.
+- **Colours.** The mascot is the Project Cherenkov Neutrino with its colours
+  inverted (pink core and lattice, blue shock ring). Its `--mf-*` tokens at the
+  end of `src/index.css` are derived from the site palette.
+- **Privacy.** Only four things are stored in the visitor's browser
+  (`heimarmene-prefs-v1` for size, rotation and hidden/shown, `heimarmene-position-v1`
+  for the position, `heimarmene-panel-size-v1` for the panel dimensions, and
+  `heimarmene-3d-slow-v1` in session storage for the slow-device fallback).
+  Nothing leaves the device.
+- **Printing and static output.** Heimarmene renders nothing until the page has
+  loaded in the browser, so the prerendered HTML is identical for everyone, and
+  it is hidden in print so it never appears in the essay PDFs made at build time.
+
 ## IV. How to run and what to understand
 
 ### Local commands
@@ -273,9 +321,11 @@ base/basename values in `vite.config.js`, `react-router.config.js`, and
 ```text
 src/
   components/       Shared layout, navigation, cards, media, and CV controls
+    companion/      Heimarmene: mascot, floating panel, settings hook, footer button
   data/             Single-source content modules
   essays/           Markdown essay sources
-  lib/              SEO, essay rendering, filtering, and shared helpers
+  lib/              SEO, essay rendering, filtering, shared helpers, and
+                    Heimarmene's geometry, position and settings modules
   pages/            Route-level page components
   routes.js         React Router route table
   root.jsx          Document shell and site-wide metadata

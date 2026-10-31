@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { Nav } from "./Nav";
 import { Footer } from "./Footer";
 import { ConstellationField } from "./ConstellationField";
+import { HeimarmeneCompanion } from "./companion/HeimarmeneCompanion";
 
 export function Layout() {
   return (
@@ -16,6 +17,7 @@ export function Layout() {
         </main>
         <Footer />
       </div>
+      <HeimarmeneCompanion />
     </div>
   );
 }

@@ -180,3 +180,155 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------------------------
+   Heimarmene - the floating guide (src/components/companion/).
+   The mascot is the Project Cherenkov Neutrino with its colours inverted:
+   there a blue spark and blue lattice sat inside a pink ring; here the spark
+   and lattice are pink and the shock ring is blue. Every colour comes from
+   the site palette above, so changing the palette changes Heimarmene too. The
+   hex fallbacks matter: Tailwind only writes out the theme colours a class
+   actually uses, and --color-blue is not used by any class.
+   Heimarmene sits on its own dark plate (ink), so the colours are soft and
+   nothing flashes. Measured on the plate: lattice edges ~9:1, nodes ~13:1,
+   pink core ~4.5:1, blue ring ~4:1 (WCAG 1.4.11 asks for 3:1); the plate
+   itself is ~15:1 against the page. Fastest motion is a <1 Hz node shimmer.
+   --------------------------------------------------------------- */
+:root {
+  --mf-plate-a: color-mix(in oklab, var(--color-ink, #221D2E) 84%, var(--color-accent, #D8579C));
+  --mf-plate-b: var(--color-ink, #221D2E);
+  --mf-rim: var(--color-accent, #D8579C);
+  --mf-core: var(--color-accent, #D8579C);
+  --mf-core-hi: color-mix(in oklab, var(--color-blush, #EEBCDC) 70%, var(--color-paper, #FAF3F7));
+  --mf-edge: color-mix(in oklab, var(--color-blush, #EEBCDC) 78%, var(--color-accent, #D8579C));
+  --mf-node: color-mix(in oklab, var(--color-blush, #EEBCDC) 40%, var(--color-paper, #FAF3F7));
+  --mf-accent: var(--color-accent, #D8579C); /* outer glow of the halo */
+  --mf-ring: var(--color-blue, #5F7AC5);
+  --mf-ring-hi: color-mix(in oklab, var(--color-blue, #5F7AC5) 55%, var(--color-paper, #FAF3F7));
+}
+
+.mf-root {
+  display: block;
+}
+
+.mf-float {
+  animation: mf-float 6s ease-in-out infinite;
+}
+.mf-root[data-mood="thinking"] .mf-float {
+  animation-duration: 3s;
+}
+@keyframes mf-float {
+  0%, 100% { transform: translateY(1.6px); }
+  50% { transform: translateY(-2px); }
+}
+
+.mf-halo,
+.mf-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mf-pulse 5s ease-in-out infinite;
+}
+.mf-root[data-mood="thinking"] .mf-halo,
+.mf-root[data-mood="thinking"] .mf-core {
+  animation-duration: 1.8s;
+}
+@keyframes mf-pulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.82; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+/* A highlight travelling around the shock boundary. */
+.mf-comet {
+  animation: mf-orbit 9s linear infinite;
+}
+.mf-root[data-mood="thinking"] .mf-comet {
+  animation-duration: 2.2s;
+}
+@keyframes mf-orbit {
+  to { stroke-dashoffset: -100; }
+}
+
+/* Streaming trails: only visible while thinking. */
+.mf-trails {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.mf-root[data-mood="thinking"] .mf-trails {
+  opacity: 0.65;
+}
+.mf-trail {
+  animation: mf-orbit 2.6s linear infinite;
+}
+.mf-trail-b { animation-duration: 3.1s; animation-delay: -0.8s; }
+.mf-trail-c { animation-duration: 3.7s; animation-delay: -1.6s; }
+
+.mf-sparkle {
+  animation: mf-twinkle 3.6s ease-in-out infinite;
+}
+.mf-sparkle:nth-child(2) { animation-delay: -0.9s; }
+.mf-sparkle:nth-child(3) { animation-delay: -1.8s; }
+.mf-sparkle:nth-child(4) { animation-delay: -2.7s; }
+.mf-root[data-mood="thinking"] .mf-sparkle {
+  animation-duration: 1.8s;
+}
+@keyframes mf-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.85; }
+}
+
+/* Flat fallback: the lattice is a static projection turned in the plane by
+   CSS alone, so no script runs per frame. Idle rests, then turns once. */
+.mf-lattice-flat {
+  transform-box: view-box;
+  transform-origin: 60px 60px;
+  animation: mf-flat-idle 18s ease-in-out infinite;
+}
+.mf-root[data-mood="thinking"] .mf-lattice-flat {
+  animation: mf-flat-think 2.8s linear infinite;
+}
+@keyframes mf-flat-idle {
+  0%, 62% { transform: rotate(0deg); }
+  78%, 100% { transform: rotate(360deg); }
+}
+@keyframes mf-flat-think {
+  to { transform: rotate(360deg); }
+}
+.mf-root[data-mood="thinking"] .mf-lattice-flat .mf-node {
+  animation: mf-shimmer 1.3s ease-in-out infinite;
+}
+@keyframes mf-shimmer {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* Dock: the draggable wrapper around the mascot. */
+.heimarmene-dock {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.heimarmene-dock[data-dragging="true"] {
+  cursor: grabbing;
+}
+.heimarmene-dock[data-dragging="true"] .heimarmene-plate {
+  transform: scale(1.06);
+}
+.heimarmene-plate {
+  transition: transform 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-root *,
+  .heimarmene-plate {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus ring for the mascot and the footer button: sits on the pale page, so
+   it uses the deeper accent (about 5:1 on paper). */
+.heimarmene-focus:focus-visible {
+  outline: 2px solid var(--color-accent-deep, #B23E82);
+  outline-offset: 3px;
+  border-radius: 9999px;
+}

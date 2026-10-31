@@ -1,6 +1,7 @@
 import { profile } from "../data/profile";
 import { SocialLinks } from "./SocialLinks";
 import { VisitorCount } from "./VisitorCount";
+import { HeimarmeneFooterButton } from "./companion/HeimarmeneCompanion";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -19,7 +20,10 @@ export function Footer() {
           )}
           <VisitorCount />
         </div>
-        <SocialLinks variant="compact" only={["email", "github", "linkedin"]} />
+        <div className="flex flex-wrap items-center gap-2">
+          <SocialLinks variant="compact" only={["email", "github", "linkedin"]} />
+          <HeimarmeneFooterButton />
+        </div>
       </div>
     </footer>
   );
