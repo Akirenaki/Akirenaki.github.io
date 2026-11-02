@@ -214,10 +214,16 @@ nothing is generated, nothing is sent anywhere, and there is no server.
   bigger steps). The position is stored as a fraction of the screen, so
   resizing or rotating a phone never leaves it off-screen. On screens under
   640px wide the panel opens as a bottom sheet.
-- **Panel sizing.** Drag any panel edge or corner to resize it from the
-  corresponding direction. On narrow screens, the bottom sheet can be resized
-  vertically. The chosen dimensions are remembered on that device, while the
-  panel continues to follow Heimarmene when the mascot is moved.
+- **Panel sizing.** The panel stays attached to the mascot, so the two edges
+  that face away from it (and the corner between them) are the ones to drag;
+  the other two stay put, which means releasing a drag never makes the panel
+  jump. It cannot shrink below a usable minimum or leave the screen. Each edge
+  also works from the keyboard (focus it, arrow keys, Shift for bigger steps);
+  double-click an edge or use *Reset panel size* in Settings to restore the
+  default. On narrow screens the bottom sheet can be resized vertically by its
+  top edge. The size is remembered on that device, and the panel keeps
+  following Heimarmene when the mascot is moved. The geometry lives in
+  `src/lib/companion-position.js`, with tests run by `npm test`.
 - **Motion.** The lattice is rotated in 3D by a small `requestAnimationFrame`
   loop. In *automatic* rotation, if the frame rate stays below about 28 fps for
   two consecutive windows, it drops to a flat CSS-only spin for the rest of the
@@ -253,6 +259,7 @@ locked dependencies:
 npm ci
 npm run dev       # development server with hot reload
 npm run lint      # Oxlint
+npm test          # unit tests (node:test)
 npm run build     # production build, sitemap/checks, and essay PDFs
 npm run preview   # preview build/client/
 npm run images    # run the image pipeline directly

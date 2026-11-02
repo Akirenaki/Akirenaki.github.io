@@ -15,7 +15,7 @@ const FORMSPREE_ENDPOINT = `https://formspree.io/f/${FORMSPREE_FORM_ID}`;
 export function meta() {
   return buildMeta({
     title: "Contact",
-    description: "Get in touch with Renee Astraea! Email, LinkedIn, GitHub, Kaggle, Instagram, and WhatsApp.",
+    description: "Get in touch with Renee Astraea! Email, LinkedIn, GitHub, Kaggle, Instagram, WhatsApp, and HoYoLAB.",
     path: "/contact",
   });
 }
@@ -58,7 +58,7 @@ export function Contact() {
         <div className="mx-auto max-w-4xl">
           <h1 className="font-display text-4xl font-medium text-ink">Message sent</h1>
           <p className="mt-4 leading-relaxed text-ink-soft">
-            Thanks for reaching out! I'll get back to you soon. Replies fastest by WhatsApp.
+            Thanks for reaching out! I'll get back to you soon.
           </p>
           <button
             type="button"
@@ -78,10 +78,26 @@ export function Contact() {
         <div>
           <h1 className="font-display text-4xl font-medium text-ink">Contact</h1>
           <p className="mt-4 leading-relaxed text-ink-soft">
-            Open to research collaborations, project feedback, or just casual talking! Replies fastest by WhatsApp.
+            Open to research collaborations, project feedback, and casual conversation. Choose the contact route that fits.
           </p>
 
-          <SocialLinks className="mt-8" />
+          <div className="mt-8 space-y-7">
+            <div>
+              <h2 className="font-display text-xl font-medium text-ink">Professional inquiries</h2>
+              <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+                For collaborations, opportunities, or project questions.
+              </p>
+              <SocialLinks only={["email", "linkedin", "github", "kaggle"]} className="mt-3" />
+            </div>
+
+            <div>
+              <h2 className="font-display text-xl font-medium text-ink">Casual conversation</h2>
+              <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+                For a friendly hello or a more informal chat.
+              </p>
+              <SocialLinks only={["whatsapp", "instagram", "hoyolab", "casualEmail"]} className="mt-3" />
+            </div>
+          </div>
 
           <div className="mt-8 border-t border-blush/70 pt-6">
             <PrintCVButton variant="pill" />
@@ -89,6 +105,12 @@ export function Contact() {
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <div>
+            <h2 className="font-display text-2xl font-medium text-ink">Send a professional inquiry</h2>
+            <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+              Use this form for collaborations, opportunities, or project feedback.
+            </p>
+          </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="name" className="text-sm text-ink-soft">
               Name

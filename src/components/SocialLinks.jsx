@@ -61,12 +61,18 @@ function WhatsAppIcon({ className = "h-4 w-4" }) {
   );
 }
 
+function HoyolabIcon({ className = "h-4 w-4" }) {
+  return <img src="/hoyolab.svg" alt="" className={`${className} object-contain`} aria-hidden="true" />;
+}
+
 const LINKS = [
   { key: "email", label: "Email", detail: profile.contact.email, href: `mailto:${profile.contact.email}`, Icon: EmailIcon },
+  { key: "casualEmail", label: "Email", detail: profile.contact.casualEmail, href: `mailto:${profile.contact.casualEmail}`, Icon: EmailIcon },
   { key: "github", label: "GitHub", detail: profile.contact.github.label, href: profile.contact.github.url, Icon: GithubIcon },
   { key: "linkedin", label: "LinkedIn", detail: null, href: profile.contact.linkedin, Icon: LinkedInIcon },
   { key: "kaggle", label: "Kaggle", detail: profile.contact.kaggle.label, href: profile.contact.kaggle.url, Icon: KaggleIcon },
   { key: "instagram", label: "Instagram", detail: null, href: profile.contact.instagram.url, Icon: InstagramIcon },
+  { key: "hoyolab", label: "HoYoLAB", detail: null, href: profile.contact.hoyolab, Icon: HoyolabIcon },
   {
     key: "whatsapp",
     label: "WhatsApp",

@@ -3,8 +3,7 @@
 // Update SITE_BASE here (not per-page) if the repo/hosting path ever
 // changes - it must match `basename` in react-router.config.js and `base`
 // in vite.config.js. Empty string because this deploys as a GitHub Pages
-// User Site (akirenaki.github.io) rather than a Project Site
-// (akirenaki.github.io/Portfolio/) - the site lives at the domain root,
+// User Site (akirenaki.github.io) - the site lives at the domain root,
 // which is also what let the prerender build succeed in the first place
 // (see react-router.config.js's comment on the basename bug this avoids).
 export const SITE_ORIGIN = "https://akirenaki.github.io";
@@ -38,21 +37,23 @@ const SITE_JSON_LD = {
       alternateName: "Raden Bagus Narendra Tsaqiif Aryasuta Maldini",
       url: SITE_URL,
       image: `${SITE_URL}assets/portrait.jpg`,
-      jobTitle: "Aspiring Astrophysicist & Software Developer",
+      jobTitle: "Aspiring Astrophysicist, Independent Web Developer, and Human Rights Activist",
       description:
-        "Astrophysics student and developer building data tools and interactive visualisations for observational astronomy.",
+        "Aspiring astrophysicist analyzing astronomical datasets, an independent web developer building full-stack apps, and a human rights activist advocating for justice and open science.",
       sameAs: [
         "https://github.com/Akirenaki",
         "https://www.linkedin.com/in/renee-astraea/",
         "https://www.kaggle.com/reneeastraea",
         "https://www.instagram.com/heavychainthatdoesfreezemybone/",
+        "https://www.instagram.com/rene_petrichor/",
+        "https://www.hoyolab.com/accountCenter/postList?id=346278097",
       ],
     },
     {
       "@type": "WebSite",
       "@id": `${SITE_URL}#website`,
       url: SITE_URL,
-      name: `${SITE_NAME} — Astrophysics & Software`,
+      name: `${SITE_NAME}’ Portfolio Site`,
       inLanguage: "en",
       publisher: { "@id": `${SITE_URL}#person` },
     },
@@ -101,8 +102,8 @@ export function articleJsonLd({ headline, description, path, inLanguage, wordCou
 export function buildMeta({ title, description, path = "/", noindex = false, jsonLd = [] }) {
   // Keep <title> under ~60 characters so it isn't cut off in results. The
   // legal name stays in the Person schema (alternateName) and in the page body.
-  const pageTitle = title ? `${title} · ${SITE_NAME}` : `${SITE_NAME} — Astrophysics & Software Portfolio`;
-  const socialTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Astrophysics & Software`;
+  const pageTitle = title ? `${title} · ${SITE_NAME}` : `${SITE_NAME}’s / Narendra Maldini’s Portfolio Site`;
+  const socialTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME}’s / Narendra Maldini’s Portfolio Site`;
   const url = pageUrl(path);
 
   const meta = [

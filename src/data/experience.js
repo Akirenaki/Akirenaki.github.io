@@ -1,6 +1,3 @@
-// Reproduced from the LinkedIn "Experience" section. Dates/"Present" labels
-// are copied as-is - update them if they're now stale.
-
 export const experience = [
   {
     title: "Astronomy Olympiad Mentor",

@@ -22,18 +22,20 @@ import {
 import {
   DEFAULT_DOCK_POSITION,
   clampPixels,
+  keyboardResize,
+  parseStoredPanelSize,
   parseStoredPosition,
   pixelsToPosition,
   placePanel,
   positionToPixels,
+  resizeFrame,
+  resizeSheetHeight,
 } from "../../lib/companion-position";
 import { COMPANION_QUESTIONS, GROUPS, QUESTIONS_BY_ID } from "../../data/companion";
 
 const POSITION_KEY = "heimarmene-position-v1";
 const SLOW_KEY = "heimarmene-3d-slow-v1";
 const PANEL_SIZE_KEY = "heimarmene-panel-size-v1";
-const DEFAULT_PANEL_SIZE = { width: 384, height: 640 };
-const MIN_PANEL_SIZE = { width: 280, height: 320 };
 
 const SIZE_LABELS = { small: "Small", medium: "Medium", large: "Large" };
 const ROTATION_LABELS = {
@@ -56,20 +58,6 @@ function writeSession(key, value) {
     else window.sessionStorage.setItem(key, value);
   } catch {
     // Blocked storage: the choice simply lasts until the next render.
-  }
-}
-
-function parsePanelSize(raw) {
-  if (!raw) return DEFAULT_PANEL_SIZE;
-  try {
-    const value = JSON.parse(raw);
-    if (!Number.isFinite(value.width) || !Number.isFinite(value.height)) return DEFAULT_PANEL_SIZE;
-    return {
-      width: Math.max(MIN_PANEL_SIZE.width, value.width),
-      height: Math.max(MIN_PANEL_SIZE.height, value.height),
-    };
-  } catch {
-    return DEFAULT_PANEL_SIZE;
   }
 }
 
@@ -253,7 +241,7 @@ function OptionGroup({ legend, name, value, options, onChange }) {
   );
 }
 
-function SettingsTab({ prefs, update, onResetPosition, onHide }) {
+function SettingsTab({ prefs, update, onResetPosition, onResetPanelSize, onHide }) {
   const fieldId = useId();
   const [status, setStatus] = useState("");
   return (
@@ -285,6 +273,15 @@ function SettingsTab({ prefs, update, onResetPosition, onHide }) {
           >
             Reset position
           </button>
+          {onResetPanelSize ? (
+            <button
+              type="button"
+              onClick={() => { onResetPanelSize(); setStatus("Panel size reset."); }}
+              className="min-h-11 rounded-lg border border-blush px-4 text-sm font-medium text-ink hover:border-accent-deep hover:bg-blush/25"
+            >
+              Reset panel size
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={onHide}
@@ -309,7 +306,7 @@ function tabClass(active) {
   ].join(" ");
 }
 
-function CompanionPanel({ prefs, update, close, onResetPosition, onHide }) {
+function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSize, onHide }) {
   const [tab, setTab] = useState("questions");
   return (
     <div className="flex h-full flex-col bg-surface text-ink">
@@ -345,7 +342,7 @@ function CompanionPanel({ prefs, update, close, onResetPosition, onHide }) {
       {tab === "questions" ? (
         <QuestionsTab closePanel={close} />
       ) : (
-        <SettingsTab prefs={prefs} update={update} onResetPosition={onResetPosition} onHide={onHide} />
+        <SettingsTab prefs={prefs} update={update} onResetPosition={onResetPosition} onResetPanelSize={onResetPanelSize} onHide={onHide} />
       )}
     </div>
   );
@@ -361,8 +358,9 @@ export function HeimarmeneCompanion() {
   const [position, setPosition] = useState(DEFAULT_DOCK_POSITION);
   const [viewport, setViewport] = useState({ width: 1024, height: 768 });
   const [dragPx, setDragPx] = useState(null);
-  const [panelSize, setPanelSize] = useState(DEFAULT_PANEL_SIZE);
-  const [panelFrame, setPanelFrame] = useState(null);
+  // null = the default panel size. liveFrame is the panel while an edge is being dragged.
+  const [panelSize, setPanelSize] = useState(null);
+  const [liveFrame, setLiveFrame] = useState(null);
 
   const dockRef = useRef(null);
   const panelRef = useRef(null);
@@ -379,7 +377,7 @@ export function HeimarmeneCompanion() {
     try {
       const stored = parseStoredPosition(window.localStorage.getItem(POSITION_KEY));
       if (stored) setPosition(stored);
-      setPanelSize(parsePanelSize(window.localStorage.getItem(PANEL_SIZE_KEY)));
+      setPanelSize(parseStoredPanelSize(window.localStorage.getItem(PANEL_SIZE_KEY)));
     } catch {
       // Storage blocked: the default corner is used.
     }
@@ -403,7 +401,7 @@ export function HeimarmeneCompanion() {
   }, [showDock]);
 
   useEffect(() => {
-    if (!open) setPanelFrame(null);
+    if (!open) setLiveFrame(null);
   }, [open]);
 
   // Move focus into the panel when it opens, and back to the mascot when it closes.
@@ -439,62 +437,62 @@ export function HeimarmeneCompanion() {
     setFellBack(true);
   }
 
-  function onResizePointerDown(event, edges) {
-    if (!placement) return;
-    event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    const frame =
-      placement.mode === "floating"
-        ? { mode: "floating", left: placement.left, top: placement.top, width: placement.width, height: placement.height }
-        : { mode: "sheet", left: 8, top: viewport.height - placement.height - 8, width: viewport.width - 16, height: placement.height };
-    resizeRef.current = {
-      id: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startFrame: frame,
-      edges,
-    };
-    setPanelFrame(frame);
+  function savePanelSize(next) {
+    setPanelSize(next);
+    try {
+      if (next) window.localStorage.setItem(PANEL_SIZE_KEY, JSON.stringify(next));
+      else window.localStorage.removeItem(PANEL_SIZE_KEY);
+    } catch {
+      // Not persisted; the size still applies for this page view.
+    }
   }
 
-  function onResizePointerMove(event) {
+  // `frame` is the panel as it is now. In the phone sheet only the height can
+  // change, by dragging the top edge.
+  function onResizeDown(event, edges, frame) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    resizeRef.current = { id: event.pointerId, startX: event.clientX, startY: event.clientY, start: frame, edges, last: frame };
+    setLiveFrame(frame);
+  }
+
+  function onResizeMove(event) {
     const resize = resizeRef.current;
     if (!resize || resize.id !== event.pointerId) return;
     const dx = event.clientX - resize.startX;
     const dy = event.clientY - resize.startY;
-    const { left, top, width, height } = resize.startFrame;
-    const resizingLeft = resize.edges.includes("left");
-    const resizingTop = resize.edges.includes("top");
-    const nextLeft = resizingLeft ? left + dx : left;
-    const nextTop = resizingTop ? top + dy : top;
-    const next = {
-      left: nextLeft,
-      top: nextTop,
-      width: Math.min(viewport.width - 16, width + (resizingLeft ? -dx : dx)),
-      height: Math.min(viewport.height - 16, height + (resizingTop ? -dy : dy)),
-    };
-    resize.lastFrame = {
-      left: resizingLeft && next.width >= MIN_PANEL_SIZE.width ? next.left : left,
-      top: resizingTop && next.height >= MIN_PANEL_SIZE.height ? next.top : top,
-      width: Math.max(MIN_PANEL_SIZE.width, next.width),
-      height: Math.max(MIN_PANEL_SIZE.height, next.height),
-    };
-    setPanelFrame(resize.lastFrame);
+    resize.last = resize.edges.includes("sheet")
+      ? { ...resize.start, height: resizeSheetHeight(resize.start.height, dy, viewport) }
+      : resizeFrame(resize.start, resize.edges, dx, dy, viewport);
+    setLiveFrame(resize.last);
   }
 
-  function onResizePointerUp(event) {
+  function onResizeUp(event, commit) {
     const resize = resizeRef.current;
     if (!resize || resize.id !== event.pointerId) return;
     resizeRef.current = null;
-    const frame = resize.lastFrame ?? resize.startFrame;
-    const next = { width: frame.width, height: frame.height };
-    setPanelFrame(null);
-    setPanelSize(next);
-    try {
-      window.localStorage.setItem(PANEL_SIZE_KEY, JSON.stringify(next));
-    } catch {
-      // Not persisted; the resized dimensions still apply for this page view.
+    setLiveFrame(null);
+    if (!commit) return;
+    // The sheet keeps the stored width; only its height was dragged.
+    savePanelSize(resize.edges.includes("sheet")
+      ? { width: panelSize?.width ?? 384, height: resize.last.height }
+      : { width: resize.last.width, height: resize.last.height });
+  }
+
+  function onResizeKey(event, edge, frame) {
+    if (edge === "sheet") {
+      if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+      event.preventDefault();
+      const step = event.shiftKey ? 96 : 24;
+      const height = resizeSheetHeight(frame.height, event.key === "ArrowUp" ? -step : step, viewport);
+      savePanelSize({ width: panelSize?.width ?? 384, height });
+      return;
     }
+    const next = keyboardResize(frame, edge, event.key, event.shiftKey, viewport);
+    if (!next) return;
+    event.preventDefault();
+    savePanelSize({ width: next.width, height: next.height });
   }
 
   const basePx = positionToPixels(position, viewport, size);
@@ -552,9 +550,11 @@ export function HeimarmeneCompanion() {
 
   if (!showDock) return null;
 
-  const calculatedPlacement = open ? placePanel({ left: px.left, top: px.top, size }, viewport, panelSize) : null;
-  const placement = panelFrame ?? calculatedPlacement;
+  const placement = open ? placePanel({ left: px.left, top: px.top, size }, viewport, panelSize ?? {}) : null;
   const sheetOpen = placement?.mode === "sheet";
+  // The frame being shown: the live drag if there is one, otherwise the placement.
+  const frame = placement?.mode === "floating" ? (liveFrame ?? placement) : null;
+  const sheetHeight = sheetOpen ? (liveFrame?.height ?? placement.height) : null;
 
   return (
     <div className="print:hidden">
@@ -571,46 +571,33 @@ export function HeimarmeneCompanion() {
               closePanel();
             }
           }}
-          className={
-            sheetOpen
-              ? "fixed inset-x-2 bottom-2 z-[60] overflow-hidden rounded-2xl border border-blush bg-surface shadow-2xl focus:outline-none"
-              : "fixed z-[60] overflow-hidden rounded-2xl border border-blush bg-surface shadow-2xl focus:outline-none"
-          }
+          className={sheetOpen ? "fixed inset-x-2 bottom-2 z-[60] focus:outline-none" : "fixed z-[60] focus:outline-none"}
           style={
-            placement.mode === "floating"
-              ? { left: placement.left, top: placement.top, width: placement.width, height: placement.height }
-              : { height: placement.height, left: placement.left, width: placement.width, bottom: 8 }
+            frame
+              ? { left: frame.left, top: frame.top, width: frame.width, height: frame.height }
+              : { height: sheetHeight }
           }
         >
-          <CompanionPanel
-            prefs={prefs}
-            update={update}
-            close={closePanel}
-            onResetPosition={() => savePosition(DEFAULT_DOCK_POSITION)}
-            onHide={hide}
-          />
-          {[
-            ["top", "absolute inset-x-3 top-0 h-3 cursor-row-resize"],
-            ["right", "absolute inset-y-3 right-0 w-3 cursor-col-resize"],
-            ["bottom", "absolute inset-x-3 bottom-0 h-3 cursor-row-resize"],
-            ["left", "absolute inset-y-3 left-0 w-3 cursor-col-resize"],
-            ["top right", "absolute right-0 top-0 h-5 w-5 cursor-ne-resize"],
-            ["bottom right", "absolute bottom-0 right-0 h-5 w-5 cursor-se-resize"],
-            ["bottom left", "absolute bottom-0 left-0 h-5 w-5 cursor-sw-resize"],
-            ["top left", "absolute left-0 top-0 h-5 w-5 cursor-nw-resize"],
-          ].map(([edges, className]) => (
-            <div
-              key={edges}
-              role="separator"
-              aria-label={`Resize panel from ${edges.replace(" ", " and ")} edge`}
-              title="Drag to resize"
-              onPointerDown={(event) => onResizePointerDown(event, edges.split(" "))}
-              onPointerMove={onResizePointerMove}
-              onPointerUp={onResizePointerUp}
-              onPointerCancel={onResizePointerUp}
-              className={`${className} z-10 touch-none`}
+          <div className="h-full overflow-hidden rounded-2xl border border-blush bg-surface shadow-2xl">
+            <CompanionPanel
+              prefs={prefs}
+              update={update}
+              close={closePanel}
+              onResetPosition={() => savePosition(DEFAULT_DOCK_POSITION)}
+              onResetPanelSize={() => savePanelSize(null)}
+              onHide={hide}
             />
-          ))}
+          </div>
+          <ResizeHandles
+            placement={placement}
+            frame={frame ?? { left: 0, top: 0, width: viewport.width - 16, height: sheetHeight }}
+            viewport={viewport}
+            onDown={onResizeDown}
+            onMove={onResizeMove}
+            onUp={onResizeUp}
+            onKey={onResizeKey}
+            onReset={() => savePanelSize(null)}
+          />
         </section>
       ) : null}
 
@@ -685,5 +672,83 @@ export function HeimarmeneFooterButton() {
     >
       <ManifoldMascot size={42} lite />
     </button>
+  );
+}
+
+// The drag handles of the panel. Only the two edges that face away from the
+// mascot (and the corner between them) can be dragged, because the other two
+// are attached to it. They sit just outside the panel so they never cover its
+// scrollbar or buttons. Each edge is also a keyboard-operable separator: focus
+// it and use the arrow keys. On a phone the bottom sheet has only a top handle.
+function ResizeHandles({ placement, frame, viewport, onDown, onMove, onUp, onKey, onReset }) {
+  const shared =
+    "absolute z-10 touch-none rounded-full hover:bg-ink/10 focus-visible:bg-ink/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-deep";
+  const bind = (edges) => ({
+    onPointerDown: (event) => onDown(event, edges, frame),
+    onPointerMove: onMove,
+    onPointerUp: (event) => onUp(event, true),
+    onPointerCancel: (event) => onUp(event, false),
+    onDoubleClick: onReset,
+    title: "Drag to resize. Double-click to reset.",
+  });
+
+  if (placement.mode === "sheet") {
+    return (
+      <div
+        role="separator"
+        tabIndex={0}
+        aria-orientation="horizontal"
+        aria-label="Panel height"
+        aria-valuemin={320}
+        aria-valuemax={Math.max(320, viewport.height - 16)}
+        aria-valuenow={Math.round(frame.height)}
+        onKeyDown={(event) => onKey(event, "sheet", frame)}
+        {...bind(["sheet"])}
+        className={`${shared} inset-x-10 -top-3 h-3 cursor-ns-resize`}
+      />
+    );
+  }
+
+  const { freeHorizontal, freeVertical } = placement;
+  const side = freeHorizontal === "left" ? "-left-3" : "-right-3";
+  const end = freeVertical === "top" ? "-top-3" : "-bottom-3";
+  // Top-left and bottom-right corners drag along the "\\" diagonal, the others along "/".
+  const backslash = (freeHorizontal === "left") === (freeVertical === "top");
+  return (
+    <>
+      <div
+        role="separator"
+        tabIndex={0}
+        aria-orientation="vertical"
+        aria-label="Panel width"
+        aria-valuemin={300}
+        aria-valuemax={Math.max(300, viewport.width - 32)}
+        aria-valuenow={Math.round(frame.width)}
+        onKeyDown={(event) => onKey(event, freeHorizontal, frame)}
+        {...bind([freeHorizontal])}
+        className={`${shared} ${side} inset-y-6 w-3 cursor-ew-resize`}
+      />
+      <div
+        role="separator"
+        tabIndex={0}
+        aria-orientation="horizontal"
+        aria-label="Panel height"
+        aria-valuemin={320}
+        aria-valuemax={Math.max(320, viewport.height - 32)}
+        aria-valuenow={Math.round(frame.height)}
+        onKeyDown={(event) => onKey(event, freeVertical, frame)}
+        {...bind([freeVertical])}
+        className={`${shared} ${end} inset-x-6 h-3 cursor-ns-resize`}
+      />
+      <div
+        aria-hidden="true"
+        {...bind([freeHorizontal, freeVertical])}
+        className={`${shared} ${side} ${end} flex h-6 w-6 items-center justify-center text-ink-soft ${backslash ? "cursor-nwse-resize" : "cursor-nesw-resize"}`}
+      >
+        <svg viewBox="0 0 16 16" className={`h-4 w-4 ${backslash ? "" : "-scale-x-100"}`} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+          <path d="M5 13L13 5M9 13l4-4" />
+        </svg>
+      </div>
+    </>
   );
 }

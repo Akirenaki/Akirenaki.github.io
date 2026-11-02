@@ -87,7 +87,9 @@ export const profile = {
 
   contact: {
     email: "narendramal4869@gmail.com",
+    casualEmail: "renedepetrichor4869@gmail.com",
     whatsapp: "+62 856-4711-9201",
+    hoyolab: "https://www.hoyolab.com/accountCenter/postList?id=346278097",
     linkedin: "https://www.linkedin.com/in/renee-astraea/",
     github: { label: "Akirenaki", url: "https://github.com/Akirenaki" },
     instagram: {

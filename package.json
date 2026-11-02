@@ -12,6 +12,7 @@
     "sitemap": "node scripts/build-sitemap.mjs",
     "essays": "node scripts/check-essays.mjs",
     "lint": "oxlint",
+    "test": "node --test",
     "preview": "vite preview --outDir build/client",
     "pdfs": "node scripts/build-pdfs.mjs"
   },
