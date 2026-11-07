@@ -71,6 +71,11 @@ export function ProjectCard({ project, size = "md" }) {
               Document
             </a>
           )}
+          {project.links.video && (
+            <a href={project.links.video} target="_blank" rel="noreferrer" className="text-ink-soft hover:text-ink">
+              Video
+            </a>
+          )}
         </div>
       </div>
     </article>

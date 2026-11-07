@@ -11,11 +11,11 @@
 //   filters.language  programming languages it is written in
 //   Live and Repo are not stored: they come from links.demo and links.repo
 //   (see isLive / hasRepo below), so they can never drift out of sync.
-//   links             { repo, demo, presentation, document }; each is an https URL
+//   links             { repo, demo, presentation, document, video }; each is an https URL
 //                     or null. A null link renders no button, so a missing link
 //                     never shows as a dead one. `presentation` is a slide deck
-//                     (Google Slides, PDF, ...); `document` is a written report
-//                     or paper (Google Docs, PDF, ...).
+//                     (Google Slides, PDF, ...); `document` is a written report or
+//                     paper (Google Docs, PDF, ...); `video` is a project video.
 // Leave a list empty when it doesn't apply (a physical prototype has no
 // language). Keep spellings identical across projects; the filter UI builds
 // its options from whatever values appear here.
@@ -71,7 +71,7 @@ export const projects = [
     },
     featured: true,
     priority: false,
-    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/", presentation: null, document: null },
+    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/", presentation: null, document: null, video: null },
     summary:
       "Olympiad editorials are easy to read and still hard to understand. Cherenkov, built by a team of five, pairs every informatics, physics and astronomy editorial with a visualisation you can operate, and adds a study planner that works backwards from the exam date. Open source, in English and Indonesian, for students preparing for the Indonesian Science Olympiad (OSN).",
     cv: {
@@ -152,6 +152,7 @@ export const projects = [
       demo: null,
       presentation: null,
       document: null,
+      video: "https://drive.google.com/file/d/1cWTQCo0t_UkGv3tUrxnidvWAXmcYBr4j/view?usp=sharing",
     },
     summary:
       "One star can have several names: 51 Peg is also 51 Pegasi and HD 217014, and searching under the wrong one can miss its planets. Taraka Sutra resolves an object's identifiers through SIMBAD, matches it against the NASA Exoplanet Archive, and states plainly how sure it is, so that a failed lookup is never mistaken for a star with no planets.",
@@ -230,7 +231,7 @@ export const projects = [
     },
     featured: true,
     priority: false,
-    links: { repo: null, demo: null, presentation: "https://canva.link/mit94dhb6kk40uk", document: "https://docs.google.com/document/d/1R0dAcxLPMbcEnnX94fn_tGCD5EA6XCZ5N7tAJ9ujUc0/edit?usp=sharing" },
+    links: { repo: null, demo: null, presentation: "https://canva.link/mit94dhb6kk40uk", document: "https://docs.google.com/document/d/1R0dAcxLPMbcEnnX94fn_tGCD5EA6XCZ5N7tAJ9ujUc0/edit?usp=sharing", video: null },
     summary:
       "The karst soil of Gunungkidul is alkaline (around pH 8) and poor for crops, while local fishers usually pay to throw away fish remains. FISHCOM ferments that waste into an acidic liquid fertiliser (pH 4) that brought alkaline karst soil toward neutral (pH 7), and proposes a circular-economy model in which the waste stops being a disposal cost.",
     cv: {
@@ -283,7 +284,7 @@ export const projects = [
     featured: true,
     priority: false,
     highlight: "Top 5 finalist out of about 200 teams, M-Fest 2026 STEM Competition",
-    links: { repo: null, demo: null, presentation: "https://canva.link/p34z80qun2pxlha", document: null },
+    links: { repo: null, demo: null, presentation: "https://canva.link/p34z80qun2pxlha", document: null, video: null },
     summary:
       "Where I live, a lot of people burn their trash, and the smoke hits me hard: I have a dust allergy and a body that gets sick easily. CORGEIN is a filter for small household incinerators. It charges smoke and fly-ash particles with high voltage and catches them on plates before they reach the air.",
     cv: {
@@ -340,7 +341,7 @@ export const projects = [
     featured: true,
     priority: false,
     scaleNote: "A focused simulation project with a clear question: how close can pre-timed burns alone get to a soft landing? Made for the BIRST 2026 Level 3 challenge.",
-    links: { repo: "https://github.com/Akirenaki/Starship-V3-Rocket", demo: null, presentation: null, document: null },
+    links: { repo: "https://github.com/Akirenaki/Starship-V3-Rocket", demo: null, presentation: null, document: null, video: null },
     summary:
       "Rockets that land on their engines normally rely on active guidance. For the BIRST 2026 Level 3 challenge we simulated a Falcon 9 Crew-9 launch with no parachutes and no steering, only burns timed in advance, to see what that costs: touchdown at 15 to 17 m/s against a 5 m/s target, and about 0.9 km of wind drift.",
     cv: {
@@ -402,6 +403,7 @@ export const projects = [
       demo: "https://akirenaki.github.io/Physics-Trebuchet-Simulation-Grade-11/",
       presentation: "https://canva.link/dsrlnulr2c1mef4",
       document: null,
+      video: null,
     },
     summary:
       "A trebuchet's range depends on sling length, release angle and counterweight mass, and those interact in ways that are hard to see on paper. We modelled the physics, built a simulator anyone can tune in the browser, and tested a real prototype to find where the energy goes (43.8% efficiency).",
@@ -452,7 +454,7 @@ export const projects = [
     priority: false,
     highlight: "Scored 97.50/100 in the programme's judging",
     scaleNote: "A one-month build to test designing an AI agent workflow in Langflow.",
-    links: { repo: null, demo: null, presentation: null, document: null },
+    links: { repo: null, demo: null, presentation: null, document: null, video: null },
     summary:
       "Exoplanet data comes as large tables that take time to analyse by hand. This AI agent workflow, built in Langflow for the IBM SkillsBuild University Education initiative with Hacktiv8, turns raw data inputs into structured analysis automatically.",
     cv: {
@@ -497,7 +499,12 @@ export const projects = [
     featured: false,
     priority: false,
     scaleNote: "A short build to test a full retrieval-augmented generation (RAG) pipeline from data to chat interface.",
-    links: { repo: "https://github.com/Akirenaki/astronomy-rag-chatbot", demo: null, presentation: null, document: null },
+    links: { 
+      repo: "https://github.com/Akirenaki/astronomy-rag-chatbot", 
+      demo: null, 
+      presentation: null, 
+      document: null, 
+      video: null },
     summary:
       "General-purpose chatbots can make up details about a specific star. This assistant answers questions about the 50 brightest named stars in the HYG database using only the records it retrieves, and tells you when a star or fact is not in its data.",
     cv: {

@@ -2,7 +2,7 @@ export const experience = [
   {
     title: "Astronomy Olympiad Mentor",
     org: "SMA Negeri 1 Yogyakarta",
-    dateRange: "Jul 2025 - Present",
+    dateRange: "Jul 2026 - Present",
     image: "/assets/credentials/experience-competitive-academic-representative.jpg",
     bullets: [
       "Mentored junior members of the school Astronomy Olympiad class, preparing students for the National Science Olympiad (OSN) through targeted instruction in mathematical and physical foundations.",

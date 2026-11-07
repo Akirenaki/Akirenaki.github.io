@@ -115,6 +115,16 @@ export function ProjectCaseStudy() {
               Document
             </a>
           )}
+          {project.links.video && (
+            <a
+              href={project.links.video}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-ink/20 px-5 py-2 font-medium text-ink transition-colors hover:border-accent-deep hover:text-accent-deep"
+            >
+              Video
+            </a>
+          )}
         </div>
 
         <ProjectMedia
