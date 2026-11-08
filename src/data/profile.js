@@ -22,24 +22,33 @@ export const profile = {
   pronouns: "she/they/he",
 
   tagline: "Faith offers no refuge to those lost in ignorance",
-  roleSummary: "Aspiring Astrophysicist | Independent Web Developer | Human Rights Activist",
+  roleSummary: "Aspiring Astrophysicist, Independent Web Developer, Human Rights Activist",
 
   location: "Yogyakarta, Indonesia",
+
+  // Set `enabled` to false when the portrait is a personal photograph.
+  portraitNotice: {
+    enabled: true,
+    subject: "Cyrene",
+    subjectType: "fictional character",
+    source: "Honkai: Star Rail",
+    sourceLink: "https://static.wikia.nocookie.net/houkai-star-rail/images/7/72/Character_Cyrene_Eidolon_3.png/revision/latest/scale-to-width-down/1000?cb=20251029074641",
+  },
 
   // Core technical domains - shown as a brief strip on Home, linking through
   // to About/Work. Kept honest to what's actually been built, not aspirational.
   coreDomains: [
     "Astronomical Data Pipelines",
     "Full-Stack Web Systems (FastAPI, Next.js)",
-    "Applied Statistics & Modelling",
     "Astrophysics",
+    "Human Rights Advocacy",
   ],
 
-  // About bio - reproduced from the LinkedIn "About" section, her own words.
+  // About bio - 
   bioParagraphs: [
-    "I am an aspiring astrophysicist dedicated to investigating physical systems through computational modelling, statistical inference, and large-scale data analysis. My objective is to contribute to observational and computational research by leveraging quantitative methodologies to extract insights from complex astronomical datasets.",
-    "Driven by a commitment to open science and the democratisation of research, I advocate for accessible scientific data infrastructure, transparent methodologies, and collaborative knowledge-sharing. I also engage in philosophy and human rights advocacy, focusing on gender equity, LGBTQ+ rights, and racial justice.",
-    "Alongside my core scientific and social focus, I specialise in information architecture and structural synthesis, regularly aggregating, cross-referencing, and reconciling disparate qualitative data sources to build unified, logically coherent systems, which strengthens my pattern recognition, systematic literature review, and technical documentation.",
+    "I am Renee Astraea, an aspiring astrophysicist and independent developer interested in applying computational methods to astronomical research. My interests include astronomical data analysis, scientific software, statistical methods, and the use of programming to investigate physical phenomena.",
+    "My projects explore ways to make scientific information and technology more accessible. Taraka Sutra is an astronomy application that resolves alternative catalogue identifiers to retrieve information across astronomical databases. I also co-founded Project Cherenkov, an open-source bilingual learning platform that combines Olympiad materials with interactive visualisations for students in informatics, physics, and astronomy.",
+    "Beyond science and software, I write about philosophy, particularly questions concerning the mind, identity, and the foundations of knowledge. This portfolio brings these interests together through project case studies, technical documentation, and independent writing.",
     "Though I am legally known as Raden Bagus Narendra Tsaqiif Aryasuta Maldini, I operate professionally and academically as Renee Astraea.",
   ],
 
@@ -73,7 +82,7 @@ export const profile = {
       image: "/assets/credentials/education-cs50x.jpg",
       description: "Completed CS50x, Harvard's introduction to computer science, covering core algorithms, memory management, database design, and asynchronous web applications.",
       bullets: [
-        "Task score 100/100, with the final project Taraka Sutra, a full-stack astronomical cross-catalogue matching web app (FastAPI, SIMBAD and the NASA Exoplanet Archive, Three.js).",
+        "Final project Taraka Sutra, a full-stack astronomical cross-catalogue matching web app (FastAPI, SIMBAD and the NASA Exoplanet Archive, Three.js).",
         "Worked in Python, C, SQL, JavaScript, Flask and FastAPI, with PostgreSQL, SQLAlchemy and Alembic, and tested with pytest.",
       ],
     },
@@ -82,7 +91,6 @@ export const profile = {
   languages: [
     { name: "Indonesian", level: "Native" },
     { name: "English", level: "Professional working proficiency" },
-    { name: "Japanese", level: "Professional working proficiency" },
   ],
 
   contact: {
@@ -91,11 +99,15 @@ export const profile = {
     whatsapp: "+62 856-4711-9201",
     hoyolab: "https://www.hoyolab.com/accountCenter/postList?id=346278097",
     linkedin: "https://www.linkedin.com/in/renee-astraea/",
-    github: { label: "Akirenaki", url: "https://github.com/Akirenaki" },
+    github: { 
+      label: "Akirenaki", 
+      url: "https://github.com/Akirenaki" },
     instagram: {
       label: "heavychainthatdoesfreezemybone",
       url: "https://www.instagram.com/heavychainthatdoesfreezemybone/",
     },
-    kaggle: { label: "reneeastraea", url: "https://www.kaggle.com/reneeastraea" },
+    kaggle: { 
+      label: "reneeastraea", 
+      url: "https://www.kaggle.com/reneeastraea" },
   },
 };

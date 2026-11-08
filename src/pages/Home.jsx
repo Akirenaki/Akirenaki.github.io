@@ -112,6 +112,26 @@ export function Home() {
               label="Portrait — 800×1000"
               className="rounded-sm"
             />
+            {profile.portraitNotice.enabled && (
+              <p className="mt-3 text-xs leading-relaxed text-ink-soft">
+                This image depicts {profile.portraitNotice.subject}, a{" "}
+                {profile.portraitNotice.subjectType} from <em>{profile.portraitNotice.source}</em>.
+                It is not a photograph of me or artwork created by me.
+                {profile.portraitNotice.sourceLink && (
+                  <>
+                    {" "}
+                    <a
+                      href={profile.portraitNotice.sourceLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-accent-deep underline decoration-blush underline-offset-2 hover:decoration-accent-deep"
+                    >
+                      View image source
+                    </a>
+                  </>
+                )}
+              </p>
+            )}
           </motion.div>
         </div>
       </section>
