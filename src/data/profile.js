@@ -54,7 +54,7 @@ export const profile = {
 
   // Home summary - shorter restatement for the landing page, not LinkedIn text.
   homeSummary:
-    "Aspiring astrophysicist focused on physical systems, computational modelling, statistical inference, and large-scale data analysis to derive insight from complex astronomical datasets. Dedicated to open science, accessible research infrastructure, transparent methodologies, and collaborative knowledge-sharing, while advocating for human rights.",
+    "Aspiring astrophysicist interested in physical systems and the use of computational modelling, statistical methods, and astronomical data analysis. I build scientific software and interactive tools, with interests in open science, accessible research infrastructure, transparent methods, and collaborative knowledge-sharing, alongside human-rights advocacy.",
 
   // Newest-first is not required: list the current programme first, then
   // completed courses. `dateLabel` is the line shown on About ("Expected May 2027",
@@ -79,7 +79,7 @@ export const profile = {
       degree: "Certificate in CS50x: Introduction to Computer Science",
       graduation: "2026",
       dateLabel: "Completed 2026",
-      image: "/assets/credentials/education-cs50x.jpg",
+      image: null,
       description: "Completed CS50x, Harvard's introduction to computer science, covering core algorithms, memory management, database design, and asynchronous web applications.",
       bullets: [
         "Final project Taraka Sutra, a full-stack astronomical cross-catalogue matching web app (FastAPI, SIMBAD and the NASA Exoplanet Archive, Three.js).",

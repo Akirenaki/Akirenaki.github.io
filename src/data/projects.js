@@ -78,7 +78,7 @@ export const projects = [
       problem:
         "Indonesian Science Olympiad (OSN) editorials in informatics, physics and astronomy are written as proofs that can be followed line by line without the underlying idea ever landing, and students have little guidance on which topic deserves the next hour of limited study time.",
       approach:
-        "Co-founded a five-person team and lead development of an open-source platform in Next.js 15 and TypeScript. Every editorial is paired with an interactive visualisation, drawn by five reusable Canvas 2D and D3 engines, one of which runs visual Blockly programs in a sandboxed interpreter. A study planner estimates topic mastery with a time-decaying Bayesian Beta posterior, schedules reviews around the exam date using Region of Proximal Learning principles, and warns when the workload does not fit the time left. Equations are compiled to static HTML at build time, and the whole site is available in English and Indonesian.",
+        "Co-founded a five-person team and lead development of an open-source platform in Next.js 15 and TypeScript. The platform currently has seven interactive visualisation engines: five purpose-built engines and two scene-authoring engines, including a sandboxed programmable-scene engine. A study planner estimates topic mastery with a time-decaying Bayesian Beta posterior, schedules reviews around the exam date using Region of Proximal Learning principles, and warns when the workload does not fit the time left. The estimator's parameters are provisional placeholders and have not been calibrated against real student-outcome data; it is not an empirically validated predictor. Equations are compiled to static HTML at build time, and the whole site is available in English and Indonesian.",
       impact:
         "Gives olympiad students something to operate instead of only something to read, and a plan that adapts to what they have actually learned. Writers add new scenes through a visual builder and a CMS without touching the rendering code, so content can grow beyond what the developers write themselves, and the public repository lets the platform be adapted to other olympiad subjects.",
     },
@@ -109,11 +109,11 @@ export const projects = [
       },
       {
         heading: "Interactive visualisations",
-        text: "Five reusable Canvas 2D and D3 engines: a graph-array stepper, a trajectory sandbox, an orbital sandbox, a template-driven composed-scene engine and a programmable-scene engine. Programmable scenes run in a sandboxed block interpreter that evaluates visual Blockly programs frame by frame. Execution budgets and element caps mean a badly written scene cannot freeze a reader's browser, which is what makes it safe for writers who are not developers to contribute scenes. A visual scene builder lets them author new ones without writing rendering code.",
+        text: "The platform currently has seven interactive visualisation engines: five purpose-built engines (a graph/array stepper, trajectory sandbox, orbital sandbox, blackbody-spectrum comparison, and relative-period sandbox) and two scene-authoring engines (a template-driven composed-scene engine and a programmable-scene engine). The programmable mode runs visual Blockly programs in a sandboxed interpreter with execution budgets and element caps. The scene builder allows contributors to author scenes without writing the rendering code themselves.",
       },
       {
         heading: "Adaptive study planner",
-        text: "In plain terms, each quiz result updates a running belief about how well you know a topic, and that belief fades with time the way memory does. Technically this is a Bayesian Beta posterior with time decay. Reviews are then scheduled with Region of Proximal Learning principles, which favour topics at the edge of what you can do over ones already secure or still out of reach, and they are anchored to the exam date. Editors write the confirmation quizzes and every question carries a difficulty label; an auto-graded quiz bank then updates the estimates according to the difficulty each stage targets.",
+        text: "Each topic's self-rating provides a weak starting prior for the estimated probability of answering a related question correctly. Recorded quiz answers then update a Beta-posterior estimate, while older answers receive less weight over time. The scheduler uses the resulting estimates to prioritise reviews around the exam date, with an RPL-inspired approach. OSN-stage difficulty ranges determine which quiz questions are selected; question difficulty is not itself a direct weight in the posterior update. The current mastery parameters are provisional placeholders and have not been calibrated against real student-outcome data, so the implemented estimator should not be described as an empirically validated predictor.",
       },
       {
         heading: "Full-stack architecture",
@@ -125,7 +125,7 @@ export const projects = [
       },
       {
         heading: "Localisation and team",
-        text: "The whole site, including the in-app documentation and the syllabus mapping, is available in English and Indonesian (/en, /id) through next-intl. Cherenkov has five founders, with me as lead developer, and the repository is public.",
+        text: "The site, in-app documentation, and syllabus mapping are available in English and Indonesian through next-intl. I co-founded the project and lead development on a five-person team; the repository is public.",
       },
       {
         heading: "Impact and where it can go",
@@ -209,11 +209,11 @@ export const projects = [
       },
       {
         heading: "Testing and hardening",
-        text: "An automated pytest suite of more than 200 tests covers the resolver, the cache, authentication, rate limiting and the front end. Repeated review passes have turned up real defects, among them a cache-expiry bug that would have re-queried the upstream services indefinitely and two routes that bypassed the rate limiter. Each was fixed together with a regression test.",
+        text: "A substantial automated pytest suite covers the resolver, the cache, authentication, rate limiting and the front end. Repeated review passes have turned up real defects, among them a cache-expiry bug that would have re-queried the upstream services indefinitely and two routes that bypassed the rate limiter. Each was fixed together with a regression test.",
       },
       {
         heading: "Impact and next steps",
-        text: "The value is time and trust. A student gets a cross-catalogue answer from one lookup, with a stated confidence and a visible failure mode when an upstream service is down. Because the resolver is separate from its interfaces, other front ends can sit on top of it, and the Astronomy Object Chat Assistant is a decoupled prototype of a conversational layer for exactly that purpose. A hosted demo is planned.",
+        text: "Taraka Sutra brings identifier resolution and alias-based catalogue matching into one workflow, while showing whether a result is resolved, partial, ambiguous, unresolved, or blocked by an upstream lookup failure. It is currently available as a public source repository, not as a hosted public application. A hosted demo is a planned next step; do not imply that the application is presently deployed for public use.",
       },
     ],
   },
@@ -233,14 +233,14 @@ export const projects = [
     priority: false,
     links: { repo: null, demo: null, presentation: "https://canva.link/mit94dhb6kk40uk", document: "https://docs.google.com/document/d/1R0dAcxLPMbcEnnX94fn_tGCD5EA6XCZ5N7tAJ9ujUc0/edit?usp=sharing", video: null },
     summary:
-      "The karst soil of Gunungkidul is alkaline (around pH 8) and poor for crops, while local fishers usually pay to throw away fish remains. FISHCOM ferments that waste into an acidic liquid fertiliser (pH 4) that brought alkaline karst soil toward neutral (pH 7), and proposes a circular-economy model in which the waste stops being a disposal cost.",
+      "FISHCOM investigated the use of fish viscera as a raw material for liquid organic fertiliser for alkaline soils in Gunungkidul. In the reported 14-day fermentation, the fertiliser's pH changed from 6 to 4; the sampled Pantai Baron soil had an initial pH of 8. The project proposes a circular-economy use for fish-processing waste, while further soil-treatment and crop-growth evidence is still needed to establish agricultural effectiveness.",
     cv: {
       problem:
         "The alkaline karst soil of Gunungkidul (about pH 8) is poor for crops, while fish remains are a disposal cost for the fishers and fish auction facilities (TPI) that produce them.",
       approach:
-        "Researched and co-authored a study following a nine-stage Borg & Gall R&D model: field sampling across three coastal hydrological zones at Pantai Baron, then a 14-day anaerobic fermentation of fish viscera into a liquid organic fertiliser (POC).",
+        "Co-authored an exploratory study using a nine-stage Borg & Gall R&D framework. The work sampled soil across three coastal hydrological zones at Pantai Baron and fermented fish viscera anaerobically for 14 days to produce liquid organic fertiliser. The report describes three 1 kg soil samples and viscera from two tuna.",
       impact:
-        "The fertiliser came out acidic (pH 4) and lowered alkaline karst soil (pH 8) toward neutral (pH 7). The study proposes a circular-economy model that turns a waste-management cost for fish auction facilities into an input for farmers on degraded soils.",
+        "The report records the fertiliser's pH changing from 6 to 4 after 14 days and an initial soil pH of 8. It does not document a post-treatment soil-pH measurement or a crop-growth trial; therefore, do not claim that soil pH was reduced to 7 or that crop performance improved on the evidence of this report alone.",
     },
     stack: {
       visible: ["Field Research", "pH Analysis"],
@@ -257,15 +257,15 @@ export const projects = [
       },
       {
         heading: "Methodology",
-        text: "We followed a nine-stage Borg & Gall R&D model, with field sampling across three coastal hydrological zones at Pantai Baron and a 14-day anaerobic fermentation of fish viscera into a liquid organic fertiliser (POC).",
+        text: "We followed a nine-stage Borg & Gall R&D framework. The reported work included sampling across three coastal hydrological zones at Pantai Baron, with three 1 kg soil samples, and a 14-day anaerobic fermentation using viscera from two tuna to produce liquid organic fertiliser (POC).",
       },
       {
         heading: "Key results",
-        text: "The fertiliser came out acidic at pH 4 and lowered high-alkalinity karst soil (pH 8) toward neutral (pH 7). Because pH is logarithmic, that one-unit shift is a tenfold change in acidity. The result shows the fertiliser can correct the soil chemistry. Whether crops then grow better is a separate question, and crop trials over a growing season are the natural next test.",
+        text: "The report records the liquid fertiliser's pH at 6 before fermentation and 4 after 14 days. The sampled soil was initially alkaline, at pH 8. The linked report does not provide a post-treatment soil-pH measurement showing a change to pH 7, nor does it report crop-growth results. The fertiliser's acidity is a measured result; improved soil chemistry and agricultural performance remain outcomes to test rather than established conclusions.",
       },
       {
         heading: "Who benefits",
-        text: "Farmers on degraded Gunungkidul soils would get a fertiliser that improves nutrient availability, made from material that used to be a disposal cost. For fish auction facilities, we propose a circular-economy model that cuts coastal waste-management spending. If it holds up beyond the pH result, the same arrangement turns one community's waste into another community's input.",
+        text: "The project proposes that fish-processing waste could become a useful input for farmers working with alkaline soils, while reducing the burden of disposing of that waste. Those are the intended benefits of the proposed circular-economy model, not outcomes demonstrated by a crop trial or a measured reduction in disposal costs. Further soil-treatment measurements and crop trials would be needed to establish the agricultural benefit.",
       },
     ],
   },
@@ -286,14 +286,14 @@ export const projects = [
     highlight: "Top 5 finalist out of about 200 teams, M-Fest 2026 STEM Competition",
     links: { repo: null, demo: null, presentation: "https://canva.link/p34z80qun2pxlha", document: null, video: null },
     summary:
-      "Where I live, a lot of people burn their trash, and the smoke hits me hard: I have a dust allergy and a body that gets sick easily. CORGEIN is a filter for small household incinerators. It charges smoke and fly-ash particles with high voltage and catches them on plates before they reach the air.",
+      "CORGEIN is a household-scale electrostatic-precipitator prototype developed by a three-person team for M-Fest 2026. It was designed to ionise particulate matter in smoke and collect charged particles on plates. The team reached the top five among approximately 200 teams and presented the prototype to an expert panel at ITB.",
     cv: {
       problem:
         "Burning household waste is routine in my area, and the smoke and fly ash from incomplete combustion drift into neighbouring homes. A fix that depends on everyone stopping is unlikely to work, so the aim was to make the burning less harmful.",
       approach:
-        "Led a three-person team that designed CORGEIN, a filter for small household incinerators based on electrostatic precipitation: high voltage ionises airborne smoke and fly-ash particles, and charged collection plates capture them before the exhaust reaches the air. Researched the problem, mapped the system and tested the prototype repeatedly, keeping the design cost-effective and practical for residential use.",
+        "Led a three-person team researching, designing, and building a household-scale electrostatic-precipitator prototype. Contributed to prototype testing, prepared the demonstration and presentation, and primarily answered the judges' questions during the final presentation at ITB. The demonstration was qualitative rather than a quantified emissions test.",
       impact:
-        "Reached the top 5 of about 200 teams in the M-Fest 2026 national STEM competition and presented to an expert panel at ITB. The concept is a retrofit that cuts particulate emissions without asking households to change their habits, aligned with the UN Sustainable Development Goals for clean air and sustainable communities.",
+        "Reached the top five among approximately 200 teams in the M-Fest 2026 national STEM competition and presented to an expert panel at ITB. The prototype demonstrated the electrostatic-precipitation concept qualitatively; no quantitative particulate-capture efficiency or emissions-reduction result was established.",
     },
     stack: {
       visible: ["Hardware Prototyping", "Electrostatics"],
@@ -306,7 +306,7 @@ export const projects = [
       },
       {
         heading: "What it does",
-        text: "CORGEIN adds an electrostatic precipitator (ESP) to a small-scale incinerator. High voltage ionises the airborne particles, charged plates capture them, and the fly ash and smoke soot are trapped before the exhaust reaches the atmosphere.",
+        text: "CORGEIN is a prototype retrofit concept for a small-scale incinerator. Its design applies the principle of an electrostatic precipitator: high voltage is intended to ionise airborne particles, after which charged particles can be collected on plates. The demonstration showed the concept qualitatively. It did not measure a particulate-removal percentage or establish how much the prototype reduces emissions under controlled operating conditions.",
       },
       {
         heading: "How the physics works",
@@ -314,7 +314,7 @@ export const projects = [
       },
       {
         heading: "Built for households, not labs",
-        text: "We researched the problem, mapped the structure of the system and tested the prototype repeatedly. Cost mattered as much as capture, because the households that burn waste are the ones least able to buy industrial equipment, so the design stays cost-effective and practical for residential use. It is aligned with the UN Sustainable Development Goals for clean air and sustainable communities.",
+        text: "Household scale and affordability were design considerations from the beginning. The project researched the problem, mapped the system, and built and demonstrated a prototype. These design goals should not be presented as proof of residential readiness: the case study does not report a quantified capture-efficiency test, a field-reliability study, or a verified cost comparison with commercial equipment.",
       },
       {
         heading: "M-Fest 2026",
@@ -322,13 +322,13 @@ export const projects = [
       },
       {
         heading: "Impact and what comes next",
-        text: "CORGEIN is a prototype, and its value is the concept: a retrofit that reduces particulate emissions without asking anyone to stop burning. Turning it into something a household could rely on means measuring how much particulate it captures across different waste mixes and burn conditions, and what the plates and the high-voltage supply cost. Those numbers would show whether the idea can leave the competition stage.",
+        text: "CORGEIN remains a prototype. Its contribution is a household-scale demonstration of an electrostatic-precipitation concept, not a measured reduction in household air pollution. The next stage would require controlled measurements of particulate capture across different waste mixes and operating conditions, alongside a transparent assessment of component costs and reliability. Until those tests exist, do not describe the prototype as proven effective, highly efficient, or ready for residential deployment.",
       },
     ],
   },
   {
     slug: "starship-rocket",
-    title: "Starship Rocket: Unguided Two-Stage Retropropulsive Landing",
+    title: "Starship V3: Two-Stage Retropropulsive Landing Study",
     dateRange: "Aug 2026 - Sep 2026",
     role: "Co-designer",
     scale: "standard",
@@ -343,14 +343,14 @@ export const projects = [
     scaleNote: "A focused simulation project with a clear question: how close can pre-timed burns alone get to a soft landing? Made for the BIRST 2026 Level 3 challenge.",
     links: { repo: "https://github.com/Akirenaki/Starship-V3-Rocket", demo: null, presentation: null, document: null, video: null },
     summary:
-      "Rockets that land on their engines normally rely on active guidance. For the BIRST 2026 Level 3 challenge we simulated a Falcon 9 Crew-9 launch with no parachutes and no steering, only burns timed in advance, to see what that costs: touchdown at 15 to 17 m/s against a 5 m/s target, and about 0.9 km of wind drift.",
+      "For the BIRST 2026 Level 3 challenge, we designed and simulated a two-stage vehicle in OpenRocket for a Falcon 9 Crew-9 mission profile. With no parachutes or active steering and only pre-timed burns, the simulation produced touchdown speeds of 14.9–16.7 m/s against a 5 m/s target and about 0.9 km of wind drift; this was a simulation, not a physical launch.",
     cv: {
       problem:
         "Landing a rocket stage on its own engines normally relies on active guidance. The BIRST 2026 Level 3 challenge asks for a simulated Falcon 9 Crew-9 launch from Cape Canaveral that reaches a 3,000 m apogee and lands both stages propulsively.",
       approach:
-        "Co-designed a two-stage vehicle in OpenRocket with one teammate, taking the strictest version of the task: no parachutes, no active stability control, only burns timed in advance. Recreated the SLC-40 launch site in OpenWind with a 30-layer wind profile (3.1 to 14.4 m/s), viewed the trajectories in Google Earth through OpenEarth, and used custom swept fins as grid-fin analogues.",
+        "Co-designed and simulated a two-stage vehicle in OpenRocket with one teammate, taking the strictest version of the task: no parachutes, no active stability control, only burns timed in advance. Recreated the SLC-40 launch site in OpenWind with a 30-layer wind profile (3.1 to 14.4 m/s), viewed the simulated trajectories in Google Earth through OpenEarth, and modelled custom swept fins as grid-fin analogues.",
       impact:
-        "Hit the apogee target to within 0.03 m (2,999.97 m against 3,000.00 m) and stayed subsonic (peak Mach 0.973). Landing missed the 5.0 m/s specification, at 16.7 m/s for the upper stage and 14.9 m/s for the booster, with 0.86 to 0.95 km of wind drift. The measured miss shows what fixed-delay burns and uncorrected crosswind cost, and why closed-loop guidance exists.",
+        "The OpenRocket simulation reached an apogee of 2,999.97 m against the 3,000.00 m target and stayed subsonic (peak Mach 0.973). Simulated landing missed the 5.0 m/s specification, at 16.7 m/s for the upper stage and 14.9 m/s for the booster, with 0.86 to 0.95 km of wind drift. These simulation outputs show the limits of fixed-delay burns and uncorrected crosswind.",
     },
     stack: {
       visible: ["OpenRocket", "OpenWind"],
@@ -359,11 +359,11 @@ export const projects = [
     caseStudy: [
       {
         heading: "The question",
-        text: "The BIRST 2026 Level 3 (Falcon Rocket) task is to simulate a Falcon 9 Crew-9 launch from Cape Canaveral, reach a 3,000 m apogee and land both stages on their own engines. Real landings close a loop: sensors measure the descent and the vehicle adjusts continuously. We took the strictest version of the task and removed that loop, with no parachutes, no active stability control and only burns timed in advance, to ask what the loop is worth. How close can fixed timing alone get to a soft landing? I designed it with one teammate.",
+        text: "The BIRST 2026 Level 3 (Falcon Rocket) task is to simulate a Falcon 9 Crew-9 launch from Cape Canaveral, reach a 3,000 m apogee and land both stages on their own engines. We designed and simulated a two-stage vehicle in OpenRocket. Real landings close a loop: sensors measure the descent and the vehicle adjusts continuously. We took the strictest version of the task and removed that loop, with no parachutes, no active stability control and only burns timed in advance, to ask what the loop is worth. I designed the simulation with one teammate.",
       },
       {
         heading: "What we found",
-        text: "Ascent worked. The rocket reached 2,999.97 m against the 3,000.00 m target, within 3 cm, and peaked at Mach 0.973, so it stayed subsonic. Landing missed the 5.0 m/s speed specification: the upper stage touched down at 16.7 m/s and the booster at 14.9 m/s, roughly three times the target, because fixed-delay ignition over-corrected the vertical momentum. Uncompensated crosswinds also carried both stages 0.86 to 0.95 km downwind.",
+        text: "The OpenRocket simulation reached 2,999.97 m against the 3,000.00 m target and peaked at Mach 0.973, so it stayed subsonic. Simulated landing missed the 5.0 m/s speed specification: the upper stage reached 16.7 m/s and the booster 14.9 m/s, roughly three times the target, because fixed-delay ignition over-corrected the vertical momentum. Uncompensated crosswinds produced 0.86 to 0.95 km of simulated downwind drift.",
       },
       {
         heading: "Why fixed timing falls short",
@@ -371,11 +371,11 @@ export const projects = [
       },
       {
         heading: "How it was built",
-        text: "A Loki K627LR ascent motor (1,526 N·s) set the apogee. The Cape Canaveral (SLC-40) site was recreated in OpenWind with a 30-layer extended ISA wind profile (crosswinds of 3.1 to 14.4 m/s), and the trajectories were viewed in Google Earth through OpenEarth. Burns from an AeroTech HP-H195NT (upper stage) and a Cesaroni 168H410-14A (booster) fire at fixed delays of 51.5 s and 65.0 s after launch, with custom swept fins standing in for Falcon 9's grid fins.",
+        text: "The OpenRocket simulation model used a Loki K627LR ascent-motor specification (1,526 N·s). The Cape Canaveral (SLC-40) site was recreated in OpenWind with a 30-layer extended ISA wind profile (crosswinds of 3.1 to 14.4 m/s), and simulated trajectories were viewed in Google Earth through OpenEarth. The model used AeroTech HP-H195NT and Cesaroni 168H410-14A motor specifications for the upper stage and booster, with fixed ignition delays of 51.5 s and 65.0 s and custom swept fins standing in for Falcon 9's grid fins. These are simulation inputs, not evidence of a physical launch.",
       },
       {
         heading: "What the miss is worth",
-        text: "A simulation that lands softly would show only that it can be done. One that misses by a measured amount shows what each omitted system is responsible for: about three times the target touchdown speed and nearly a kilometre of drift are the price of flying open-loop. That gives a baseline against which any added guidance can be judged.",
+        text: "The simulated miss provides a baseline for examining the effects of fixed-delay burns and uncorrected crosswind: about three times the target touchdown speed and nearly a kilometre of drift. It is not a physical flight result.",
       },
       {
         heading: "What we would try next",
@@ -434,7 +434,7 @@ export const projects = [
       },
       {
         heading: "Empirical data and efficiency",
-        text: "We built and tested a physical prototype to collect launch data. Analysis gave a system efficiency of η = 43.8% and identified the factors behind the lost energy. Efficiency here is the share of the counterweight's energy that reaches the projectile, so the other 56.2% measures everything the ideal model leaves out. We co-authored a presentation and dataset that set out the fixed and independent variables and the findings.",
+        text: "We built and tested a physical prototype to collect launch data. The reported system efficiency was η = 43.8%, defined as the share of the counterweight's energy transferred to the projectile. The team co-authored a presentation documenting the variables and reported results; a shareable dataset is not linked on this page.",
       },
     ],
   },

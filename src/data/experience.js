@@ -35,19 +35,19 @@ export const experience = [
     title: "Supply Chain & Distribution Chief - GIAT 1446 H",
     org: "SMA Negeri 1 Yogyakarta · Pengurus Oeamat Harian (POH)",
     dateRange: "May 2025 - Jun 2025",
-    image: "/assets/credentials/experience-supply-chain.jpg",
+    image: null,
     bullets: [
       "Took over an unstaffed distribution division on event day, leading the end-to-end distribution workflow under tight time constraints.",
       "Directed last-mile delivery of perishable goods to beneficiary households using demographic records for equitable allocation.",
       "Restructured volunteer deployment and packaging protocols on short notice, resolving processing bottlenecks.",
-      "Mobilised over IDR 40 million in community capital during the planning phase.",
+      "Coordinated distribution operations for an event supported by over IDR 40 million in community capital; this was the event's community funding, not an amount personally raised by me.",
     ],
   },
   {
     title: "Master of Ceremonies - GRT 1446 H",
     org: "SMA Negeri 1 Yogyakarta · Pengurus Oeamat Harian (POH)",
     dateRange: "Feb 2025 - Mar 2025",
-    image: "/assets/credentials/experience-master-of-ceremonies.jpg",
+    image: null,
     bullets: [
       "Primary MC for a religious gathering of 300+ attendees, managing schedule and program transitions.",
       "Handled financial aggregation and end-to-end procurement for an honourarium and gift to the guest speaker.",
