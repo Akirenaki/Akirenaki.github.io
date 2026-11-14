@@ -43,8 +43,9 @@ content system:
   versions.
 - The About page collects biography and credentials in one long-form view.
 - Contact provides social links and a Formspree-backed message form.
-- The print page turns the same profile and project data into a printable CV
-  or a browser-generated PDF.
+- The print page presents a curated two-page CV, drawn from `src/data/cv.js` and
+  the shared profile and project data, as a printable page or browser-generated
+  PDF.
 
 ## II. Tech stack
 
@@ -127,9 +128,9 @@ hardware/engineering projects.
 5. Options within one filter group use OR logic; different groups use AND
    logic. Active filters appear as removable chips.
 6. Cards can expose repository, live demo, presentation, and document links.
-7. Case studies describe the problem, approach, and impact. Optional
-   `cv.problem`, `cv.approach`, and `cv.impact` values provide concise lines
-   for the printable CV.
+7. Case studies describe the problem, approach, and impact. (The optional
+   `cv.problem`, `cv.approach`, and `cv.impact` values are no longer used by the
+   printable CV, which takes its condensed bullets from `src/data/cv.js`.)
 
 The prerender list reads project slugs from the same data file, so adding a
 project does not require maintaining a second route list.
@@ -181,13 +182,20 @@ endpoint changes, update it there and test both success and failure states.
 `/print` is a standalone document view intentionally outside the normal
 navigation/footer layout so that it prints cleanly.
 
-It composes the CV from the same source data used elsewhere:
+It is a curated two-page A4 academic–professional CV, not a dump of every
+record on the site. Its content lives in `src/data/cv.js`: the display name and
+profile paragraph, the education and test-score lines, the six selected
+projects (in order, with condensed bullets and condensed roles), the curated
+teaching, leadership and service entries, four awards, one selected
+certification, and the grouped skills. Canonical project titles, date ranges
+and links, the contact fields, and the SAT and IELTS results are still read from
+`projects.js`, `profile.js` and `awards.js` by slug or name.
 
-- profile summary and contact details;
-- education and test scores;
-- technical skills, experience, awards, and certifications;
-- selected projects with compact Problem/Approach/Impact lines;
-- selected writing and other relevant portfolio information.
+Section order: Header, Profile, Education & Standardized Tests, Selected
+Projects & Research, Teaching, Leadership & Service, Awards & Selected
+Credentials, Technical Skills & Languages. Writing and the full certificate list
+are deliberately left out and remain on the website. To change what the CV shows,
+edit `cv.js`; do not edit the shared data files for that purpose.
 
 The page is styled for A4 output and hides browser-only notices and controls
 when printing. Visitors can click **Print / Save as PDF**, choose a printer,
@@ -284,10 +292,11 @@ Routine content changes should normally touch only `src/data/`:
 | File | Content |
 | --- | --- |
 | `src/data/profile.js` | Names, bio, contact links, languages, and education |
-| `src/data/projects.js` | Project cards, filters, case studies, links, and CV summaries |
+| `src/data/projects.js` | Project cards, filters, case studies, and links |
 | `src/data/writing.js` | Essay metadata, ordering, PDFs, featured flags, and related versions |
 | `src/data/writing-taxonomy.js` | Writing facets and tag definitions |
 | `src/data/experience.js` | Experience and leadership entries |
+| `src/data/cv.js` | Curated, CV-only content for `/print` (selection, order, condensed wording) |
 | `src/data/awards.js` | Awards, certifications, scores, and technical-stack lists |
 | `src/essays/` | Markdown source for essays with generated text/PDF output |
 

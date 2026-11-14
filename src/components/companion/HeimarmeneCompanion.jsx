@@ -32,6 +32,8 @@ import {
   resizeSheetHeight,
 } from "../../lib/companion-position";
 import { COMPANION_QUESTIONS, GROUPS, QUESTIONS_BY_ID } from "../../data/companion";
+import { RIPPLES_BY_ID } from "../../data/past-reverie";
+import { PastReverie } from "./PastReverie";
 
 const POSITION_KEY = "heimarmene-position-v1";
 const SLOW_KEY = "heimarmene-3d-slow-v1";
@@ -102,28 +104,37 @@ function AnswerLinks({ links, onNavigate }) {
   );
 }
 
-function QuestionList({ onPick }) {
+function QuestionList({ onPick, reverie }) {
   return (
-    <div className="space-y-5">
-      {GROUPS.map((group) => (
-        <section key={group.id}>
-          <h3 className="mb-2 text-sm font-medium text-ink-soft">{group.label}</h3>
-          <ul className="space-y-2">
-            {COMPANION_QUESTIONS.filter((q) => q.group === group.id).map((q) => (
-              <li key={q.id}>
-                <button type="button" onClick={() => onPick(q.id)} className={questionButton}>
-                  {q.question}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </div>
+    <>
+      <div className="space-y-5">
+        {GROUPS.map((group) => (
+          <section key={group.id}>
+            <h3 className="mb-2 text-sm font-medium text-ink-soft">{group.label}</h3>
+            <ul className="space-y-2">
+              {COMPANION_QUESTIONS.filter((q) => q.group === group.id).map((q) => (
+                <li key={q.id}>
+                  <button type="button" onClick={() => onPick(q.id)} className={questionButton}>
+                    {q.question}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+      <PastReverie
+        unlocked={reverie.unlocked}
+        onUnlock={reverie.onUnlock}
+        onPick={onPick}
+        buttonClassName={questionButton}
+        className="mt-12"
+      />
+    </>
   );
 }
 
-function QuestionsTab({ closePanel }) {
+function QuestionsTab({ closePanel, reverie }) {
   const [history, setHistory] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const scrollRef = useRef(null);
@@ -142,12 +153,13 @@ function QuestionsTab({ closePanel }) {
     setShowAll(false);
   }
 
-  const exchanges = history.map((id) => {
-    const q = QUESTIONS_BY_ID.get(id);
-    return { q, a: q.answer() };
-  });
+  // Ripples resolve only once the collection is unlocked, and have no follow-ups.
+  const exchanges = history
+    .map((id) => QUESTIONS_BY_ID.get(id) ?? (reverie.unlocked ? RIPPLES_BY_ID.get(id) : undefined))
+    .filter(Boolean)
+    .map((q) => ({ q, a: q.answer() }));
   const last = exchanges[exchanges.length - 1];
-  const followUps = last ? last.q.related.filter((id) => !history.includes(id)).slice(0, 3) : [];
+  const followUps = last ? (last.q.related ?? []).filter((id) => !history.includes(id)).slice(0, 3) : [];
 
   return (
     <div ref={scrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
@@ -156,7 +168,7 @@ function QuestionsTab({ closePanel }) {
       </p>
 
       {exchanges.length === 0 ? (
-        <QuestionList onPick={pick} />
+        <QuestionList onPick={pick} reverie={reverie} />
       ) : (
         <div className="space-y-4" aria-live="polite">
           {exchanges.map(({ q, a }, index) => (
@@ -202,7 +214,7 @@ function QuestionsTab({ closePanel }) {
             </button>
           </div>
 
-          {showAll ? <QuestionList onPick={pick} /> : null}
+          {showAll ? <QuestionList onPick={pick} reverie={reverie} /> : null}
         </div>
       )}
     </div>
@@ -306,7 +318,7 @@ function tabClass(active) {
   ].join(" ");
 }
 
-function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSize, onHide }) {
+function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSize, onHide, reverie }) {
   const [tab, setTab] = useState("questions");
   return (
     <div className="flex h-full flex-col bg-surface text-ink">
@@ -340,7 +352,7 @@ function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSiz
       </nav>
 
       {tab === "questions" ? (
-        <QuestionsTab closePanel={close} />
+        <QuestionsTab closePanel={close} reverie={reverie} />
       ) : (
         <SettingsTab prefs={prefs} update={update} onResetPosition={onResetPosition} onResetPanelSize={onResetPanelSize} onHide={onHide} />
       )}
@@ -361,6 +373,9 @@ export function HeimarmeneCompanion() {
   // null = the default panel size. liveFrame is the panel while an edge is being dragged.
   const [panelSize, setPanelSize] = useState(null);
   const [liveFrame, setLiveFrame] = useState(null);
+  // Held here, above the conditionally mounted panel, so the collection stays
+  // open while Heimarmene is closed and reopened. Memory only: a reload relocks it.
+  const [reverieUnlocked, setReverieUnlocked] = useState(false);
 
   const dockRef = useRef(null);
   const panelRef = useRef(null);
@@ -586,6 +601,7 @@ export function HeimarmeneCompanion() {
               onResetPosition={() => savePosition(DEFAULT_DOCK_POSITION)}
               onResetPanelSize={() => savePanelSize(null)}
               onHide={hide}
+              reverie={{ unlocked: reverieUnlocked, onUnlock: () => setReverieUnlocked(true) }}
             />
           </div>
           <ResizeHandles

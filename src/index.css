@@ -332,3 +332,195 @@
   outline-offset: 3px;
   border-radius: 9999px;
 }
+
+/* ---------------------------------------------------------------
+   Ripples of Past Reverie - the gated section at the foot of Heimarmene's
+   Questions tab (src/components/companion/PastReverie.jsx). Everything is
+   scoped under .past-reverie, so the public FAQ above the divider is untouched.
+
+   Locked: two decorative layers of blocks cover nearly the whole section, one
+   behind the text and one over it. The blocks only jump sideways (and dip a
+   little in opacity) a few times per cycle, staggered, never all at once, so
+   nothing flashes more than about three times a second. Both layers are
+   aria-hidden with pointer-events: none, and they thin out while the section
+   has focus so the form is easy to find and read. Colours come from the site
+   palette (hex fallbacks, as above, because Tailwind only emits theme
+   variables that a class uses).
+   Reduced motion: no animation at all - a static corrupted mask, and an
+   immediate reveal on success.
+   --------------------------------------------------------------- */
+.past-reverie {
+  --pr-ink: var(--color-ink, #221D2E);
+  --pr-accent: var(--color-accent, #D8579C);
+  --pr-deep: var(--color-accent-deep, #B23E82);
+  --pr-blush: var(--color-blush, #EEBCDC);
+  --pr-blue: var(--color-blue-deep, #3E3A95);
+  --pr-unlock: 1400ms; /* keep in step with UNLOCK_MS in PastReverie.jsx */
+  --pr-amp: 1;
+}
+
+.past-reverie[data-state="verifying"] { --pr-amp: 2.4; }
+
+/* The divider between the public FAQ and the collection. */
+.past-reverie .pr-seam {
+  position: relative;
+  height: 2px;
+  margin: 0 0 1rem;
+  border: 0;
+  background: var(--pr-deep);
+}
+.past-reverie .pr-seam::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 14%;
+  width: 22%;
+  height: 10px;
+  background: var(--pr-accent);
+  opacity: 0;
+  pointer-events: none;
+  animation: pr-seam 7s steps(1, end) infinite;
+}
+.past-reverie:not([data-state="open"]) .pr-seam::after {
+  opacity: 0.8;
+  animation-duration: 3.6s;
+}
+
+.past-reverie .pr-body {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+}
+.past-reverie:not([data-state="open"]) .pr-body {
+  min-height: 15rem;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--pr-ink) 14%, transparent) 3px 4px),
+    var(--color-surface, #FFFBFD);
+}
+.past-reverie .pr-content {
+  position: relative;
+  z-index: 2;
+}
+
+.past-reverie .pr-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.past-reverie .pr-layer--under { z-index: 1; }
+.past-reverie .pr-layer--over { z-index: 3; }
+.past-reverie:focus-within .pr-layer--under { opacity: 0.4; }
+.past-reverie:focus-within .pr-layer--over { opacity: 0.2; }
+
+.past-reverie .pr-frag {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  background: var(--tone);
+  opacity: var(--o);
+  animation: pr-jitter var(--dur) steps(1, end) var(--delay) infinite;
+}
+.past-reverie[data-state="verifying"] .pr-frag {
+  animation-duration: calc(var(--dur) * 0.4);
+}
+.past-reverie[data-state="unlocking"] .pr-frag {
+  animation: pr-surge var(--pr-unlock) ease-in-out 0s 1 forwards;
+}
+.pr-tone-ink { --tone: var(--pr-ink); }
+.pr-tone-accent { --tone: var(--pr-accent); }
+.pr-tone-deep { --tone: var(--pr-deep); }
+.pr-tone-blush { --tone: var(--pr-blush); }
+.pr-tone-blue { --tone: var(--pr-blue); }
+
+/* The heading: two offset, clipped copies. Static slivers by default (so the
+   reduced-motion look is a fixed tear); animated while locked; a rare, brief
+   twitch once open. The copies are hidden from assistive technology. */
+.past-reverie .pr-title {
+  position: relative;
+  outline: none;
+}
+.past-reverie .pr-title::before,
+.past-reverie .pr-title::after {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.past-reverie .pr-title::before {
+  color: var(--pr-deep);
+  transform: translateX(4px);
+  clip-path: inset(18% 0 58% 0);
+}
+.past-reverie .pr-title::after {
+  color: var(--pr-blue);
+  transform: translateX(-4px);
+  clip-path: inset(62% 0 10% 0);
+}
+.past-reverie:not([data-state="open"]) .pr-title::before { animation: pr-slice-a 3.1s steps(1, end) infinite; }
+.past-reverie:not([data-state="open"]) .pr-title::after { animation: pr-slice-b 4.3s steps(1, end) infinite; }
+.past-reverie[data-state="open"] .pr-title::before,
+.past-reverie[data-state="open"] .pr-title::after {
+  opacity: 0;
+  animation: pr-twitch 9s steps(1, end) infinite;
+}
+.past-reverie[data-state="open"] .pr-title::after { animation-delay: -4s; }
+
+/* Ripples read like the public questions, with a marked left edge. */
+.past-reverie .pr-ripple {
+  border-left-width: 3px;
+  border-left-color: var(--pr-deep);
+}
+
+@keyframes pr-jitter {
+  0%   { transform: translate3d(0, 0, 0); opacity: var(--o); }
+  14%  { transform: translate3d(calc(var(--dx) * var(--pr-amp)), 0, 0); }
+  17%  { transform: translate3d(calc(var(--dx) * var(--pr-amp) * -0.6), 0, 0); opacity: calc(var(--o) * 0.65); }
+  21%  { transform: translate3d(0, 0, 0); opacity: var(--o); }
+  58%  { transform: translate3d(calc(var(--dx) * var(--pr-amp) * 0.4), 0, 0); }
+  61%  { transform: translate3d(0, 0, 0); }
+}
+@keyframes pr-surge {
+  0%   { transform: translate3d(0, 0, 0); opacity: var(--o); }
+  30%  { transform: translate3d(calc(var(--dx) * 3), 0, 0) scaleY(1.2); opacity: 1; }
+  55%  { transform: translate3d(calc(var(--dx) * -2), 0, 0) scaleY(0.9); opacity: 0.9; }
+  100% { transform: translate3d(calc(var(--dx) * 8), 0, 0); opacity: 0; }
+}
+@keyframes pr-slice-a {
+  0%   { clip-path: inset(18% 0 58% 0); opacity: 0.9; }
+  23%  { clip-path: inset(44% 0 30% 0); }
+  47%  { clip-path: inset(0 0 82% 0); opacity: 0.6; }
+  71%  { clip-path: inset(70% 0 6% 0); opacity: 0.9; }
+}
+@keyframes pr-slice-b {
+  0%   { clip-path: inset(62% 0 10% 0); opacity: 0.9; }
+  31%  { clip-path: inset(8% 0 72% 0); opacity: 0.6; }
+  58%  { clip-path: inset(36% 0 40% 0); opacity: 0.9; }
+  83%  { clip-path: inset(80% 0 0 0); }
+}
+@keyframes pr-twitch {
+  0%, 96%, 100% { opacity: 0; }
+  97% { opacity: 0.7; clip-path: inset(30% 0 45% 0); }
+  98.5% { opacity: 0.7; clip-path: inset(60% 0 15% 0); }
+}
+@keyframes pr-seam {
+  0%, 92%, 100% { transform: translateX(0); width: 22%; }
+  93% { transform: translateX(120%); width: 30%; }
+  96% { transform: translateX(-40%); width: 14%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .past-reverie *,
+  .past-reverie *::before,
+  .past-reverie *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .past-reverie[data-state="unlocking"] .pr-layer { opacity: 0; }
+  .past-reverie[data-state="open"] .pr-seam::after { opacity: 0; }
+}

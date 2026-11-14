@@ -1,11 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { profile } from "../data/profile";
-import { experience } from "../data/experience";
-import { awards, certifications, technicalStack, testScores } from "../data/awards";
+import { testScores } from "../data/awards";
 import { projects } from "../data/projects";
-import { writing } from "../data/writing";
-import { TAGS_BY_ID } from "../data/writing-taxonomy";
+import {
+  cvProfile,
+  cvEducation,
+  cvTests,
+  cvProjects,
+  cvExperience,
+  cvAwards,
+  cvCertification,
+  cvSkills,
+  formatCvDate,
+  LINK_LABELS,
+} from "../data/cv";
 import { isLikelyInAppBrowser } from "../utils/browserDetect";
 import { SITE_URL } from "../lib/seo";
 
@@ -19,28 +28,46 @@ function PrinterIcon({ className = "h-4 w-4" }) {
   );
 }
 
-// The three labelled lines shown under each project on the CV, in order. The
-// text comes from `project.cv` in projects.js; a project without it falls back
-// to its card summary.
-const CV_PROJECT_LINES = [
-  { key: "problem", label: "Problem" },
-  { key: "approach", label: "Approach" },
-  { key: "impact", label: "Impact" },
-];
+const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
+
+// Links are absolute so they stay clickable in the saved PDF.
+const caseStudyUrl = (slug) => `${SITE_URL}work/${slug}/`;
+const linkedinLabel = profile.contact.linkedin.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+const githubLabel = `github.com/${profile.contact.github.label}`;
 
 function SectionHeading({ children }) {
+  return <h2 className="cv-h2">{children}</h2>;
+}
+
+function EntryHead({ title, sub, date }) {
   return (
-    <h2 className="font-display text-lg font-medium text-ink border-b border-blush pb-1.5 mb-3">{children}</h2>
+    <div className="cv-head">
+      <p className="cv-head-main">
+        {title}
+        {sub && <span className="cv-sub"> — {sub}</span>}
+      </p>
+      {date && <p className="cv-date">{date}</p>}
+    </div>
+  );
+}
+
+function Bullets({ items }) {
+  return (
+    <ul className="cv-bullets">
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
   );
 }
 
 // Baked into the prerendered build/client/print/index.html. noindex: this
-// page repeats the About content and lists contact details (email, phone,
-// location), so it shouldn't appear in search results. Don't also block it in
-// robots.txt - a crawler has to be able to fetch the page to see the tag.
+// page lists contact details (email, location), so it shouldn't appear in
+// search results. Don't also block it in robots.txt - a crawler has to be able
+// to fetch the page to see the tag.
 export function meta() {
   return [
-    { title: `${profile.legalNameCV} — CV` },
+    { title: `${cvProfile.displayName} — CV` },
     { name: "robots", content: "noindex" },
   ];
 }
@@ -63,21 +90,46 @@ export function PrintCV() {
     }
   }, [searchParams]);
 
-  // Starts at the canonical URL (safe during the prerender pass, which
-  // runs in Node and has no `window`) and swaps in the real address -
-  // query string included - once mounted in an actual browser.
-  const [generatedFrom, setGeneratedFrom] = useState(`${SITE_URL}print`);
-  useEffect(() => {
-    setGeneratedFrom(window.location.href);
-  }, []);
-  const generatedOn = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const testLine = cvTests
+    .map(({ name, showMax }) => {
+      const test = testScores.find((entry) => entry.name === name);
+      if (!test) return null;
+      const score = showMax
+        ? `${test.value.toFixed(test.decimals)}/${test.max.toFixed(test.decimals)}`
+        : test.value.toFixed(test.decimals);
+      return `${test.name} ${score} (${formatCvDate(test.date)})`;
+    })
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <div className="min-h-screen bg-paper px-4 py-10 print:bg-white print:p-0 md:px-8">
       <style>{`
-        @page { size: A4; margin: 14mm 16mm; }
+        @page { size: A4; margin: 13mm 16mm; }
+        .cv-doc { font-family: var(--font-body); font-size: 10.5pt; line-height: 1.33; color: #221D2E; }
+        .cv-doc a { color: inherit; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: #B23E82; }
+        .cv-name { font-family: var(--font-display); font-size: 26pt; line-height: 1.1; font-weight: 500; }
+        .cv-headline { margin-top: 3pt; font-size: 11.5pt; color: #3d3748; }
+        .cv-contact { margin-top: 6pt; display: flex; flex-wrap: wrap; gap: 0 14pt; font-size: 10pt; }
+        .cv-h2 { font-family: var(--font-display); font-size: 13pt; font-weight: 500; line-height: 1.2; border-bottom: 1px solid #221D2E; padding-bottom: 2pt; margin: 10pt 0 5pt; break-after: avoid; page-break-after: avoid; }
+        .cv-entry { margin-top: 6pt; break-inside: avoid; page-break-inside: avoid; }
+        .cv-entry:first-of-type { margin-top: 0; }
+        .cv-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12pt; }
+        .cv-head-main { font-weight: 700; break-after: avoid; }
+        .cv-sub { font-weight: 400; }
+        .cv-date { white-space: nowrap; flex: none; }
+        .cv-role { font-style: italic; }
+        .cv-bullets { margin: 2pt 0 0; padding-left: 14pt; list-style: disc; }
+        .cv-bullets li { margin-top: 1pt; padding-left: 1pt; }
+        .cv-links { font-size: 9.5pt; white-space: nowrap; flex: none; }
+        .cv-group-title { font-weight: 700; break-after: avoid; }
+        .cv-subentry { margin-top: 4pt; margin-left: 0; break-inside: avoid; page-break-inside: avoid; }
+        .cv-line { margin-top: 2pt; }
+        .cv-line strong { font-weight: 700; }
         @media print {
           html, body { background: #fff !important; }
+          .cv-doc { color: #000; }
+          .cv-headline { color: #222; }
         }
       `}</style>
 
@@ -120,212 +172,134 @@ export function PrintCV() {
       </div>
 
       {/* The document itself */}
-      <div className="mx-auto max-w-[210mm] border border-blush/40 bg-white p-10 shadow-sm print:max-w-none print:border-0 print:p-0 print:shadow-none">
-        <header className="mb-8 border-b border-blush pb-6 print:break-inside-avoid">
-          <p className="font-body text-sm text-ink-soft">
-            {profile.preferredNameCV}
-            {profile.pronouns && <> · Pronouns: {profile.pronouns}</>}
-          </p>
-          <h1 className="mt-1 font-display text-4xl font-medium leading-tight text-ink">
-            {profile.legalNameCV}
-          </h1>
-          <p className="mt-2 text-base text-ink-soft">{profile.roleSummary}</p>
-
-          <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink">
+      <div className="cv-doc mx-auto max-w-[210mm] border border-blush/40 bg-white p-10 shadow-sm print:max-w-none print:border-0 print:p-0 print:shadow-none">
+        <header>
+          <h1 className="cv-name">{cvProfile.displayName}</h1>
+          <p className="cv-headline">{cvProfile.headline}</p>
+          <p className="cv-contact">
             <span>{profile.location}</span>
-            <span className="text-blush">·</span>
-            <span>{profile.contact.email}</span>
-            <span className="text-blush">·</span>
-            <span>{profile.contact.whatsapp}</span>
-            <span className="text-blush">·</span>
-            <span>{profile.contact.linkedin.replace("https://www.", "")}</span>
-            <span className="text-blush">·</span>
-            <span>github.com/{profile.contact.github.label}</span>
+            <a href={`mailto:${profile.contact.email}`}>{profile.contact.email}</a>
+            <span>
+              LinkedIn: <a href={profile.contact.linkedin}>{linkedinLabel}</a>
+            </span>
+            <span>
+              GitHub: <a href={profile.contact.github.url}>{githubLabel}</a>
+            </span>
+            <span>
+              Portfolio: <a href={SITE_URL}>{cvProfile.portfolioLabel}</a>
+            </span>
           </p>
         </header>
 
-        <section className="mb-8 print:break-inside-avoid">
-          <SectionHeading>Summary</SectionHeading>
-          <p className="text-sm leading-relaxed text-ink">{profile.homeSummary}</p>
+        <section aria-labelledby="cv-profile">
+          <h2 id="cv-profile" className="cv-h2">Profile</h2>
+          <p>{cvProfile.summary}</p>
         </section>
 
-        <section className="mb-8 print:break-inside-avoid">
-          <SectionHeading>Education</SectionHeading>
-          <div className="flex flex-col gap-4">
-            {profile.education.map((edu) => (
-              <div key={edu.institution} className="flex flex-col gap-1.5 text-sm">
-                <div className="flex items-baseline justify-between gap-4">
-                  <div>
-                    <p className="font-medium text-ink">{edu.institution}</p>
-                    <p className="text-ink-soft">{edu.degree}</p>
-                  </div>
-                  <p className="whitespace-nowrap text-ink-soft">{edu.graduation}</p>
-                </div>
-                {edu.description && <p className="mt-1 text-sm leading-relaxed text-ink">{edu.description}</p>}
-                {edu.bullets && (
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-ink">
-                    {edu.bullets.map((bullet) => (
-                      <li key={bullet}>{bullet}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
+        <section aria-labelledby="cv-education">
+          <h2 id="cv-education" className="cv-h2">Education &amp; Standardized Tests</h2>
+          {cvEducation.map((edu) => (
+            <div key={edu.institution} className="cv-entry">
+              <EntryHead title={edu.institution} date={edu.date} />
+              {(edu.detail || edu.note) && <p>{[edu.detail, edu.note].filter(Boolean).join(" · ")}</p>}
+            </div>
+          ))}
+          <p className="cv-line" style={{ marginTop: "7pt" }}>
+            <strong>Standardized tests:</strong> {testLine}
+          </p>
         </section>
 
-        <section className="mb-8 print:break-inside-avoid">
-          <SectionHeading>Test Scores</SectionHeading>
-          <div className="flex flex-col gap-2 text-sm">
-            {testScores.map((test) => (
-              <div key={test.name} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                <p className="text-ink">
-                  <span className="font-medium">{test.name}</span>{" "}
-                  <span className="text-ink-soft">— {test.fullName}</span>
-                </p>
-                <p className="whitespace-nowrap text-xs text-ink-soft">
-                  {test.value.toFixed(test.decimals)} / {test.max.toFixed(test.decimals)} · {test.date}
-                </p>
-                <p className="w-full text-xs text-ink-soft">
-                  {test.sections.map((section) => `${section.label}: ${section.value.toFixed(section.decimals)}`).join(" · ")}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mb-8">
-          <SectionHeading>Experience</SectionHeading>
-          <div className="flex flex-col gap-5">
-            {experience.map((role) => (
-              <div key={role.title} className="print:break-inside-avoid">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                  <p className="font-medium text-ink">
-                    {role.title} <span className="font-normal text-ink-soft">— {role.org}</span>
+        <section aria-labelledby="cv-projects">
+          <h2 id="cv-projects" className="cv-h2">Selected Projects &amp; Research</h2>
+          {cvProjects.map((entry) => {
+            const project = PROJECTS_BY_SLUG.get(entry.slug);
+            if (!project) return null;
+            const extraLinks = entry.links
+              .map((key) => ({ key, url: project.links?.[key] }))
+              .filter((link) => link.url);
+            return (
+              <div key={entry.slug} className="cv-entry">
+                <div className="cv-head">
+                  <p className="cv-head-main">
+                    <a href={caseStudyUrl(entry.slug)}>{project.title}</a>
                   </p>
-                  <p className="whitespace-nowrap text-xs text-ink-soft">{role.dateRange}</p>
+                  <p className="cv-date">{formatCvDate(project.dateRange)}</p>
                 </div>
-                <ul className="mt-1.5 list-disc space-y-1 pl-5 text-sm text-ink">
-                  {role.bullets.map((bullet) => (
-                    <li key={bullet}>{bullet}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mb-8">
-          <SectionHeading>Projects</SectionHeading>
-          <div className="flex flex-col gap-5">
-            {projects
-              .filter((project) => project.scale === "flagship" || project.scale === "standard")
-              .map((project) => (
-                <div key={project.slug} className="print:break-inside-avoid">
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                    <p className="font-medium text-ink">
-                      {project.title} <span className="font-normal text-ink-soft">— {project.role}</span>
-                    </p>
-                    <p className="whitespace-nowrap text-xs text-ink-soft">{project.dateRange}</p>
-                  </div>
-                  {project.cv ? (
-                    <div className="mt-1.5 flex flex-col gap-1.5 text-sm leading-relaxed text-ink">
-                      {CV_PROJECT_LINES.map(({ key, label }) => (
-                        <p key={key}>
-                          <span className="font-medium">{`${label}.`}</span> {project.cv[key]}
-                        </p>
+                <div className="cv-head">
+                  <p className="cv-role">{entry.role}</p>
+                  {extraLinks.length > 0 && (
+                    <p className="cv-links">
+                      {extraLinks.map((link, index) => (
+                        <span key={link.key}>
+                          {index > 0 && " · "}
+                          <a href={link.url}>{LINK_LABELS[link.key]}</a>
+                        </span>
                       ))}
-                    </div>
-                  ) : (
-                    <p className="mt-1.5 text-sm leading-relaxed text-ink">{project.summary}</p>
-                  )}
-                  <p className="mt-1.5 text-xs text-ink-soft">
-                    {[...project.stack.visible, ...project.stack.hidden].join(" · ")}
-                  </p>
-                </div>
-              ))}
-          </div>
-        </section>
-
-        <section className="mb-8">
-          <SectionHeading>Writings</SectionHeading>
-          <div className="flex flex-col gap-5">
-            {writing.map((entry) => {
-              const subjects = (entry.tags?.subject ?? [])
-                .map((id) => TAGS_BY_ID.get(id)?.label || id)
-                .join(" · ");
-
-              return (
-                <div key={entry.slug} className="print:break-inside-avoid">
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
-                    <p className="font-medium text-ink">{entry.title}</p>
-                    <p className="whitespace-nowrap text-xs text-ink-soft">
-                      {[
-                        entry.section === "academic" ? "Academic Essay" : "Creative Writing",
-                        entry.status === "finished" ? "Finished" : "Ongoing",
-                        `${entry.wordCount} words`,
-                        entry.language,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
                     </p>
-                  </div>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink">{entry.summary}</p>
-                  {subjects && <p className="mt-1.5 text-xs text-ink-soft">{subjects}</p>}
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="mb-8 print:break-inside-avoid">
-          <SectionHeading>Awards</SectionHeading>
-          <div className="flex flex-col gap-3">
-            {awards.map((award) => (
-              <div key={award.title} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 text-sm">
-                <p className="text-ink">
-                  {award.title} <span className="text-ink-soft">— {award.issuer}</span>
-                </p>
-                {award.credentialId && <p className="text-xs text-ink-soft">Credential ID: {award.credentialId}</p>}
-                <p className="whitespace-nowrap text-xs text-ink-soft">{award.date}</p>
+                <Bullets items={entry.bullets} />
               </div>
+            );
+          })}
+        </section>
+
+        <section aria-labelledby="cv-service">
+          <h2 id="cv-service" className="cv-h2">Teaching, Leadership &amp; Service</h2>
+          {cvExperience.map((role) =>
+            role.group ? (
+              <div key={role.org} className="cv-entry">
+                <p className="cv-group-title">{role.org}</p>
+                {role.group.map((sub) => (
+                  <div key={sub.title} className="cv-subentry">
+                    <div className="cv-head">
+                      <p className="cv-head-main" style={{ fontWeight: 400 }}>
+                        <strong style={{ fontWeight: 700 }}>{sub.title}</strong>
+                      </p>
+                      <p className="cv-date">{sub.date}</p>
+                    </div>
+                    <Bullets items={sub.bullets} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div key={role.title} className="cv-entry">
+                <EntryHead title={role.title} date={role.date} />
+                <p className="cv-role">{role.org}</p>
+                <Bullets items={role.bullets} />
+              </div>
+            ),
+          )}
+        </section>
+
+        <section aria-labelledby="cv-awards">
+          <h2 id="cv-awards" className="cv-h2">Awards &amp; Selected Credentials</h2>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            {cvAwards.map((award) => (
+              <li key={`${award.title}-${award.date}`} className="cv-head" style={{ marginTop: "2pt", breakInside: "avoid" }}>
+                <p>
+                  <strong>{award.title}</strong>, {award.detail}
+                </p>
+                <p className="cv-date">{award.date}</p>
+              </li>
             ))}
+          </ul>
+          <div className="cv-head" style={{ marginTop: "5pt", breakInside: "avoid" }}>
+            <p>
+              <strong>{cvCertification.label}:</strong> {cvCertification.text}
+            </p>
+            <p className="cv-date">{cvCertification.date}</p>
           </div>
         </section>
 
-        <section className="mb-8 print:break-inside-avoid">
-          <SectionHeading>Certifications</SectionHeading>
-          <div className="grid grid-cols-1 gap-x-8 gap-y-1 text-sm text-ink sm:grid-cols-2">
-            {certifications.map((cert) => (
-              <p key={cert.title}>
-                {cert.title} <span className="text-ink-soft">— {cert.issuer}, {cert.date}</span>
-              </p>
-            ))}
-          </div>
+        <section aria-labelledby="cv-skills">
+          <h2 id="cv-skills" className="cv-h2">Technical Skills &amp; Languages</h2>
+          {cvSkills.map((group) => (
+            <p key={group.label} className="cv-line" style={{ breakInside: "avoid" }}>
+              <strong>{group.label}:</strong> {group.items}.
+            </p>
+          ))}
         </section>
-
-        <section className="mb-8 print:break-inside-avoid">
-          <SectionHeading>Technical Skills</SectionHeading>
-          <p className="text-sm text-ink">
-            <span className="text-ink-soft">Daily: </span>
-            {technicalStack.daily.join(" · ")}
-          </p>
-          <p className="mt-1.5 text-sm text-ink">
-            <span className="text-ink-soft">Also worked with: </span>
-            {technicalStack.workedWith.join(" · ")}
-          </p>
-        </section>
-
-        <section className="print:break-inside-avoid">
-          <SectionHeading>Languages</SectionHeading>
-          <p className="text-sm text-ink">
-            {profile.languages.map((lang) => `${lang.name} (${lang.level})`).join(" · ")}
-          </p>
-        </section>
-
-        <footer className="mt-10 border-t border-blush pt-4 text-xs text-ink-soft print:break-inside-avoid">
-          Generated from {generatedFrom} on {generatedOn}.
-        </footer>
       </div>
     </div>
   );
