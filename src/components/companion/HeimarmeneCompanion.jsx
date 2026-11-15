@@ -14,6 +14,7 @@ import { Link, useLocation } from "react-router";
 import { ManifoldMascot } from "./ManifoldMascot";
 import { CompanionTrail } from "./CompanionTrail";
 import { useCompanionPrefs } from "./useCompanionPrefs";
+import { useCompanionWander } from "./useCompanionWander";
 import {
   COMPANION_NAME,
   COMPANION_ROTATIONS,
@@ -30,6 +31,7 @@ import {
 } from "../../lib/companion-settings";
 import {
   DEFAULT_DOCK_POSITION,
+  DOCK_MARGIN,
   clampPixels,
   keyboardResize,
   parseStoredPanelSize,
@@ -464,6 +466,7 @@ export function HeimarmeneCompanion() {
   const [reverieUnlocked, setReverieUnlocked] = useState(false);
 
   const dockRef = useRef(null);
+  const wanderRef = useRef(null);
   const panelRef = useRef(null);
   const dragRef = useRef(null);
   const resizeRef = useRef(null);
@@ -662,8 +665,21 @@ export function HeimarmeneCompanion() {
 
   const basePx = positionToPixels(position, viewport, size);
   const px = dragPx ?? basePx;
-  const roamX = Math.max(0, position.x > 0.5 ? px.left - 12 : viewport.width - size - 12 - px.left);
-  const roamY = Math.max(0, position.y > 0.5 ? px.top - 12 : viewport.height - size - 12 - px.top);
+
+  // Random wandering: offsets from the resting spot that keep it on screen.
+  useCompanionWander({
+    ref: wanderRef,
+    enabled: showDock && prefs.ambientMotion && !dragPx && !resetMotion,
+    paused: driftPaused || open,
+    speed: prefs.driftSpeed ?? DEFAULT_DRIFT_SPEED,
+    bounds: {
+      minX: DOCK_MARGIN - basePx.left,
+      maxX: viewport.width - size - DOCK_MARGIN - basePx.left,
+      minY: DOCK_MARGIN - basePx.top,
+      maxY: viewport.height - size - DOCK_MARGIN - basePx.top,
+    },
+    resetKey: [Math.round(basePx.left), Math.round(basePx.top), viewport.width, viewport.height, size].join("|"),
+  });
 
   function onPointerDown(event) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -804,6 +820,7 @@ export function HeimarmeneCompanion() {
       ) : null}
 
       <div
+        ref={wanderRef}
         role="region"
         aria-label={COMPANION_NAME}
         className="heimarmene-dock group fixed z-[60]"
@@ -813,7 +830,7 @@ export function HeimarmeneCompanion() {
         data-open={open ? "true" : "false"}
         data-motion-reset={resetMotion ? "true" : "false"}
         hidden={sheetOpen}
-        style={{ left: px.left, top: px.top, width: size, height: size, "--roam-x": `${position.x > 0.5 ? -roamX : roamX}px`, "--roam-y": `${position.y > 0.5 ? -roamY : roamY}px`, "--drift-duration": `${(12 * 100 / (prefs.driftSpeed ?? DEFAULT_DRIFT_SPEED)).toFixed(1)}s` }}
+        style={{ left: px.left, top: px.top, width: size, height: size }}
       >
         {introVisible && !open ? (
           <div className={`absolute top-1/2 z-10 -translate-y-1/2 ${position.x > 0.5 ? "right-full mr-3" : "left-full ml-3"}`}>
