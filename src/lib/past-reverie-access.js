@@ -1,15 +1,23 @@
 // Passphrase check for Ripples of Past Reverie (data/past-reverie.js).
 //
 // PBKDF2-HMAC-SHA-256 through the browser's Web Crypto API: the entered
-// passphrase is stretched with the stored salt and the result is compared with
-// the stored verifier. Nothing here touches storage, the network or the
-// console, and nothing runs until verifyPasscode() is called from a submit
-// handler, so the static prerender never executes any of it.
+// passphrase is normalised (lib/normalise-passphrase.js), stretched with the
+// stored salt, and the result is compared with the stored verifier. Nothing
+// here touches storage, the network or the console, and nothing runs until
+// verifyPasscode() is called from a submit handler, so the static prerender
+// never executes any of it.
 //
-// Policy: the passphrase is case-sensitive and used exactly as typed (no
-// trimming, no case folding). Anything longer than MAX_PASSPHRASE_LENGTH is
-// rejected without doing the expensive derivation.
+// Policy: case, spacing, punctuation and invisible characters are ignored (see
+// normalise-passphrase.js for the exact rules). Input longer than
+// MAX_RAW_INPUT_LENGTH is rejected before any work is done, and a normalised
+// passphrase that is empty or longer than MAX_PASSPHRASE_LENGTH is rejected
+// without doing the expensive derivation.
 
+import { NORMALISATION_VERSION, normalisePassphrase } from "./normalise-passphrase.js";
+
+// Longest raw input that is looked at (UTF-16 code units, as maxLength counts).
+export const MAX_RAW_INPUT_LENGTH = 1024;
+// Longest normalised passphrase (letters and digits only) that is derived.
 export const MAX_PASSPHRASE_LENGTH = 256;
 
 function fail(code, message) {
@@ -28,10 +36,15 @@ export function decodeBase64(text) {
   return bytes;
 }
 
-// False while the salt or verifier is still a placeholder (or malformed).
+// False while the salt or verifier is still a placeholder (or malformed), or
+// when the verifier was made under a normalisation version this code lacks.
 export function isAccessConfigured(access) {
   try {
-    return decodeBase64(access?.salt).length >= 16 && decodeBase64(access?.verifier).length >= 32;
+    return (
+      access?.normalisation === NORMALISATION_VERSION &&
+      decodeBase64(access?.salt).length >= 16 &&
+      decodeBase64(access?.verifier).length >= 32
+    );
   } catch {
     return false;
   }
@@ -51,13 +64,15 @@ function sameBytes(a, b) {
 export async function verifyPasscode(passphrase, access, subtle = globalThis.crypto?.subtle) {
   if (!subtle) throw fail("unsupported", "Web Crypto is not available.");
   if (!isAccessConfigured(access)) throw fail("unconfigured", "Access is not configured.");
-  if (typeof passphrase !== "string" || passphrase.length === 0 || passphrase.length > MAX_PASSPHRASE_LENGTH) {
+  if (typeof passphrase !== "string" || passphrase.length === 0 || passphrase.length > MAX_RAW_INPUT_LENGTH) {
     return false;
   }
+  const normalised = normalisePassphrase(passphrase);
+  if (normalised.length === 0 || normalised.length > MAX_PASSPHRASE_LENGTH) return false;
 
   const salt = decodeBase64(access.salt);
   const expected = decodeBase64(access.verifier);
-  const material = await subtle.importKey("raw", new TextEncoder().encode(passphrase), access.algorithm, false, [
+  const material = await subtle.importKey("raw", new TextEncoder().encode(normalised), access.algorithm, false, [
     "deriveBits",
   ]);
   const derived = await subtle.deriveBits(

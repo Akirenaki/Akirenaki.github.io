@@ -22,8 +22,11 @@ const FLICKER_CHANCE = 0.6;    // 60 % of stars flicker
 const FLICKER_SPEED = 0.8;     // cycles per second
 const FLICKER_INTENSITY = 0.4; // opacity floor = BASE_ALPHA * FLICKER_INTENSITY
 
-export function ConstellationField({ className = "" }) {
+export function ConstellationField({ className = "", speed = 100 }) {
   const canvasRef = useRef(null);
+  const speedRef = useRef(speed);
+
+  useEffect(() => { speedRef.current = speed; }, [speed]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -68,8 +71,9 @@ export function ConstellationField({ className = "" }) {
 
       for (const p of points) {
         if (!reduceMotion) {
-          p.x += p.vx;
-          p.y += p.vy;
+          const speedScale = speedRef.current / 100;
+          p.x += p.vx * speedScale;
+          p.y += p.vy * speedScale;
           if (p.x < 0 || p.x > width) p.vx *= -1;
           if (p.y < 0 || p.y > height) p.vy *= -1;
         }

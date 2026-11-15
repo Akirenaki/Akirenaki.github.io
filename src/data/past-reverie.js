@@ -6,11 +6,13 @@
 // can read them. The passphrase only decides whether the interface shows them.
 //
 // `access` holds public verification parameters only. The passphrase itself is
-// never stored: `verifier` is what PBKDF2-HMAC-SHA-256 derives from it with
-// `salt`. Generate both locally with `node scripts/past-reverie-setup.mjs`
-// (it prompts for the passphrase without echoing it and writes nothing to
-// disk), then paste the printed `salt` and `verifier` below. If you change
-// `iterations`, run the script again.
+// never stored: `verifier` is what PBKDF2-HMAC-SHA-256 derives from its
+// normalised form (lib/normalise-passphrase.js: case, spacing and punctuation
+// ignored) with `salt`. Generate `salt`, `verifier` and `normalisation` locally
+// with `node scripts/past-reverie-setup.mjs` (it prompts for the passphrase
+// without echoing it and writes nothing to disk), then paste the printed lines
+// below. If you change `iterations` or the normalisation rules, run the script
+// again.
 //
 // Each ripple:
 //   id        unique, lower-case kebab-case, and never the same as an id in
@@ -21,21 +23,25 @@
 //             site or { label, href } for an external address.
 //
 // Ripples are independent: there is deliberately no `related` field.
+// Run `node scripts/past-reverie-setup.mjs` to generate a new salt and verifier for a new passphrase, 
+// then add new ripples to the `ripples` array. 
+// The order of ripples in the array is the order they appear in the interface.
 
 export const PAST_REVERIE = {
   access: {
     algorithm: "PBKDF2",
     hash: "SHA-256",
     iterations: 600000,
-    salt: "X61MItJz6bQRWvIy7FqC0xfgxNpEioThaA7aBWjRVGo=",
-    verifier: "Eo4MGoEuvOn794e2u/lcntHjli24IG9WCf2jqqeZrDY=",
+    salt: "SLbT3qQ0Ku3i/20cVbWHEqf/RimO2WURvHbhmcGt2i8=",
+    verifier: "fLMB0J8H/oZz6azJeMGgHORl50eL1lXRvlsP2dmWCso=",
+    normalisation: 1,
   },
   ripples: [
     {
       id: "ripple-01",
       question: "What is this section about?",
       answer: () => ({
-        text: "In this questions, lies secrets that I wish my comrades would know, yet often would be to dangerous for the world to know",
+        text: "“This is Renee speaking—not Heimarmene. In this questions, lies secrets that I wish my comrades would know, yet often would be to dangerous for the world to know.”",
         links: [],
       }),
     },
@@ -43,7 +49,7 @@ export const PAST_REVERIE = {
       id: "ripple-02",
       question: "What do you think defines a woman?",
       answer: () => ({
-        text: "The category ‘woman’ is not reducible to a single necessary-and-sufficient biological property that cleanly includes all cis women while simultaenously exclude trans women.",
+        text: "“The category ‘woman’ is not reducible to a single necessary-and-sufficient biological property that cleanly includes all cis women while simultaenously exclude trans women.”",
         links: [],
       }),
     },
@@ -51,7 +57,7 @@ export const PAST_REVERIE = {
       id: "ripple-03",
       question: "So, What is your gender identity?",
       answer: () => ({
-        text: "Regardless, there is also the conventional truth: I am a non-binary trans woman and I use she/they pronouns; the \"he\" pronoun is only for camouflage. ",
+        text: "“Regardless, there is also the conventional truth: I am a non-binary trans woman and I use she/they pronouns; the ‘he’ pronoun is only for camouflage. ”",
         links: [],
       }),
     },

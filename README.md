@@ -213,7 +213,10 @@ nothing is generated, nothing is sent anywhere, and there is no server.
   (About, Projects, Writing, Contact). Picking one shows the answer, links to
   the relevant page, and up to three related follow-up questions.
 - **Settings tab.** Size (small, medium, large), rotation (automatic, 3D,
-  flat), reset position, and hide.
+  flat), screen-wide drift with cosmic lattice and star traces, reset position,
+  and hide. Separate sliders adjust Heimarmene's roam speed and the stellar
+  background's drift speed. The trace also appears while dragging; the motion
+  setting turns off both ambient drift and traces.
 - **Hiding.** Hiding Heimarmene (from Settings or the small × on the mascot) is
   remembered on the visitor's device. While hidden, a small button with the
   mascot appears in the footer, beside the email, GitHub and LinkedIn links;
@@ -235,7 +238,12 @@ nothing is generated, nothing is sent anywhere, and there is no server.
 - **Motion.** The lattice is rotated in 3D by a small `requestAnimationFrame`
   loop. In *automatic* rotation, if the frame rate stays below about 28 fps for
   two consecutive windows, it drops to a flat CSS-only spin for the rest of the
-  tab session. `prefers-reduced-motion` shows one still frame.
+  tab session. The companion roams across the visible screen; its speed slider
+  adjusts a 12-second base cycle from 8 to 24 seconds. A separate slider
+  controls the star field's drift rate. It leaves a short-lived trail of
+  lattice fragments and sparkles. A one-time prompt introduces its portfolio
+  questions. `prefers-reduced-motion` shows one still frame and disables
+  ambient roaming.
 - **Editing the questions.** All questions and answers live in
   `src/data/companion.js`. Most answers are built from `profile.js`,
   `projects.js`, `writing.js` and `awards.js`, so figures and titles follow the
@@ -247,10 +255,8 @@ nothing is generated, nothing is sent anywhere, and there is no server.
 - **Colours.** The mascot is the Project Cherenkov Neutrino with its colours
   inverted (pink core and lattice, blue shock ring). Its `--mf-*` tokens at the
   end of `src/index.css` are derived from the site palette.
-- **Privacy.** Only four things are stored in the visitor's browser
-  (`heimarmene-prefs-v1` for size, rotation and hidden/shown, `heimarmene-position-v1`
-  for the position, `heimarmene-panel-size-v1` for the panel dimensions, and
-  `heimarmene-3d-slow-v1` in session storage for the slow-device fallback).
+- **Privacy.** Preferences, position, panel dimensions, the one-time intro
+  dismissal, and the slow-device fallback stay in the visitor's browser.
   Nothing leaves the device.
 - **Printing and static output.** Heimarmene renders nothing until the page has
   loaded in the browser, so the prerendered HTML is identical for everyone, and

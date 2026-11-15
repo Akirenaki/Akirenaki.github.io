@@ -296,6 +296,13 @@
 .mf-root[data-mood="thinking"] .mf-lattice-flat .mf-node {
   animation: mf-shimmer 1.3s ease-in-out infinite;
 }
+.mf-root[data-mood="curious"] .mf-halo,
+.mf-root[data-mood="curious"] .mf-core {
+  animation-duration: 2.6s;
+}
+.mf-root[data-mood="curious"] .mf-comet {
+  animation-duration: 4.5s;
+}
 @keyframes mf-shimmer {
   0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
@@ -303,12 +310,30 @@
 
 /* Dock: the draggable wrapper around the mascot. */
 .heimarmene-dock {
+  position: fixed;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
+.heimarmene-dock[data-ambient="true"] {
+  animation: heimarmene-drift var(--drift-duration, 17.1s) ease-in-out infinite;
+}
+.heimarmene-dock[data-paused="true"],
+.heimarmene-dock[data-open="true"] { animation-play-state: paused; }
+.heimarmene-dock[data-motion-reset="true"] { animation: none; transform: none; }
+@keyframes heimarmene-drift {
+  0%, 10%, 100% { transform: translate(0, 0); }
+  42%, 54% { transform: translate(var(--roam-x), var(--roam-y)); }
+  72% { transform: translate(var(--roam-x), 0); }
+  86% { transform: translate(0, 0); }
+}
+.companion-cosmos-trail { position: fixed; inset: 0; z-index: 59; width: 100vw; height: 100vh; overflow: visible; pointer-events: none; }
+.companion-cosmos-star { fill: var(--mf-ring-hi); filter: drop-shadow(0 0 3px var(--mf-ring)); }
+.companion-cosmos-lattice { fill: none; stroke: var(--mf-edge); stroke-width: 0.8; filter: drop-shadow(0 0 2px var(--mf-accent)); }
 .heimarmene-dock[data-dragging="true"] {
   cursor: grabbing;
+  animation: none;
+  transform: none;
 }
 .heimarmene-dock[data-dragging="true"] .heimarmene-plate {
   transform: scale(1.06);
@@ -323,6 +348,7 @@
     animation: none !important;
     transition: none !important;
   }
+  .heimarmene-dock[data-ambient="true"] { animation: none !important; }
 }
 
 /* Focus ring for the mascot and the footer button: sits on the pale page, so

@@ -21,7 +21,7 @@ export const profile = {
   // pages cannot drift apart. Delete this line to remove it everywhere.
   pronouns: "she/they/he",
 
-  tagline: "Faith offers no refuge to those lost in ignorance",
+  tagline: "If they do not call me a Heretic, how can they be deemed righteous?",
   roleSummary: "Aspiring Astrophysicist, Independent Web Developer, Human Rights Activist",
 
   location: "Yogyakarta, Indonesia",

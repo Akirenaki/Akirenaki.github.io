@@ -13,7 +13,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { PAST_REVERIE } from "../../data/past-reverie";
-import { MAX_PASSPHRASE_LENGTH, verifyPasscode } from "../../lib/past-reverie-access";
+import { MAX_RAW_INPUT_LENGTH, verifyPasscode } from "../../lib/past-reverie-access";
 
 const TITLE = "Ripples of Past Reverie";
 const ATTEMPT_MS = 700; // shortest a check may take, so the burst is always seen
@@ -183,7 +183,7 @@ export function PastReverie({ unlocked, onUnlock, onPick, buttonClassName, class
                       setMessage("");
                     }
                   }}
-                  maxLength={MAX_PASSPHRASE_LENGTH}
+                  maxLength={MAX_RAW_INPUT_LENGTH}
                   readOnly={working}
                   autoComplete="off"
                   autoCapitalize="off"

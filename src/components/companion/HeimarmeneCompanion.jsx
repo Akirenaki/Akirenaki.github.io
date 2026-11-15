@@ -10,14 +10,23 @@
 // it is mounted in components/Layout.jsx, so it never appears on /print.
 
 import { useEffect, useId, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { ManifoldMascot } from "./ManifoldMascot";
+import { CompanionTrail } from "./CompanionTrail";
 import { useCompanionPrefs } from "./useCompanionPrefs";
 import {
   COMPANION_NAME,
   COMPANION_ROTATIONS,
   COMPANION_SIZES,
   COMPANION_SIZE_PX,
+  DEFAULT_COMPANION_PREFS,
+  DEFAULT_DRIFT_SPEED,
+  DEFAULT_STARFIELD_SPEED,
+  MOTION_SPEED_MAX,
+  MOTION_SPEED_MIN,
+  MOTION_SPEED_STEP,
+  STARFIELD_SPEED_MAX,
+  STARFIELD_SPEED_MIN,
 } from "../../lib/companion-settings";
 import {
   DEFAULT_DOCK_POSITION,
@@ -38,6 +47,7 @@ import { PastReverie } from "./PastReverie";
 const POSITION_KEY = "heimarmene-position-v1";
 const SLOW_KEY = "heimarmene-3d-slow-v1";
 const PANEL_SIZE_KEY = "heimarmene-panel-size-v1";
+const INTRO_KEY = "heimarmene-intro-dismissed-v1";
 
 const SIZE_LABELS = { small: "Small", medium: "Medium", large: "Large" };
 const ROTATION_LABELS = {
@@ -253,7 +263,36 @@ function OptionGroup({ legend, name, value, options, onChange }) {
   );
 }
 
-function SettingsTab({ prefs, update, onResetPosition, onResetPanelSize, onHide }) {
+function SpeedSlider({ label, help, value, min, max, defaultValue, onChange }) {
+  const id = useId();
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between gap-3 text-sm font-medium text-ink">
+        <label htmlFor={id}>{label}</label>
+        <span className="flex items-center gap-2">
+          <output htmlFor={id} className="tabular-nums text-ink-soft">{(value / 100).toFixed(1)}×</output>
+          <button type="button" onClick={() => onChange(defaultValue)} disabled={value === defaultValue} aria-label={`Reset ${label} speed`} className="min-h-8 rounded-md px-2 text-xs text-accent-deep underline underline-offset-2 disabled:cursor-default disabled:text-ink-soft disabled:no-underline">
+            Reset
+          </button>
+        </span>
+      </div>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={MOTION_SPEED_STEP}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="h-11 w-full cursor-pointer accent-accent-deep"
+      />
+      <div className="flex justify-between text-xs text-ink-soft"><span>Slower</span><span>Faster</span></div>
+      <p className="text-xs text-ink-soft">{help}</p>
+    </div>
+  );
+}
+
+function SettingsTab({ prefs, update, onResetPosition, onResetPanelSize, onResetAll, onHide }) {
   const fieldId = useId();
   const [status, setStatus] = useState("");
   return (
@@ -276,8 +315,49 @@ function SettingsTab({ prefs, update, onResetPosition, onResetPanelSize, onHide 
           help: ROTATION_LABELS[rotation].help,
         }))}
       />
+      <label className="flex min-h-11 cursor-pointer items-start gap-3 text-sm">
+        <input
+          type="checkbox"
+          role="switch"
+          checked={prefs.ambientMotion}
+          onChange={(event) => { update({ ambientMotion: event.target.checked }); setStatus(""); }}
+          className="mt-1 h-5 w-5 shrink-0 accent-accent-deep"
+        />
+        <span>
+          <span className="block font-medium">Drift and traces</span>
+          <span className="block text-xs text-ink-soft">Let Heimarmene roam the screen with lattice fragments and star-like sparkles. The trail also appears while you drag it.</span>
+        </span>
+      </label>
+      <fieldset className="space-y-4 rounded-xl border border-blush/70 p-3">
+        <legend className="px-1 text-sm font-medium text-ink">Motion speed</legend>
+        <SpeedSlider
+          label="Heimarmene drift"
+          help="Adjust how quickly Heimarmene roams across the screen."
+          value={prefs.driftSpeed ?? DEFAULT_DRIFT_SPEED}
+          min={MOTION_SPEED_MIN}
+          max={MOTION_SPEED_MAX}
+          defaultValue={DEFAULT_DRIFT_SPEED}
+          onChange={(driftSpeed) => { update({ driftSpeed }); setStatus(""); }}
+        />
+        <SpeedSlider
+          label="Stellar field"
+          help="Adjust how quickly the background stars drift."
+          value={prefs.starfieldSpeed ?? DEFAULT_STARFIELD_SPEED}
+          min={STARFIELD_SPEED_MIN}
+          max={STARFIELD_SPEED_MAX}
+          defaultValue={DEFAULT_STARFIELD_SPEED}
+          onChange={(starfieldSpeed) => { update({ starfieldSpeed }); setStatus(""); }}
+        />
+      </fieldset>
       <div className="space-y-2">
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => { onResetAll(); setStatus("All companion settings reset."); }}
+            className="min-h-11 rounded-lg border border-accent-deep/40 px-4 text-sm font-medium text-accent-deep hover:bg-blush/25"
+          >
+            Reset all Heimarmene settings
+          </button>
           <button
             type="button"
             onClick={() => { onResetPosition(); setStatus("Position reset."); }}
@@ -318,7 +398,7 @@ function tabClass(active) {
   ].join(" ");
 }
 
-function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSize, onHide, reverie }) {
+function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSize, onResetAll, onHide, reverie }) {
   const [tab, setTab] = useState("questions");
   return (
     <div className="flex h-full flex-col bg-surface text-ink">
@@ -354,7 +434,7 @@ function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSiz
       {tab === "questions" ? (
         <QuestionsTab closePanel={close} reverie={reverie} />
       ) : (
-        <SettingsTab prefs={prefs} update={update} onResetPosition={onResetPosition} onResetPanelSize={onResetPanelSize} onHide={onHide} />
+        <SettingsTab prefs={prefs} update={update} onResetPosition={onResetPosition} onResetPanelSize={onResetPanelSize} onResetAll={onResetAll} onHide={onHide} />
       )}
     </div>
   );
@@ -362,10 +442,16 @@ function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSiz
 
 export function HeimarmeneCompanion() {
   const { prefs, ready, update } = useCompanionPrefs();
+  const location = useLocation();
   const panelId = useId();
   const helpId = useId();
 
   const [open, setOpen] = useState(false);
+  const [pageMood, setPageMood] = useState("idle");
+  const [introVisible, setIntroVisible] = useState(false);
+  const [resetMotion, setResetMotion] = useState(false);
+  const [openAnchor, setOpenAnchor] = useState(null);
+  const [driftPaused, setDriftPaused] = useState(false);
   const [fellBack, setFellBack] = useState(false);
   const [position, setPosition] = useState(DEFAULT_DOCK_POSITION);
   const [viewport, setViewport] = useState({ width: 1024, height: 768 });
@@ -383,6 +469,8 @@ export function HeimarmeneCompanion() {
   const resizeRef = useRef(null);
   const suppressClickUntil = useRef(0);
   const restoreFocus = useRef(false);
+  const driftTimer = useRef(null);
+  const previousPath = useRef(location.pathname);
 
   const size = COMPANION_SIZE_PX[prefs.size];
   const showDock = ready && prefs.enabled;
@@ -393,6 +481,7 @@ export function HeimarmeneCompanion() {
       const stored = parseStoredPosition(window.localStorage.getItem(POSITION_KEY));
       if (stored) setPosition(stored);
       setPanelSize(parseStoredPanelSize(window.localStorage.getItem(PANEL_SIZE_KEY)));
+      setIntroVisible(window.localStorage.getItem(INTRO_KEY) !== "1");
     } catch {
       // Storage blocked: the default corner is used.
     }
@@ -402,6 +491,14 @@ export function HeimarmeneCompanion() {
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  useEffect(() => {
+    if (previousPath.current === location.pathname) return;
+    previousPath.current = location.pathname;
+    setPageMood("curious");
+    const timeout = window.setTimeout(() => setPageMood("idle"), 2200);
+    return () => window.clearTimeout(timeout);
+  }, [location.pathname]);
 
   // Choosing a rotation other than Automatic clears the "3D was too slow" note,
   // so choosing Automatic again gives 3D another chance.
@@ -419,6 +516,16 @@ export function HeimarmeneCompanion() {
     if (!open) setLiveFrame(null);
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    if (driftTimer.current) window.clearTimeout(driftTimer.current);
+    driftTimer.current = null;
+  }, [open]);
+
+  useEffect(() => () => {
+    if (driftTimer.current) window.clearTimeout(driftTimer.current);
+  }, []);
+
   // Move focus into the panel when it opens, and back to the mascot when it closes.
   useEffect(() => {
     if (open) panelRef.current?.focus();
@@ -431,6 +538,18 @@ export function HeimarmeneCompanion() {
   function closePanel() {
     restoreFocus.current = true;
     setOpen(false);
+    setOpenAnchor(null);
+    pauseDriftForCooldown();
+  }
+
+  function pauseDriftForCooldown() {
+    setDriftPaused(true);
+    if (driftTimer.current) window.clearTimeout(driftTimer.current);
+    driftTimer.current = window.setTimeout(() => {
+      driftTimer.current = null;
+      if (dragRef.current) return;
+      setDriftPaused(false);
+    }, 5000);
   }
 
   function savePosition(next) {
@@ -460,6 +579,37 @@ export function HeimarmeneCompanion() {
     } catch {
       // Not persisted; the size still applies for this page view.
     }
+  }
+
+  function resetDockMotion() {
+    setResetMotion(true);
+    window.requestAnimationFrame(() => setResetMotion(false));
+  }
+
+  function resetPosition() {
+    const next = positionToPixels(DEFAULT_DOCK_POSITION, viewport, size);
+    savePosition(DEFAULT_DOCK_POSITION);
+    if (open) setOpenAnchor(next);
+    resetDockMotion();
+  }
+
+  function resetAll() {
+    update(DEFAULT_COMPANION_PREFS);
+    savePosition(DEFAULT_DOCK_POSITION);
+    savePanelSize(null);
+    try { window.localStorage.removeItem(INTRO_KEY); } catch { /* Defaults still apply for this visit. */ }
+    setIntroVisible(true);
+    writeSession(SLOW_KEY, null);
+    setFellBack(false);
+    setDriftPaused(true);
+    if (driftTimer.current) window.clearTimeout(driftTimer.current);
+    driftTimer.current = window.setTimeout(() => {
+      driftTimer.current = null;
+      setDriftPaused(false);
+    }, 5000);
+    const next = positionToPixels(DEFAULT_DOCK_POSITION, viewport, COMPANION_SIZE_PX[DEFAULT_COMPANION_PREFS.size]);
+    if (open) setOpenAnchor(next);
+    resetDockMotion();
   }
 
   // `frame` is the panel as it is now. In the phone sheet only the height can
@@ -512,11 +662,17 @@ export function HeimarmeneCompanion() {
 
   const basePx = positionToPixels(position, viewport, size);
   const px = dragPx ?? basePx;
+  const roamX = Math.max(0, position.x > 0.5 ? px.left - 12 : viewport.width - size - 12 - px.left);
+  const roamY = Math.max(0, position.y > 0.5 ? px.top - 12 : viewport.height - size - 12 - px.top);
 
   function onPointerDown(event) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
+    pauseDriftForCooldown();
     event.currentTarget.setPointerCapture(event.pointerId);
-    dragRef.current = { id: event.pointerId, startX: event.clientX, startY: event.clientY, left: basePx.left, top: basePx.top, moved: false, last: basePx };
+    const rect = event.currentTarget.getBoundingClientRect();
+    const visualPosition = { left: rect.left, top: rect.top };
+    setDragPx(visualPosition);
+    dragRef.current = { id: event.pointerId, startX: event.clientX, startY: event.clientY, ...visualPosition, moved: false, last: visualPosition };
   }
 
   function onPointerMove(event) {
@@ -527,6 +683,7 @@ export function HeimarmeneCompanion() {
     // A small threshold keeps an ordinary click from nudging the mascot.
     if (!drag.moved && Math.hypot(dx, dy) < 6) return;
     drag.moved = true;
+    pauseDriftForCooldown();
     drag.last = clampPixels(drag.left + dx, drag.top + dy, viewport, size);
     setDragPx(drag.last);
   }
@@ -535,14 +692,24 @@ export function HeimarmeneCompanion() {
     const drag = dragRef.current;
     if (!drag || drag.id !== event.pointerId) return;
     dragRef.current = null;
-    if (!drag.moved) return;
+    if (!drag.moved) {
+      setDragPx(null);
+      pauseDriftForCooldown();
+      return;
+    }
+    pauseDriftForCooldown();
     // The browser still fires a click after a drag; ignore it.
     suppressClickUntil.current = performance.now() + 300;
-    if (commit) savePosition(pixelsToPosition(drag.last.left, drag.last.top, viewport, size));
+    if (commit) {
+      savePosition(pixelsToPosition(drag.last.left, drag.last.top, viewport, size));
+      if (open) setOpenAnchor({ left: drag.last.left, top: drag.last.top });
+      resetDockMotion();
+    }
     setDragPx(null);
   }
 
   function onKeyDown(event) {
+    pauseDriftForCooldown();
     const step = event.shiftKey ? 64 : 16;
     const delta = {
       ArrowLeft: [-step, 0],
@@ -553,19 +720,32 @@ export function HeimarmeneCompanion() {
     const move = delta[event.key];
     if (!move) return;
     event.preventDefault();
-    const next = clampPixels(basePx.left + move[0], basePx.top + move[1], viewport, size);
+    const rect = dockRef.current?.getBoundingClientRect();
+    const next = clampPixels((rect?.left ?? basePx.left) + move[0], (rect?.top ?? basePx.top) + move[1], viewport, size);
     savePosition(pixelsToPosition(next.left, next.top, viewport, size));
+    if (open) setOpenAnchor(next);
+    resetDockMotion();
   }
 
   function onClick() {
     if (performance.now() < suppressClickUntil.current) return;
+    if (introVisible) {
+      setIntroVisible(false);
+      try { window.localStorage.setItem(INTRO_KEY, "1"); } catch { /* The prompt can still be dismissed for this visit. */ }
+    }
+    pauseDriftForCooldown();
     if (open) closePanel();
-    else setOpen(true);
+    else {
+      const rect = dockRef.current?.getBoundingClientRect();
+      if (rect) setOpenAnchor({ left: rect.left, top: rect.top });
+      setOpen(true);
+    }
   }
 
   if (!showDock) return null;
 
-  const placement = open ? placePanel({ left: px.left, top: px.top, size }, viewport, panelSize ?? {}) : null;
+  const panelAnchor = dragPx ?? openAnchor ?? px;
+  const placement = open ? placePanel({ ...panelAnchor, size }, viewport, panelSize ?? {}) : null;
   const sheetOpen = placement?.mode === "sheet";
   // The frame being shown: the live drag if there is one, otherwise the placement.
   const frame = placement?.mode === "floating" ? (liveFrame ?? placement) : null;
@@ -573,6 +753,11 @@ export function HeimarmeneCompanion() {
 
   return (
     <div className="print:hidden">
+      <CompanionTrail
+        targetRef={dockRef}
+        enabled={prefs.ambientMotion}
+        active={!open && (!driftPaused || Boolean(dragPx))}
+      />
       {placement ? (
         <section
           ref={panelRef}
@@ -598,8 +783,9 @@ export function HeimarmeneCompanion() {
               prefs={prefs}
               update={update}
               close={closePanel}
-              onResetPosition={() => savePosition(DEFAULT_DOCK_POSITION)}
+              onResetPosition={resetPosition}
               onResetPanelSize={() => savePanelSize(null)}
+              onResetAll={resetAll}
               onHide={hide}
               reverie={{ unlocked: reverieUnlocked, onUnlock: () => setReverieUnlocked(true) }}
             />
@@ -622,9 +808,28 @@ export function HeimarmeneCompanion() {
         aria-label={COMPANION_NAME}
         className="heimarmene-dock group fixed z-[60]"
         data-dragging={dragPx ? "true" : "false"}
+        data-ambient={prefs.ambientMotion ? "true" : "false"}
+        data-paused={driftPaused ? "true" : "false"}
+        data-open={open ? "true" : "false"}
+        data-motion-reset={resetMotion ? "true" : "false"}
         hidden={sheetOpen}
-        style={{ left: px.left, top: px.top, width: size, height: size }}
+        style={{ left: px.left, top: px.top, width: size, height: size, "--roam-x": `${position.x > 0.5 ? -roamX : roamX}px`, "--roam-y": `${position.y > 0.5 ? -roamY : roamY}px`, "--drift-duration": `${(12 * 100 / (prefs.driftSpeed ?? DEFAULT_DRIFT_SPEED)).toFixed(1)}s` }}
       >
+        {introVisible && !open ? (
+          <div className={`absolute top-1/2 z-10 -translate-y-1/2 ${position.x > 0.5 ? "right-full mr-3" : "left-full ml-3"}`}>
+            <button type="button" onClick={onClick} className="whitespace-nowrap rounded-full border border-blush bg-surface px-3 py-2 text-xs font-medium text-ink shadow-lg">
+              Ask about this portfolio
+            </button>
+            <button
+              type="button"
+              onClick={() => { setIntroVisible(false); try { window.localStorage.setItem(INTRO_KEY, "1"); } catch { /* The prompt can still be dismissed for this visit. */ } }}
+              aria-label="Dismiss introduction"
+              className="heimarmene-focus absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-blush bg-surface text-ink shadow"
+            >
+              <CloseIcon className="h-3 w-3" />
+            </button>
+          </div>
+        ) : null}
         <button
           ref={dockRef}
           type="button"
@@ -640,10 +845,13 @@ export function HeimarmeneCompanion() {
           onPointerMove={onPointerMove}
           onPointerUp={(event) => endDrag(event, true)}
           onPointerCancel={(event) => endDrag(event, false)}
+          onFocus={pauseDriftForCooldown}
+          onBlur={pauseDriftForCooldown}
           className="heimarmene-plate heimarmene-focus block h-full w-full cursor-grab rounded-full shadow-xl active:cursor-grabbing"
         >
           <ManifoldMascot
             size={size}
+            mood={open ? "curious" : pageMood}
             rotation={use3d ? "3d" : "flat"}
             monitor={prefs.rotation === "auto" && use3d}
             onSlow={markSlow}
