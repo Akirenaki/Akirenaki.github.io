@@ -35,6 +35,10 @@ export default {
       "/print",
       ...projects.map((p) => `/work/${p.slug}`),
       ...writing.map((w) => `/writing/${w.slug}`),
+      // The catch-all route, rendered once. scripts/build-404.mjs copies it to
+      // build/client/404.html, the file GitHub Pages serves for any address
+      // that matches no page. Not in the sitemap (it is noindex).
+      "/404",
     ];
   },
 };

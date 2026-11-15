@@ -7,14 +7,15 @@
     "predev": "npm run images",
     "dev": "react-router dev",
     "prebuild": "npm run images && npm run sitemap && npm run essays",
-    "build": "react-router build && node scripts/build-pdfs.mjs",
+    "build": "react-router build && node scripts/build-404.mjs && node scripts/build-pdfs.mjs",
     "images": "node scripts/build-images.mjs",
     "sitemap": "node scripts/build-sitemap.mjs",
     "essays": "node scripts/check-essays.mjs",
     "lint": "oxlint",
     "test": "node --test",
     "preview": "vite preview --outDir build/client",
-    "pdfs": "node scripts/build-pdfs.mjs"
+    "pdfs": "node scripts/build-pdfs.mjs",
+    "404": "node scripts/build-404.mjs"
   },
   "dependencies": {
     "framer-motion": "^13.2.0",

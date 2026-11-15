@@ -1,5 +1,6 @@
 import { StrictMode, useEffect } from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
+import { CorruptedScreen } from "./components/CorruptedScreen";
 import "./index.css";
 
 // Layout wraps both the page (the default export below) and any error
@@ -82,5 +83,23 @@ export default function Root() {
       <Analytics />
       <Outlet />
     </StrictMode>
+  );
+}
+
+// Shown when a page throws while rendering, or a route answers with an error
+// status. It replaces the whole page, so it deliberately uses none of the site
+// layout (navigation, starfield, companion): after an error none of that can be
+// trusted. Unknown addresses never reach this: the "*" route in routes.js
+// handles them inside the normal layout. The words are in data/error-screen.js.
+export function ErrorBoundary({ error }) {
+  const routeError = isRouteErrorResponse(error);
+  return (
+    <>
+      <title>{routeError && error.status === 404 ? "Page not found" : "Something went wrong"} · Renee Astraea</title>
+      <meta name="robots" content="noindex" />
+      <main className="mx-auto max-w-5xl px-5 py-10 md:px-8 md:py-16">
+        <CorruptedScreen variant={routeError && error.status === 404 ? "notFound" : "error"} status={routeError ? error.status : undefined} />
+      </main>
+    </>
   );
 }

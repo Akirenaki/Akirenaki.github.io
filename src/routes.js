@@ -25,5 +25,8 @@ export default [
     route("writing/:slug", "pages/WritingEntry.jsx"),
     route("about", "pages/About.jsx"),
     route("contact", "pages/Contact.jsx"),
+    // Catch-all, last: any address that matches nothing above shows the
+    // corrupted 404 (data/error-screen.js) inside the normal site layout.
+    route("*", "pages/NotFound.jsx"),
   ]),
 ];

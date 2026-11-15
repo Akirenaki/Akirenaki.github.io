@@ -540,3 +540,206 @@
   .past-reverie[data-state="unlocking"] .pr-layer { opacity: 0; }
   .past-reverie[data-state="open"] .pr-seam::after { opacity: 0; }
 }
+
+/* ---------------------------------------------------------------
+   Corrupted error screen - the 404 page and the fallback for any other error
+   (src/components/CorruptedScreen.jsx, words in src/data/error-screen.js).
+   Everything is scoped under .corrupt.
+
+   Same family of effect as Ripples of Past Reverie (jumping blocks, a heading
+   split into offset slices, scanlines) with a different palette: a dark field
+   instead of a pale card, so the screen reads as the site going dark rather
+   than as another locked section. The hues are the site's own pink and blue
+   moved to the dark end, plus one lighter blue for the slices. Retune the
+   screen by editing the six variables below.
+
+   The text sits on an opaque panel and no block is ever placed over it. Blocks
+   only jump sideways (and dip a little in opacity), staggered, so nothing
+   flashes more than about three times a second. The layer is aria-hidden with
+   pointer-events: none. Reduced motion: no animation, a still corrupted mask.
+   --------------------------------------------------------------- */
+.corrupt {
+  --cx-void: #171221;     /* the field; darker than --color-ink */
+  --cx-panel: #221D2E;    /* the text panel (= --color-ink), opaque */
+  --cx-text: #FAF3F7;     /* = --color-paper; 14:1 on the panel */
+  --cx-text-soft: #CFC6DC; /* secondary text; 9:1 on the panel */
+  --cx-pink: #D8579C;     /* = --color-accent */
+  --cx-blush: #EEBCDC;    /* = --color-blush */
+  --cx-blue: #5F7AC5;     /* = --color-blue */
+  --cx-indigo: #3E3A95;   /* = --color-blue-deep */
+  --cx-slice: #9FB4F2;    /* the cold slice in the big code; not used for text */
+  --cx-amp: 1;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-height: min(34rem, calc(100svh - 12rem));
+  padding: clamp(2.5rem, 9vw, 5rem) clamp(1rem, 5vw, 3rem);
+  border-radius: 1rem;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(250 243 247 / 0.05) 3px 4px),
+    var(--cx-void);
+}
+.corrupt[data-settling] { --cx-amp: 2.6; }
+
+.corrupt .cx-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.corrupt .cx-frag {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  background: var(--tone);
+  opacity: var(--o);
+  animation: cx-jitter var(--dur) steps(1, end) var(--delay) infinite;
+}
+.corrupt[data-settling] .cx-frag { animation-duration: calc(var(--dur) * 0.4); }
+.cx-tone-pink { --tone: var(--cx-pink); }
+.cx-tone-blush { --tone: var(--cx-blush); }
+.cx-tone-blue { --tone: var(--cx-blue); }
+.cx-tone-indigo { --tone: var(--cx-indigo); }
+
+.corrupt .cx-panel {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 34rem;
+  padding: clamp(1.5rem, 5vw, 2.25rem);
+  border: 1px solid rgb(238 188 220 / 0.35);
+  border-radius: 0.75rem;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(250 243 247 / 0.04) 3px 4px),
+    var(--cx-panel);
+  color: var(--cx-text);
+}
+
+/* The big code: two offset, clipped copies, like the Past Reverie heading. The
+   copies are decorative and hidden from assistive technology. */
+.corrupt .cx-code {
+  position: relative;
+  margin: 0 0 0.25rem;
+  font-size: clamp(4.5rem, 22vw, 8rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cx-text);
+}
+.corrupt .cx-code::before,
+.corrupt .cx-code::after {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.corrupt .cx-code::before {
+  color: var(--cx-pink);
+  transform: translateX(calc(6px * var(--cx-amp)));
+  clip-path: inset(16% 0 56% 0);
+  animation: cx-slice-a 3.3s steps(1, end) infinite;
+}
+.corrupt .cx-code::after {
+  color: var(--cx-slice);
+  transform: translateX(calc(-6px * var(--cx-amp)));
+  clip-path: inset(60% 0 8% 0);
+  animation: cx-slice-b 4.1s steps(1, end) infinite;
+}
+
+.corrupt .cx-heading {
+  margin: 0;
+  font-size: clamp(1.35rem, 4.6vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--cx-text);
+}
+.corrupt .cx-body {
+  margin: 0.75rem 0 0;
+  max-width: 62ch;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--cx-text-soft);
+}
+
+/* The customisable line (data/error-screen.js). A fixed minimum height, so the
+   buttons do not jump when it appears after load or when it is swapped. */
+.corrupt .cx-flavour {
+  margin: 1.25rem 0 0;
+  min-height: 4.5em;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--cx-pink);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--cx-blush);
+  overflow-wrap: anywhere;
+}
+
+.corrupt .cx-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+.corrupt .cx-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+.corrupt .cx-button--primary {
+  background: var(--cx-text);
+  color: #221D2E;
+}
+.corrupt .cx-button--primary:hover { background: var(--cx-blush); }
+.corrupt .cx-button--ghost {
+  background: transparent;
+  border-color: rgb(238 188 220 / 0.55);
+  color: var(--cx-text);
+}
+.corrupt .cx-button--ghost:hover { background: rgb(238 188 220 / 0.14); }
+.corrupt .cx-button:focus-visible {
+  outline: 2px solid var(--cx-blush);
+  outline-offset: 3px;
+}
+
+@keyframes cx-jitter {
+  0%   { transform: translate3d(0, 0, 0); opacity: var(--o); }
+  14%  { transform: translate3d(calc(var(--dx) * var(--cx-amp)), 0, 0); }
+  17%  { transform: translate3d(calc(var(--dx) * var(--cx-amp) * -0.6), 0, 0); opacity: calc(var(--o) * 0.6); }
+  21%  { transform: translate3d(0, 0, 0); opacity: var(--o); }
+  58%  { transform: translate3d(calc(var(--dx) * var(--cx-amp) * 0.4), 0, 0); }
+  61%  { transform: translate3d(0, 0, 0); }
+}
+@keyframes cx-slice-a {
+  0%   { clip-path: inset(16% 0 56% 0); opacity: 0.95; }
+  21%  { clip-path: inset(42% 0 30% 0); }
+  46%  { clip-path: inset(0 0 80% 0); opacity: 0.6; }
+  73%  { clip-path: inset(68% 0 4% 0); opacity: 0.95; }
+}
+@keyframes cx-slice-b {
+  0%   { clip-path: inset(60% 0 8% 0); opacity: 0.95; }
+  29%  { clip-path: inset(6% 0 74% 0); opacity: 0.6; }
+  57%  { clip-path: inset(34% 0 40% 0); opacity: 0.95; }
+  84%  { clip-path: inset(82% 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corrupt *,
+  .corrupt *::before,
+  .corrupt *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

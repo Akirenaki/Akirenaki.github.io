@@ -304,6 +304,7 @@ Routine content changes should normally touch only `src/data/`:
 | `src/data/experience.js` | Experience and leadership entries |
 | `src/data/cv.js` | Curated, CV-only content for `/print` (selection, order, condensed wording) |
 | `src/data/awards.js` | Awards, certifications, scores, and technical-stack lists |
+| `src/data/error-screen.js` | Wording of the corrupted 404 / error screen, including the editable flavour lines |
 | `src/essays/` | Markdown source for essays with generated text/PDF output |
 
 For a new project, add a unique slug and its data object. For a new essay,
@@ -324,6 +325,10 @@ build-time validation used by the application.
 3. **Sitemap:** `scripts/build-sitemap.mjs` uses the same route sources to
    write `public/sitemap.xml`. `/print` is intentionally excluded because it
    is `noindex`.
+   **404 page:** the catch-all route (`src/pages/NotFound.jsx`) is prerendered
+   at `/404`, and `scripts/build-404.mjs` copies it to `build/client/404.html`,
+   the file GitHub Pages serves for an address that matches no page. It is
+   `noindex` and not in the sitemap.
 4. **Essay checks:** `scripts/check-essays.mjs` checks Markdown presence,
    committed fallback PDFs, and recorded word counts.
 5. **Essay PDF generation:** `scripts/build-pdfs.mjs` starts a temporary local
