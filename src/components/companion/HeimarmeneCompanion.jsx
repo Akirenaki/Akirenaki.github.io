@@ -50,6 +50,10 @@ const POSITION_KEY = "heimarmene-position-v1";
 const SLOW_KEY = "heimarmene-3d-slow-v1";
 const PANEL_SIZE_KEY = "heimarmene-panel-size-v1";
 const INTRO_KEY = "heimarmene-intro-dismissed-v1";
+// How long the intro bubble stays up, and how much horizontal room it needs
+// beside the mascot (its width plus the gap and a margin from the screen edge).
+const INTRO_VISIBLE_MS = 6000;
+const INTRO_ROOM_PX = 230;
 
 const SIZE_LABELS = { small: "Small", medium: "Medium", large: "Large" };
 const ROTATION_LABELS = {
@@ -433,11 +437,14 @@ function CompanionPanel({ prefs, update, close, onResetPosition, onResetPanelSiz
         </button>
       </nav>
 
-      {tab === "questions" ? (
+      {/* Both tabs stay mounted; the inactive one is display:none. Unmounting the
+          Questions tab on every switch threw away the whole conversation. */}
+      <div className={tab === "questions" ? "contents" : "hidden"}>
         <QuestionsTab closePanel={close} reverie={reverie} />
-      ) : (
+      </div>
+      {tab === "settings" ? (
         <SettingsTab prefs={prefs} update={update} onResetPosition={onResetPosition} onResetPanelSize={onResetPanelSize} onResetAll={onResetAll} onHide={onHide} />
-      )}
+      ) : null}
     </div>
   );
 }
@@ -451,6 +458,9 @@ export function HeimarmeneCompanion() {
   const [open, setOpen] = useState(false);
   const [pageMood, setPageMood] = useState("idle");
   const [introVisible, setIntroVisible] = useState(false);
+  // Which side of the mascot the intro bubble sits on. "left" puts the bubble
+  // to the mascot's left (the natural choice for the default bottom-right corner).
+  const [introSide, setIntroSide] = useState("left");
   const [resetMotion, setResetMotion] = useState(false);
   const [openAnchor, setOpenAnchor] = useState(null);
   const [driftPaused, setDriftPaused] = useState(false);
@@ -484,16 +494,50 @@ export function HeimarmeneCompanion() {
       const stored = parseStoredPosition(window.localStorage.getItem(POSITION_KEY));
       if (stored) setPosition(stored);
       setPanelSize(parseStoredPanelSize(window.localStorage.getItem(PANEL_SIZE_KEY)));
-      setIntroVisible(window.localStorage.getItem(INTRO_KEY) !== "1");
     } catch {
       // Storage blocked: the default corner is used.
     }
+    // The intro bubble shows ONCE. The dismissal is stored when it is first
+    // shown (not only when it is clicked), and it hides itself after
+    // INTRO_VISIBLE_MS, so a roaming mascot never carries a speech bubble over
+    // the text a first-time visitor is reading.
+    try {
+      const firstView = window.localStorage.getItem(INTRO_KEY) !== "1";
+      setIntroVisible(firstView);
+      if (firstView) window.localStorage.setItem(INTRO_KEY, "1");
+    } catch { /* Keep the intro optional when storage is unavailable. */ }
     setFellBack(readSession(SLOW_KEY) === "1");
     const measure = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  useEffect(() => {
+    if (!introVisible) return undefined;
+    const timer = window.setTimeout(() => setIntroVisible(false), INTRO_VISIBLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [introVisible]);
+
+  // The mascot roams, so the side with room for the bubble changes. Look at where
+  // it is on screen (not at its resting spot) and only switch sides once the
+  // current side runs out of room, so the bubble does not flip back and forth.
+  useEffect(() => {
+    if (!introVisible || open) return undefined;
+    const place = () => {
+      const rect = dockRef.current?.getBoundingClientRect();
+      if (!rect || (rect.width === 0 && rect.height === 0)) return;
+      const roomLeft = rect.left;
+      const roomRight = window.innerWidth - rect.right;
+      setIntroSide((current) => {
+        if ((current === "left" ? roomLeft : roomRight) >= INTRO_ROOM_PX) return current;
+        return roomLeft >= roomRight ? "left" : "right";
+      });
+    };
+    place();
+    const interval = window.setInterval(place, 200);
+    return () => window.clearInterval(interval);
+  }, [introVisible, open]);
 
   useEffect(() => {
     if (previousPath.current === location.pathname) return;
@@ -641,7 +685,10 @@ export function HeimarmeneCompanion() {
     if (!resize || resize.id !== event.pointerId) return;
     resizeRef.current = null;
     setLiveFrame(null);
-    if (!commit) return;
+    // A click on a handle (or the first half of a double-click) must not freeze
+    // the current, possibly screen-clamped, size as the visitor's chosen size.
+    const changed = resize.last.width !== resize.start.width || resize.last.height !== resize.start.height;
+    if (!commit || !changed) return;
     // The sheet keeps the stored width; only its height was dragged.
     savePanelSize(resize.edges.includes("sheet")
       ? { width: panelSize?.width ?? 384, height: resize.last.height }
@@ -687,7 +734,10 @@ export function HeimarmeneCompanion() {
     event.currentTarget.setPointerCapture(event.pointerId);
     const rect = event.currentTarget.getBoundingClientRect();
     const visualPosition = { left: rect.left, top: rect.top };
-    setDragPx(visualPosition);
+    // dragPx stays null until the pointer has travelled past the threshold (see
+    // onPointerMove). Setting it here, as this used to, made every plain click
+    // swap the dock from its on-screen spot to its resting spot (basePx) on
+    // release, so a mascot that had wandered away jumped back to the corner.
     dragRef.current = { id: event.pointerId, startX: event.clientX, startY: event.clientY, ...visualPosition, moved: false, last: visualPosition };
   }
 
@@ -709,7 +759,6 @@ export function HeimarmeneCompanion() {
     if (!drag || drag.id !== event.pointerId) return;
     dragRef.current = null;
     if (!drag.moved) {
-      setDragPx(null);
       pauseDriftForCooldown();
       return;
     }
@@ -833,7 +882,7 @@ export function HeimarmeneCompanion() {
         style={{ left: px.left, top: px.top, width: size, height: size }}
       >
         {introVisible && !open ? (
-          <div className={`absolute top-1/2 z-10 -translate-y-1/2 ${position.x > 0.5 ? "right-full mr-3" : "left-full ml-3"}`}>
+          <div className={`absolute top-1/2 z-10 -translate-y-1/2 ${introSide === "left" ? "right-full mr-3" : "left-full ml-3"}`}>
             <button type="button" onClick={onClick} className="whitespace-nowrap rounded-full border border-blush bg-surface px-3 py-2 text-xs font-medium text-ink shadow-lg">
               Ask about this portfolio
             </button>
@@ -882,7 +931,7 @@ export function HeimarmeneCompanion() {
           onClick={hide}
           aria-label={`Hide ${COMPANION_NAME}`}
           title={`Hide ${COMPANION_NAME}`}
-          className="heimarmene-focus absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border border-blush bg-surface text-ink opacity-0 shadow transition-opacity before:absolute before:-inset-2.5 before:content-[''] focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
+          className="heimarmene-focus pointer-events-none absolute -right-3 -top-3 flex [@media(hover:none)]:hidden h-6 w-6 items-center justify-center rounded-full border border-blush bg-surface text-ink opacity-0 shadow transition-opacity before:absolute before:-right-2.5 before:-top-2.5 before:bottom-0 before:left-0 before:content-[''] focus-visible:pointer-events-auto focus-visible:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100"
         >
           <CloseIcon className="h-3.5 w-3.5" />
         </button>

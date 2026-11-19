@@ -44,6 +44,10 @@ export function useCompanionPrefs() {
 
   const update = useCallback((patch) => {
     const next = normalizeCompanionPrefs({ ...prefsRef.current, ...patch });
+    // Move the ref now, not at the next render: two updates in one event
+    // handler would otherwise both start from the same old prefs, and the
+    // second would silently undo the first.
+    prefsRef.current = next;
     setPrefs(next);
     writeStored(next);
     window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: next }));

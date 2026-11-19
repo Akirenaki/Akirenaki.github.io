@@ -8,7 +8,7 @@
 // transform offset on top of them (Web Animations API), so dragging, the
 // panel anchor and the trail sampler keep working unchanged.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 const EASINGS = [
   "ease-in-out",
@@ -86,7 +86,12 @@ export function useCompanionWander({ ref, enabled, paused, speed, bounds, resetK
   speedRef.current = speed;
   boundsRef.current = bounds;
 
-  useEffect(() => {
+  // A layout effect, so that when `enabled` flips off (a drag starts, the dock is
+  // moved) the leftover transform is cancelled in the same commit that changes
+  // the dock's left/top, before the browser paints. A passive effect is allowed
+  // to run after the paint, which would show the dock displaced by its old
+  // wander offset for a moment.
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!enabled || !el || typeof el.animate !== "function") return undefined;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
@@ -116,10 +121,11 @@ export function useCompanionWander({ ref, enabled, paused, speed, bounds, resetK
       animationRef.current = animation;
       if (pausedRef.current) animation.pause();
       animation.onfinish = () => {
-        if (cancelled) return;
+        if (cancelled || animationRef.current !== animation) return;
         at = to;
         // Mostly short pauses, sometimes a long rest.
         const rest = Math.random() < 0.2 ? rand(3500, 7000) : rand(500, 2600);
+        if (timer) window.clearTimeout(timer);
         timer = window.setTimeout(leg, rest);
       };
     }
@@ -138,7 +144,14 @@ export function useCompanionWander({ ref, enabled, paused, speed, bounds, resetK
   useEffect(() => {
     const animation = animationRef.current;
     if (!animation) return;
-    if (paused) animation.pause();
-    else animation.play();
+    // Only touch a leg that is actually in flight. A finished leg (the dock is
+    // resting between legs) must be left alone: play() on a finished animation
+    // rewinds it to the start, which sends the dock back to where the leg began,
+    // replays it, and then starts a second chain of legs on top of the first.
+    if (paused) {
+      if (animation.playState === "running") animation.pause();
+    } else if (animation.playState === "paused") {
+      animation.play();
+    }
   }, [paused]);
 }
