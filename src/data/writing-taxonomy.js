@@ -36,6 +36,7 @@ export const FACETS = [
           { id: "ethics", label: "Ethics" },
           { id: "oceanography", label: "Oceanography" },
           { id: "philosophy", label: "Philosophy" },
+          { id: "political-science", label: "Political science" },
           { id: "religious-studies", label: "Religious studies" },
           { id: "sociology", label: "Sociology" },
         ],
@@ -49,6 +50,7 @@ export const FACETS = [
       {
         key: "topic",
         tags: [
+          { id: "accountability", label: "Accountability" },
           { id: "artificial-intelligence", label: "Artificial intelligence" },
           { id: "barzakh", label: "Barzakh", original: "بَرْزَخ", originalLang: "ar" },
           { id: "biological-naturalism", label: "Biological naturalism" },
@@ -70,9 +72,12 @@ export const FACETS = [
           { id: "hard-problem-of-consciousness", label: "Hard problem of consciousness" },
           { id: "kardashev-scale", label: "Kardashev scale" },
           { id: "integrated-information-theory", label: "Integrated information theory" },
+          { id: "lgbtq-rights", label: "LGBTQ rights" },
           { id: "madhyamaka-buddhism", label: "Madhyamaka Buddhism" },
+          { id: "may-1998-riots", label: "May 1998 riots" },
           { id: "moral-status", label: "Moral status" },
           { id: "quranic-exegesis", label: "Quranic exegesis" },
+          { id: "scapegoating", label: "Scapegoating", original: "Kambing hitam", originalLang: "id" },
           { id: "scientific-miracle-claims", label: "Scientific-miracle claims" },
           {
             id: "self-surpassing",

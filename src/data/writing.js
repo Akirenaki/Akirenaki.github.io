@@ -218,6 +218,34 @@ export const writing = [
     sources: [],
     rights: "All rights reserved",
   },
+  {
+    slug: "politik-kambing-hitam-krisis-akuntabilitas",
+    title: "The Politics of Scapegoating and the Accountability Crisis in Indonesia",
+    section: "academic",
+    status: "finished",
+    featured: false,
+    wordCount: 710, // Indonesian text; excludes the title and the reference list
+    language: "Indonesian",
+    summary:
+      "Indonesia faces corruption, forest fires, air pollution and shrinking civil liberties, yet public debate keeps returning to the morality and existence of LGBTQ people. The essay reads this through scapegoating, comparing it with the anti-Chinese violence of May 1998, when official rhetoric and the redirection of public anger harmed a minority with little political protection. It points to Presidential Regulation 111 of 2025, which lists the spread of LGBTQ culture as a nonmilitary threat, and to the 2026 harassment of LGBTQ students and persecution of trans women in Bogor. It does not claim that every anti-LGBTQ campaign is a deliberate distraction, and it acknowledges that the 1998 comparison has limits. Its argument is that, whatever the intent, scapegoating works politically by directing anger at the powerless and narrowing scrutiny of those who hold power, and that ignorance does not remove responsibility for violence.",
+    tags: {
+      subject: ["political-science", "sociology"],
+      topic: ["scapegoating", "accountability", "lgbtq-rights", "may-1998-riots"],
+      characterFictional: [],
+      characterReal: [],
+    },
+    pdf: { path: "/essays/politik-kambing-hitam-krisis-akuntabilitas.pdf", lastEdited: "2026-11-19T21:20:55+07:00" },
+    otherVersions: [],
+    googleDocUrl: "https://docs.google.com/document/d/1NXOH2HXHl6ukCqRDYlSAeStmexEfzcCspH4FoU067Qg/edit?usp=sharing",
+    sources: [
+      "Human Rights Watch, ‘Indonesia Alert: Economic Crisis Leads to Scapegoating of Ethnic Chinese’ (1998)",
+      "S. R. Panggabean and B. Smith, ‘Explaining anti-Chinese riots in late 20th century Indonesia’, World Development 39(2) (2011)",
+      "Komnas Perempuan, ‘Kekerasan seksual massal Mei 1998 adalah fakta resmi negara’ (2026)",
+      "Human Rights Watch, ‘Indonesia: Surge in abuse against LGBT students’ (2026)",
+      "Komnas Perempuan, ‘Mendesak penghentian persekusi dan penegakan hukum atas kekerasan terhadap transpuan’ (2026)",
+    ],
+    rights: "All rights reserved",
+  },
 ];
 
 // ---- ordering and Home, mirroring projects.js ------------------------------
