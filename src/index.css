@@ -70,6 +70,39 @@
    an essay can contain are styled here.
    --------------------------------------------------------------- */
 @layer components {
+  .info-tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  .info-tooltip-trigger {
+    display: inline-block;
+  }
+  .info-tooltip-content {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 20;
+    width: max-content;
+    max-width: min(22rem, calc(100vw - 2.5rem));
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--color-blush);
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.35;
+    text-align: left;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.25rem);
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+  .info-tooltip:hover .info-tooltip-content,
+  .info-tooltip:focus-within .info-tooltip-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .essay-prose {
     font-size: 1.0625rem;
     line-height: 1.8;

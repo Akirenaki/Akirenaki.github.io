@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // GoatCounter's public, read-only counter (enabled in GoatCounter's settings).
 // No secret token is involved, so it's safe to call from the browser.
@@ -40,11 +41,10 @@ export function VisitorCount() {
   if (!Number.isFinite(numeric) || numeric < MIN_TO_SHOW) return null;
 
   return (
-    <p
-      className="mt-0.5 text-xs text-ink-soft"
-      title="Visitors who opened the home page, each counted once per session"
-    >
-      {count} visits
+    <p className="mt-0.5 text-xs text-ink-soft">
+      <InfoTooltip content="Visitors who opened the home page, each counted once per session">
+        {count} visits
+      </InfoTooltip>
     </p>
   );
 }

@@ -2,6 +2,7 @@ import { profile } from "../data/profile";
 import { experience } from "../data/experience";
 import { awards, certifications, technicalStack, testScores } from "../data/awards";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
+import { InfoTooltip } from "../components/InfoTooltip";
 import { buildMeta } from "../lib/seo";
 
 const SECTIONS = [
@@ -40,7 +41,13 @@ export function About() {
 
         <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1 text-sm text-ink-soft">
           <span>{profile.location}</span>
-          {profile.pronouns && <span>Pronouns: {profile.pronouns}</span>}
+          {profile.pronouns && (
+            <span>
+              <InfoTooltip content="Pronouns are listed in order of preference: she/they/he means she is preferred over they, then he.">
+                Pronouns: {profile.pronouns}
+              </InfoTooltip>
+            </span>
+          )}
           <span className="flex gap-3">
             {profile.languages.map((l) => (
               <span key={l.name}>

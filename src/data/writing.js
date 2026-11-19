@@ -79,6 +79,7 @@ export const writing = [
     section: "academic",
     status: "finished",
     featured: true,
+    priority: false,
     wordCount: 514,
     language: "English",
     summary:
@@ -106,6 +107,7 @@ export const writing = [
     section: "academic",
     status: "finished",
     featured: true,
+    priority: false,
     wordCount: 586,
     language: "English",
     summary:
@@ -129,6 +131,7 @@ export const writing = [
     section: "academic",
     status: "finished",
     featured: false,
+    priority: false,
     wordCount: 2363,
     language: "English",
     summary:
@@ -164,6 +167,7 @@ export const writing = [
     section: "academic",
     status: "finished",
     featured: false,
+    priority: false,
     wordCount: 539,
     language: "English",
     summary:
@@ -202,6 +206,7 @@ export const writing = [
     section: "academic",
     status: "finished",
     featured: true,
+    priority: false,
     wordCount: 1067, // Indonesian text, after the redactions became "Anda"; excludes the title, the source line and the closing reading list
     language: "Indonesian",
     summary:
@@ -223,7 +228,8 @@ export const writing = [
     title: "The Politics of Scapegoating and the Accountability Crisis in Indonesia",
     section: "academic",
     status: "finished",
-    featured: false,
+    featured: true,
+    priority: true,
     wordCount: 710, // Indonesian text; excludes the title and the reference list
     language: "Indonesian",
     summary:

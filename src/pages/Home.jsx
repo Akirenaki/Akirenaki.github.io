@@ -7,6 +7,7 @@ import { ProjectCard } from "../components/ProjectCard";
 import { WritingCard } from "../components/WritingCard";
 import { PlaceholderImage } from "../components/PlaceholderMedia";
 import { PrintCVButton } from "../components/PrintCVButton";
+import { InfoTooltip } from "../components/InfoTooltip";
 import { buildMeta } from "../lib/seo";
 
 // One deliberate motion moment for the whole site: the hero text and portrait
@@ -73,7 +74,11 @@ export function Home() {
               {profile.preferredNameHome}
             </h1>
             {profile.pronouns && (
-              <p className="mt-1.5 font-body text-sm tracking-wide text-ink-soft">{profile.pronouns}</p>
+              <p className="mt-1.5 font-body text-sm tracking-wide text-ink-soft">
+                <InfoTooltip content="Pronouns are listed in order of preference: she/they/he means she is preferred over they, then he.">
+                  {profile.pronouns}
+                </InfoTooltip>
+              </p>
             )}
             <p className="mt-5 text-lg text-ink-soft">{profile.roleSummary}</p>
             <p className="mt-6 font-display text-xl italic text-accent-deep">"{profile.tagline}"</p>

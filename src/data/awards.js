@@ -1,5 +1,15 @@
 export const awards = [
   {
+  title: "OSN-K Astronomy (City Level, SMA) - 3rd Place",
+  issuer: "Dinas Pendidikan, Pemuda, dan Olahraga DIY",
+  date: "Jun 2026",
+  image: "/assets/credentials/award-osn-k-astronomi-juara-3.jpg",
+  credentialId: "",
+  credentialUrl: "",
+  detail:
+    "Third place in Astronomy at the Yogyakarta city-level National Science Olympiad (OSN-K), run online by the Indonesian Talent Development Agency (BPTI) with the DIY Education Office.",
+  },
+  {
     title: "HMM ITB Mechanical Festival - STEM Competition Finalist",
     issuer: "HMM ITB (Institut Teknologi Bandung)",
     date: "May 2026",

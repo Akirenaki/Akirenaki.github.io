@@ -70,8 +70,8 @@ export const projects = [
       language: ["TypeScript"],
     },
     featured: true,
-    priority: false,
-    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://project-cherenkov-app.vercel.app/", presentation: null, document: null, video: null },
+    priority: true,
+    links: { repo: "https://github.com/project-cherenkov/project-cherenkov-app", demo: "https://www.projectcherenkov.dev/", presentation: null, document: null, video: null },
     summary:
       "Olympiad editorials are easy to read and still hard to understand. Cherenkov, built by a team of five, pairs every informatics, physics and astronomy editorial with a visualisation you can operate, and adds a study planner that works backwards from the exam date. Open source, in English and Indonesian, for students preparing for the Indonesian Science Olympiad (OSN).",
     cv: {
@@ -85,7 +85,6 @@ export const projects = [
     stack: {
       visible: ["Next.js", "TypeScript", "Drizzle ORM", "PostgreSQL"],
       hidden: [
-        "shadcn/ui",
         "Tailwind CSS",
         "Better Auth",
         "Canvas 2D",
@@ -146,7 +145,7 @@ export const projects = [
       language: ["Python", "JavaScript"],
     },
     featured: true,
-    priority: true,
+    priority: false,
     links: {
       repo: "https://github.com/Akirenaki/astronomy-multi-catalog-identifier-matcher",
       demo: null,
@@ -331,7 +330,7 @@ export const projects = [
     title: "Starship V3: Two-Stage Retropropulsive Landing Study",
     dateRange: "Aug 2026 - Sep 2026",
     role: "Co-designer",
-    scale: "standard",
+    scale: "mini",
     filters: {
       domain: ["Aerospace", "Physics", "Engineering"],
       type: ["Simulation"],

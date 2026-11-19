@@ -1,6 +1,7 @@
 import { profile } from "../data/profile";
 import { SocialLinks } from "./SocialLinks";
 import { VisitorCount } from "./VisitorCount";
+import { InfoTooltip } from "./InfoTooltip";
 import { HeimarmeneFooterButton } from "./companion/HeimarmeneCompanion";
 
 export function Footer() {
@@ -15,7 +16,9 @@ export function Footer() {
           </p>
           {typeof __BUILD_DATE__ !== "undefined" && __BUILD_DATE__ && (
             <p className="mt-0.5 text-xs text-ink-soft">
-              Last Updated On: {new Date(__BUILD_DATE__).toLocaleString()}
+              <InfoTooltip content="Based on the latest GitHub commit used to build this site. The date is shown as month/day/year, so 11/19/2026 means November 19, 2026.">
+                Last Updated On: {new Date(__BUILD_DATE__).toLocaleString()}
+              </InfoTooltip>
             </p>
           )}
           <VisitorCount />
