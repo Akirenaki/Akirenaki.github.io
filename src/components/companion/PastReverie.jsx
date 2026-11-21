@@ -12,8 +12,12 @@
 // stays fully usable.
 
 import { useEffect, useId, useRef, useState } from "react";
-import { PAST_REVERIE } from "../../data/past-reverie";
+import { Link } from "react-router";
+import { QUESTIONS_BY_ID } from "../../data/companion";
+import { PAST_REVERIE, RIPPLES_BY_ID, RIPPLE_SITES } from "../../data/past-reverie";
+import { writing } from "../../data/writing";
 import { MAX_RAW_INPUT_LENGTH, verifyPasscode } from "../../lib/past-reverie-access";
+import { isRequirementDone, isRippleOpen, requirementsOf } from "../../lib/past-reverie-locks";
 
 const TITLE = "Ripples of Past Reverie";
 const ATTEMPT_MS = 700; // shortest a check may take, so the burst is always seen
@@ -66,7 +70,65 @@ function prefersReducedMotion() {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function PastReverie({ unlocked, onUnlock, onPick, buttonClassName, className = "" }) {
+const requirementLink =
+  "font-medium text-accent-deep underline hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-deep";
+
+// One line of a sealed ripple's checklist. Everything is looked up by id. The
+// text of a question that is itself still sealed is not revealed.
+function RequirementItem({ requirement, progress, onRead, onNavigate }) {
+  const { kind, id } = requirement;
+  const done = isRequirementDone(progress, requirement);
+  let content;
+  if (kind === "essay") {
+    const entry = writing.find((w) => w.slug === id);
+    content = entry ? (
+      <>
+        Essay:{" "}
+        <Link to={`/writing/${id}`} onClick={onNavigate} className={requirementLink}>
+          {entry.title}
+        </Link>
+      </>
+    ) : (
+      "An essay"
+    );
+  } else if (kind === "site") {
+    const site = RIPPLE_SITES[id];
+    content = site ? (
+      <>
+        Website:{" "}
+        <a
+          href={site.href}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => onRead("site", id)}
+          onAuxClick={(event) => {
+            if (event.button === 1) onRead("site", id);
+          }}
+          className={requirementLink}
+        >
+          {site.label}
+        </a>
+      </>
+    ) : (
+      "A website"
+    );
+  } else {
+    const ripple = RIPPLES_BY_ID.get(id);
+    const text = ripple ? (isRippleOpen(ripple, progress) ? ripple.question : null) : QUESTIONS_BY_ID.get(id)?.question;
+    content = text ? <>Question: “{text}”</> : "Question: a sealed ripple";
+  }
+  return (
+    <li className="flex gap-2">
+      <span aria-hidden="true">{done ? "✓" : "○"}</span>
+      <span>
+        {content}
+        <span className="sr-only">{done ? " (done)" : " (not yet)"}</span>
+      </span>
+    </li>
+  );
+}
+
+export function PastReverie({ unlocked, onUnlock, onPick, progress, onRead, onNavigate, buttonClassName, className = "" }) {
   // locked | verifying | unlocking | error | open
   const [phase, setPhase] = useState(unlocked ? "open" : "locked");
   const [value, setValue] = useState("");
@@ -154,13 +216,33 @@ export function PastReverie({ unlocked, onUnlock, onPick, buttonClassName, class
           {open ? (
             ripples.length > 0 ? (
               <ul className="mt-3 space-y-2">
-                {ripples.map((ripple) => (
-                  <li key={ripple.id}>
-                    <button type="button" onClick={() => onPick(ripple.id)} className={`${buttonClassName} pr-ripple`}>
-                      {ripple.question}
-                    </button>
-                  </li>
-                ))}
+                {ripples.map((ripple) =>
+                  isRippleOpen(ripple, progress) ? (
+                    <li key={ripple.id}>
+                      <button type="button" onClick={() => onPick(ripple.id)} className={`${buttonClassName} pr-ripple`}>
+                        {ripple.question}
+                      </button>
+                    </li>
+                  ) : (
+                    <li key={ripple.id}>
+                      <div className="rounded-xl border border-dashed border-ink/40 px-3 py-2 text-sm text-ink-soft">
+                        <p className="font-medium text-ink">Sealed ripple</p>
+                        <p className="mt-1">Read these first to open it:</p>
+                        <ul className="mt-1 space-y-1">
+                          {requirementsOf(ripple).map((requirement) => (
+                            <RequirementItem
+                              key={`${requirement.kind}:${requirement.id}`}
+                              requirement={requirement}
+                              progress={progress}
+                              onRead={onRead}
+                              onNavigate={onNavigate}
+                            />
+                          ))}
+                        </ul>
+                      </div>
+                    </li>
+                  ),
+                )}
               </ul>
             ) : (
               <p className="mt-3 text-sm text-ink-soft">Nothing has surfaced here yet.</p>

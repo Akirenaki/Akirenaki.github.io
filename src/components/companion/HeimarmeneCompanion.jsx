@@ -44,6 +44,7 @@ import {
 } from "../../lib/companion-position";
 import { COMPANION_QUESTIONS, GROUPS, QUESTIONS_BY_ID } from "../../data/companion";
 import { RIPPLES_BY_ID } from "../../data/past-reverie";
+import { emptyProgress, isRippleOpen, markRead } from "../../lib/past-reverie-locks";
 import { PastReverie } from "./PastReverie";
 
 const POSITION_KEY = "heimarmene-position-v1";
@@ -120,7 +121,7 @@ function AnswerLinks({ links, onNavigate }) {
   );
 }
 
-function QuestionList({ onPick, reverie }) {
+function QuestionList({ onPick, reverie, closePanel }) {
   return (
     <>
       <div className="space-y-5">
@@ -142,6 +143,9 @@ function QuestionList({ onPick, reverie }) {
       <PastReverie
         unlocked={reverie.unlocked}
         onUnlock={reverie.onUnlock}
+        progress={reverie.progress}
+        onRead={reverie.onRead}
+        onNavigate={closePanel}
         onPick={onPick}
         buttonClassName={questionButton}
         className="mt-12"
@@ -165,13 +169,22 @@ function QuestionsTab({ closePanel, reverie }) {
   }, [history, showAll]);
 
   function pick(id) {
+    // A sealed ripple cannot be picked, whatever the interface shows.
+    const ripple = RIPPLES_BY_ID.get(id);
+    if (ripple && !(reverie.unlocked && isRippleOpen(ripple, reverie.progress))) return;
+    reverie.onRead("question", id);
     setHistory((current) => [...current.filter((x) => x !== id), id]);
     setShowAll(false);
   }
 
-  // Ripples resolve only once the collection is unlocked, and have no follow-ups.
+  // Ripples resolve only once the collection is unlocked and their own lock is
+  // open (data/past-reverie.js), and have no follow-ups.
+  const resolveRipple = (id) => {
+    const ripple = RIPPLES_BY_ID.get(id);
+    return ripple && reverie.unlocked && isRippleOpen(ripple, reverie.progress) ? ripple : undefined;
+  };
   const exchanges = history
-    .map((id) => QUESTIONS_BY_ID.get(id) ?? (reverie.unlocked ? RIPPLES_BY_ID.get(id) : undefined))
+    .map((id) => QUESTIONS_BY_ID.get(id) ?? resolveRipple(id))
     .filter(Boolean)
     .map((q) => ({ q, a: q.answer() }));
   const last = exchanges[exchanges.length - 1];
@@ -184,7 +197,7 @@ function QuestionsTab({ closePanel, reverie }) {
       </p>
 
       {exchanges.length === 0 ? (
-        <QuestionList onPick={pick} reverie={reverie} />
+        <QuestionList onPick={pick} reverie={reverie} closePanel={closePanel} />
       ) : (
         <div className="space-y-4" aria-live="polite">
           {exchanges.map(({ q, a }, index) => (
@@ -230,7 +243,7 @@ function QuestionsTab({ closePanel, reverie }) {
             </button>
           </div>
 
-          {showAll ? <QuestionList onPick={pick} reverie={reverie} /> : null}
+          {showAll ? <QuestionList onPick={pick} reverie={reverie} closePanel={closePanel} /> : null}
         </div>
       )}
     </div>
@@ -474,6 +487,9 @@ export function HeimarmeneCompanion() {
   // Held here, above the conditionally mounted panel, so the collection stays
   // open while Heimarmene is closed and reopened. Memory only: a reload relocks it.
   const [reverieUnlocked, setReverieUnlocked] = useState(false);
+  // What the visitor has read so far, for the locks on individual ripples
+  // (lib/past-reverie-locks.js). Memory only, like the unlock above.
+  const [reverieProgress, setReverieProgress] = useState(emptyProgress);
 
   const dockRef = useRef(null);
   const wanderRef = useRef(null);
@@ -538,6 +554,12 @@ export function HeimarmeneCompanion() {
     const interval = window.setInterval(place, 200);
     return () => window.clearInterval(interval);
   }, [introVisible, open]);
+
+  // Opening an essay page counts towards the locks on ripples.
+  useEffect(() => {
+    const match = /^\/writing\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/.exec(location.pathname);
+    if (match) setReverieProgress((current) => markRead(current, "essay", match[1]));
+  }, [location.pathname]);
 
   useEffect(() => {
     if (previousPath.current === location.pathname) return;
@@ -852,7 +874,12 @@ export function HeimarmeneCompanion() {
               onResetPanelSize={() => savePanelSize(null)}
               onResetAll={resetAll}
               onHide={hide}
-              reverie={{ unlocked: reverieUnlocked, onUnlock: () => setReverieUnlocked(true) }}
+              reverie={{
+                unlocked: reverieUnlocked,
+                onUnlock: () => setReverieUnlocked(true),
+                progress: reverieProgress,
+                onRead: (kind, id) => setReverieProgress((current) => markRead(current, kind, id)),
+              }}
             />
           </div>
           <ResizeHandles
