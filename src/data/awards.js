@@ -1,13 +1,37 @@
+// Awards & competitions, newest first. Shown in full on About; the printable CV
+// (/print) reads this list too, so a new entry here appears on the CV with no
+// further edit. Optional `cv: { title, detail }` sets tighter CV wording
+// (otherwise the CV prints `title` and `issuer`); `cv: false` keeps an entry off
+// the CV. `image` points at a file under public/assets/credentials/; until the
+// file exists the page shows a "Photo pending" placeholder.
 export const awards = [
   {
-  title: "OSN-K Astronomy (City Level, SMA) - 3rd Place",
-  issuer: "Dinas Pendidikan, Pemuda, dan Olahraga DIY",
-  date: "Jun 2026",
-  image: "/assets/credentials/award-osn-k-astronomi-juara-3.jpg",
-  credentialId: "",
-  credentialUrl: "",
-  detail:
-    "Third place in Astronomy at the Yogyakarta city-level National Science Olympiad (OSN-K), run online by the Indonesian Talent Development Agency (BPTI) with the DIY Education Office.",
+    title: "OSIFOG / BIRST 2026 (Level III, International) - Silver Tier, Rank 16",
+    issuer: "Olimpíada Brasileira de Simulação de Foguetes (OSIFOG) | Brazilian International Rocket Simulation Tournament (BIRST)",
+    date: "Sep 2026",
+    image: "/assets/credentials/award-osifog-birst-silver.jpg",
+    credentialId: "",
+    credentialUrl: "",
+    detail:
+      "Silver tier, ranked 16th at the international level (Level III, Falcon rocket) with a score of −3,150,147.609, as team Semoga Menang 6767 with the Starship V3 two-stage retropropulsive landing simulation. Medals are awarded by tier, not by position. The organisers note that the score is an internal metric used to order projects, and that a negative score can still rank among the best in the world.",
+    cv: {
+      title: "Silver tier, ranked 16th",
+      detail: "OSIFOG / BIRST 2026 Rocket Simulation Tournament, Level III (international)",
+    },
+  },
+  {
+    title: "OSN-K Astronomy (City Level, SMA) - 3rd Place",
+    issuer: "Dinas Pendidikan, Pemuda, dan Olahraga DIY",
+    date: "Jun 2026",
+    image: "/assets/credentials/award-osn-k-astronomi-juara-3.jpg",
+    credentialId: "",
+    credentialUrl: "",
+    detail:
+      "Third place in Astronomy at the Yogyakarta city-level National Science Olympiad (OSN-K), run online by the Indonesian Talent Development Agency (BPTI) with the DIY Education Office.",
+    cv: {
+      title: "Third place",
+      detail: "OSN-K Astronomy, Yogyakarta city level (SMA)",
+    },
   },
   {
     title: "HMM ITB Mechanical Festival - STEM Competition Finalist",
@@ -18,6 +42,10 @@ export const awards = [
     credentialUrl: "",
     detail:
       "Top 5 national finalist out of ~200 teams; led a 3-person team through a Design Thinking challenge addressing SDG-aligned clean energy, sanitation, and infrastructure problems, presented before an expert panel at ITB Ganesha.",
+    cv: {
+      title: "Top-five finalist",
+      detail: "HMM ITB Mechanical Festival STEM Competition — among approximately 200 teams",
+    },
   },
   {
     title: "Immerse Education Essay Competition - Scholar's Laureate",
@@ -28,6 +56,10 @@ export const awards = [
     credentialUrl: "",
     detail:
       "50% partial scholarship for an essay in the Philosophy category, evaluated by a panel from leading universities.",
+    cv: {
+      title: "Scholar's Laureate",
+      detail: "Immerse Education Essay Competition — Philosophy category; 50% partial scholarship",
+    },
   },
   {
     title: "Semifinalist of New Primagama Mencari Juara Physics Category",
@@ -36,6 +68,10 @@ export const awards = [
     image: "/assets/credentials/award-new-primagama.jpg",
     credentialId: "",
     credentialUrl: "",
+    cv: {
+      title: "Semifinalist",
+      detail: "New Primagama Mencari Juara — Physics Category",
+    },
   },
   {
     title: "Immerse Education Essay Competition - Honours List",
@@ -44,6 +80,10 @@ export const awards = [
     image: "/assets/credentials/award-immerse-honours-list.jpg",
     credentialId: "",
     credentialUrl: "",
+    cv: {
+      title: "Honours List",
+      detail: "Immerse Education Essay Competition",
+    },
   },
 ];
 

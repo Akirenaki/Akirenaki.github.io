@@ -37,9 +37,11 @@
 //   problem   one or two sentences on what was wrong or missing
 //   approach  what was built or done, with the specifics that matter
 //   impact    what changed, or could change, and the evidence for it
-// The CV shows these three labelled lines for flagship and standard projects.
-// A project without `cv` falls back to its `summary`. Keep personal details out
-// of `cv`: it is a document people forward.
+// The printable CV (/print) includes every flagship and standard project
+// automatically, and never a mini one. It uses condensed bullets from cv.js when
+// that file has them for the slug; otherwise it prints these three lines, and
+// falls back to `summary` if a project has no `cv`. Keep personal details out of
+// `cv`: it is a document people forward.
 
 export const SCALES = {
   flagship: {

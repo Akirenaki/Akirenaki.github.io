@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { profile } from "../data/profile";
 import { testScores } from "../data/awards";
-import { projects } from "../data/projects";
 import {
   cvProfile,
   cvEducation,
@@ -27,8 +26,6 @@ function PrinterIcon({ className = "h-4 w-4" }) {
     </svg>
   );
 }
-
-const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
 
 // Links are absolute so they stay clickable in the saved PDF.
 const caseStudyUrl = (slug) => `${SITE_URL}work/${slug}/`;
@@ -211,37 +208,30 @@ export function PrintCV() {
 
         <section aria-labelledby="cv-projects">
           <h2 id="cv-projects" className="cv-h2">Selected Projects &amp; Research</h2>
-          {cvProjects.map((entry) => {
-            const project = PROJECTS_BY_SLUG.get(entry.slug);
-            if (!project) return null;
-            const extraLinks = entry.links
-              .map((key) => ({ key, url: project.links?.[key] }))
-              .filter((link) => link.url);
-            return (
-              <div key={entry.slug} className="cv-entry">
-                <div className="cv-head">
-                  <p className="cv-head-main">
-                    <a href={caseStudyUrl(entry.slug)}>{project.title}</a>
-                  </p>
-                  <p className="cv-date">{formatCvDate(project.dateRange)}</p>
-                </div>
-                <div className="cv-head">
-                  <p className="cv-role">{entry.role}</p>
-                  {extraLinks.length > 0 && (
-                    <p className="cv-links">
-                      {extraLinks.map((link, index) => (
-                        <span key={link.key}>
-                          {index > 0 && " · "}
-                          <a href={link.url}>{LINK_LABELS[link.key]}</a>
-                        </span>
-                      ))}
-                    </p>
-                  )}
-                </div>
-                <Bullets items={entry.bullets} />
+          {cvProjects.map((entry) => (
+            <div key={entry.slug} className="cv-entry">
+              <div className="cv-head">
+                <p className="cv-head-main">
+                  <a href={caseStudyUrl(entry.slug)}>{entry.title}</a>
+                </p>
+                <p className="cv-date">{formatCvDate(entry.dateRange)}</p>
               </div>
-            );
-          })}
+              <div className="cv-head">
+                <p className="cv-role">{entry.role}</p>
+                {entry.links.length > 0 && (
+                  <p className="cv-links">
+                    {entry.links.map((link, index) => (
+                      <span key={link.key}>
+                        {index > 0 && " · "}
+                        <a href={link.url}>{LINK_LABELS[link.key]}</a>
+                      </span>
+                    ))}
+                  </p>
+                )}
+              </div>
+              <Bullets items={entry.bullets} />
+            </div>
+          ))}
         </section>
 
         <section aria-labelledby="cv-service">

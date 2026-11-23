@@ -128,9 +128,10 @@ hardware/engineering projects.
 5. Options within one filter group use OR logic; different groups use AND
    logic. Active filters appear as removable chips.
 6. Cards can expose repository, live demo, presentation, and document links.
-7. Case studies describe the problem, approach, and impact. (The optional
-   `cv.problem`, `cv.approach`, and `cv.impact` values are no longer used by the
-   printable CV, which takes its condensed bullets from `src/data/cv.js`.)
+7. Case studies describe the problem, approach, and impact. The optional
+   `cv.problem`, `cv.approach`, and `cv.impact` values are the printable CV's
+   fallback text for a flagship or standard project that has no condensed
+   bullets in `src/data/cv.js`.
 
 The prerender list reads project slugs from the same data file, so adding a
 project does not require maintaining a second route list.
@@ -183,19 +184,30 @@ endpoint changes, update it there and test both success and failure states.
 navigation/footer layout so that it prints cleanly.
 
 It is a curated two-page A4 academic–professional CV, not a dump of every
-record on the site. Its content lives in `src/data/cv.js`: the display name and
-profile paragraph, the education and test-score lines, the six selected
-projects (in order, with condensed bullets and condensed roles), the curated
-teaching, leadership and service entries, four awards, one selected
-certification, and the grouped skills. Canonical project titles, date ranges
-and links, the contact fields, and the SAT and IELTS results are still read from
-`projects.js`, `profile.js` and `awards.js` by slug or name.
+record on the site. Most of it is read from the shared data files, so it stays
+current without a separate edit:
+
+- **Projects**: every `flagship` and `standard` project in `projects.js`
+  appears automatically (flagship first); `mini` projects never do. Titles,
+  dates and links come from the project record. `src/data/cv.js` can hold
+  condensed bullets and a shorter role per slug; without them the CV prints the
+  project's `cv` lines, or its `summary`.
+- **Awards**: every entry in `awards.js` appears automatically, newest first.
+  An award can set `cv: { title, detail }` for tighter wording, or `cv: false`
+  to stay off the CV.
+- **Contact fields and the SAT and IELTS results** come from `profile.js` and
+  `awards.js`.
+
+Curated in `src/data/cv.js`: the display name and profile paragraph, the
+education line, the teaching, leadership and service entries, one selected
+certification, and the grouped skills.
 
 Section order: Header, Profile, Education & Standardized Tests, Selected
 Projects & Research, Teaching, Leadership & Service, Awards & Selected
 Credentials, Technical Skills & Languages. Writing and the full certificate list
-are deliberately left out and remain on the website. To change what the CV shows,
-edit `cv.js`; do not edit the shared data files for that purpose.
+are deliberately left out and remain on the website. To change what the CV
+shows, edit the shared record where the fact lives, or the CV-only wording in
+`cv.js`.
 
 The page is styled for A4 output and hides browser-only notices and controls
 when printing. Visitors can click **Print / Save as PDF**, choose a printer,
