@@ -63,6 +63,7 @@ function CloseIcon({ className = "h-3 w-3" }) {
 export function Work() {
   const [selected, setSelected] = useState(EMPTY);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [orderBy, setOrderBy] = useState("scale");
 
   const options = useMemo(
     () =>
@@ -78,7 +79,11 @@ export function Work() {
   const matches = (project, skipKey) =>
     GROUPS.every((g) => g.key === skipKey || matchesGroup(project, g, selected[g.key]));
 
-  const visible = projects.filter((p) => matches(p));
+  const visible = projects.filter((p) => matches(p)).sort((a, b) => {
+    if (orderBy === "title") return a.title.localeCompare(b.title);
+    const scaleRank = { flagship: 0, standard: 1, mini: 2 };
+    return scaleRank[a.scale] - scaleRank[b.scale] || a.title.localeCompare(b.title);
+  });
   const activeCount = GROUPS.reduce((n, g) => n + selected[g.key].length, 0);
   const secondaryActiveCount = GROUPS.filter((g) => g.key !== "scale").reduce(
     (n, g) => n + selected[g.key].length,
@@ -120,6 +125,25 @@ export function Work() {
           Everything from full-stack astronomy tools to a trebuchet built for a physics grade. Start with the big
           ones or the quick experiments, browse by field, or dig into the tech. Open any project for the full write-up.
         </p>
+
+        <div className="mt-6 flex flex-wrap items-center gap-2" role="group" aria-label="Order projects">
+          <span className="mr-1 text-xs font-medium uppercase tracking-wide text-ink-soft">Order by:</span>
+          {[{ id: "scale", label: "Scale" }, { id: "title", label: "Title" }].map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setOrderBy(option.id)}
+              aria-pressed={orderBy === option.id}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                orderBy === option.id
+                  ? "bg-accent-deep text-paper shadow-xs"
+                  : "border border-blush/70 bg-surface/80 text-ink-soft hover:border-accent-deep hover:text-accent-deep"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
 
         {/* Clean, streamlined filter toolbar */}
         <div className="mt-8 border-y border-blush/70 py-4" role="group" aria-label="Filter projects">

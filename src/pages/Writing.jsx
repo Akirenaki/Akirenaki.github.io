@@ -46,6 +46,7 @@ function CloseIcon({ className = "h-3 w-3" }) {
 export function Writing() {
   const [params, setParams] = useSearchParams();
   const [panelOpen, setPanelOpen] = useState(false);
+  const [orderBy, setOrderBy] = useState("last-edited");
 
   // The prerendered HTML is the unfiltered list. If the first client render
   // already applied ?topic=... the two would disagree, so the URL is read only
@@ -61,8 +62,16 @@ export function Writing() {
 
   const activeCount = selectionCount(selected);
   const secondaryActiveCount = (selected.topic?.length ?? 0) + (selected.character?.length ?? 0);
-  const visible = writing.filter((w) => matches(w, selected));
-  const visibleSlugs = new Set(visible.map((w) => w.slug));
+  const visible = writing.filter((w) => matches(w, selected)).sort((a, b) => {
+    // Keep active drafts at the top in either ordering. Finished pieces then
+    // follow the selected sort, with title as a stable tie-breaker.
+    const statusOrder = Number(b.status === "ongoing") - Number(a.status === "ongoing");
+    if (statusOrder) return statusOrder;
+    if (orderBy === "title") return a.title.localeCompare(b.title);
+    const editOrder = Date.parse(b.pdf.lastEdited) - Date.parse(a.pdf.lastEdited);
+    return editOrder || a.title.localeCompare(b.title);
+  });
+  const ongoingVisible = visible.filter((w) => w.status === "ongoing");
 
   // The URL is the state. replace keeps the Back button from stepping through
   // every click; preventScrollReset keeps the page where it is.
@@ -96,6 +105,25 @@ export function Writing() {
         <p className="mt-3 max-w-xl text-ink-soft">
           Essays on evidence, minds and meaning. Each entry gives the argument in brief; open it for the full text.
         </p>
+
+        <div className="mt-6 flex flex-wrap items-center gap-2" role="group" aria-label="Order writing">
+          <span className="mr-1 text-xs font-medium uppercase tracking-wide text-ink-soft">Order by:</span>
+          {[{ id: "last-edited", label: "Last edited" }, { id: "title", label: "Title" }].map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setOrderBy(option.id)}
+              aria-pressed={orderBy === option.id}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                orderBy === option.id
+                  ? "bg-accent-deep text-paper shadow-xs"
+                  : "border border-blush/70 bg-surface/80 text-ink-soft hover:border-accent-deep hover:text-accent-deep"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
 
         {TREE.length > 0 && (
           <div className="mt-8 border-y border-blush/70 py-4" role="group" aria-label="Filter writing">
@@ -277,11 +305,26 @@ export function Writing() {
         )}
 
         <div className="mt-10 flex flex-col gap-12">
+          {ongoingVisible.length > 0 && (
+            <section aria-labelledby="section-ongoing">
+              <h2
+                id="section-ongoing"
+                className="mb-2 font-body text-[13px] font-medium uppercase tracking-[0.08em] text-ink-soft"
+              >
+                Ongoing writing
+              </h2>
+              <div className="border-b border-blush">
+                {ongoingVisible.map((entry) => (
+                  <WritingCard key={entry.slug} entry={entry} />
+                ))}
+              </div>
+            </section>
+          )}
           {Object.entries(SECTIONS).map(([key, section]) => {
             const all = entriesInSection(key);
             // A section with no entries is not rendered; neither is one with no
             // matches while a filter is active.
-            const shown = all.filter((w) => visibleSlugs.has(w.slug));
+            const shown = visible.filter((w) => w.section === key && w.status !== "ongoing");
             if (all.length === 0 || shown.length === 0) return null;
             return (
               <section key={key} aria-labelledby={`section-${key}`}>

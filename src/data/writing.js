@@ -51,8 +51,9 @@
 //   rights       one-line notice; keep in step with the site footer unless a
 //                licence is chosen for that piece.
 //
-// Order: entries are shown in the order of this array (within their section),
-// as with projects. Previous/next links on an entry page follow the same order.
+// The writing index defaults to ongoing first, then newest `pdf.lastEdited`;
+// its title option alphabetizes within those status groups. Previous/next links
+// on an entry page follow this array's order within each section.
 
 import { FACETS, GROUP_KEYS, TAGS_BY_ID } from "./writing-taxonomy.js";
 

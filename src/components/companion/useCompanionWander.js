@@ -20,6 +20,16 @@ const EASINGS = [
 
 const rand = (min, max) => min + Math.random() * (max - min);
 
+// A viewport can be smaller than the mascot plus its edge margins. In that
+// case there is no valid roam range on that axis; keep the resting offset at
+// zero instead of asking rand() for a destination from an inverted range.
+function safeBounds(bounds) {
+  const axis = (min, max) => min <= max ? { min, max } : { min: 0, max: 0 };
+  const x = axis(bounds.minX, bounds.maxX);
+  const y = axis(bounds.minY, bounds.maxY);
+  return { minX: x.min, maxX: x.max, minY: y.min, maxY: y.max };
+}
+
 function pickTarget(from, b) {
   const spanX = Math.max(0, b.maxX - b.minX);
   const spanY = Math.max(0, b.maxY - b.minY);
@@ -102,7 +112,7 @@ export function useCompanionWander({ ref, enabled, paused, speed, bounds, resetK
 
     function leg() {
       if (cancelled) return;
-      const b = boundsRef.current;
+      const b = safeBounds(boundsRef.current);
       const target = pickTarget(at, b);
       if (!target || target.distance < 1) {
         timer = window.setTimeout(leg, 2000);
