@@ -351,6 +351,9 @@ build-time validation used by the application.
    `build/client/` as a Pages artifact, and deploys it to
    `https://akirenaki.github.io/`.
 
+The legacy `/Portfolio/` path redirects to the site root via
+`public/Portfolio/index.html`, including URLs with a hash fragment.
+
 The site is a GitHub Pages **User Site**, so the base path is `/`. Keep the
 base/basename values in `vite.config.js`, `react-router.config.js`, and
 `src/lib/seo.js` consistent if the deployment domain changes.
