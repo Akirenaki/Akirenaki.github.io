@@ -339,7 +339,7 @@ export const projects = [
       framework: [],
       language: [],
     },
-    highlight: "Silver Tier, Ranked 26th, Level III international Falcon Rocket challenge",
+    highlight: "Silver Tier, Ranked 16th, Level III international Falcon Rocket challenge",
     featured: true,
     priority: false,
     scaleNote: "A focused simulation project with a clear question: how close can pre-timed burns alone get to a soft landing? Made for the BIRST 2026 Level 3 challenge.",

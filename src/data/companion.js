@@ -25,6 +25,7 @@ export const GROUPS = [
   { id: "work", label: "Projects" },
   { id: "writing", label: "Writing" },
   { id: "contact", label: "Contact" },
+  { id: "heimarmene", label: "About Heimarmene" },
 ];
 
 const firstName = profile.preferredNameHome.split(" ")[0];
@@ -183,6 +184,31 @@ export const COMPANION_QUESTIONS = [
         { label: "GitHub", href: profile.contact.github.url },
         { label: "Kaggle", href: profile.contact.kaggle.url },
         { label: "LinkedIn", href: profile.contact.linkedin },
+      ],
+    }),
+  },
+  {
+    id: "heimarmene-what",
+    group: "heimarmene",
+    question: "What are you, Heimarmene?",
+    related: ["heimarmene-reference", "about-focus", "contact-how"],
+    answer: () => ({
+      text: "I, Heimarmene (she/her), am this portfolio's draggable interactive guide. I list pre-written questions about Renee, including her projects, her writing, and how to get in touch with her.",
+      links: [
+        { label: "Explore the About page", to: "/about" },
+        { label: "Browse the projects", to: "/work" },
+      ],
+    }),
+  },
+  {
+    id: "heimarmene-reference",
+    group: "heimarmene",
+    question: "What is the reference for Heimarmene?",
+    related: ["heimarmene-what", "about-tools", "contact-how"],
+    answer: () => ({
+      text: "Heimarmene is the predetermined, inescapable destiny of Teyvat imposed by the Heavenly Principles. The name is used for thie portfolio's Heimarmene because she can only answer prewritten answers",
+      links: [
+        { label: "Genshin Page on Heimarmene", href: "https://genshin-impact.fandom.com/wiki/Fate" },
       ],
     }),
   },
