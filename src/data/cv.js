@@ -1,10 +1,8 @@
 // Content for the printable CV at /print.
 //
 // The CV is a curated, two-page document, not a dump of every record on the
-// site. Everything that is specific to it - the display name, the condensed
-// wording, the single certification shown - lives here, so the shared data files
-// (profile.js, projects.js, experience.js, awards.js) stay untouched and keep
-// feeding Home, About and Work in full.
+// site. CV-specific wording and groupings live here, while selected records are
+// read from the shared data files.
 //
 // What the CV selects is data-driven, so it cannot drift from the rest of the
 // site:
@@ -16,16 +14,17 @@
 //   - Awards: every entry in awards.js is included automatically, newest
 //     first. An entry can set `cv: { title, detail }` for tighter CV wording,
 //     or `cv: false` to leave it off the CV.
-//   - SAT and IELTS results are read from awards.js by name.
-// Teaching, leadership and service entries, education, the single certification
-// and the skills groups are curated here, because their wording and grouping
-// differ from the full records.
+//   - Certifications: the entry in awards.js marked `onCV: true` is included.
+//   - Test scores are read from awards.js, including any newly added records.
+// Teaching, leadership and service entries and skills groups are curated here,
+// because their wording and grouping differ from the full records.
 //
 // Spelling follows the CV brief: modelling, visualisation, organisation,
 // programme, fertiliser.
 
 import { projects } from "./projects.js";
-import { awards } from "./awards.js";
+import { awards, certifications, testScores } from "./awards.js";
+import { profile } from "./profile.js";
 
 // "Jun 2026 - Present" -> "June 2026 – Present". The shared records abbreviate
 // months and use a plain hyphen; the CV prints full month names and en dashes.
@@ -51,36 +50,24 @@ export function formatCvDate(text = "") {
 }
 
 export const cvProfile = {
-  displayName: "Renee Astraea",
+  displayName: profile.preferredNameHome,
   headline: "Astrophysics · Scientific Software · Data Analysis",
   summary:
     "Secondary-school student interested in astrophysics, computational methods, and astronomical data analysis. Builds scientific software and interactive tools, with experience in collaborative research, physics modelling, student instruction, and technical project leadership.",
-  // Printed as a link to the portfolio homepage. Location, email, LinkedIn and
-  // GitHub are read from profile.js; nothing else from profile.contact is used.
-  portfolioLabel: "akirenaki.github.io",
 };
 
-export const cvEducation = [
-  {
-    institution: "SMA Negeri 1 Yogyakarta",
-    detail: "High School Diploma",
-    date: "Expected May 2027",
-    note: "Mathematics and Natural Sciences (MIPA); Astronomy Olympiad class.",
-  },
-  {
-    institution: "HarvardX — CS50x: Introduction to Computer Science",
-    detail: null,
-    date: "Completed 2026",
-    note: null,
-  },
-];
+export const cvEducation = profile.education.map((education) => ({
+  institution: education.institution,
+  detail: education.degree,
+  date: education.dateLabel,
+}));
 
-// Names must match `name` in testScores (awards.js). Only the overall score and
-// date are printed; section scores stay on the About page.
-export const cvTests = [
-  { name: "SAT", showMax: true },
-  { name: "IELTS Academic", showMax: false },
-];
+// Print the overall scores from awards.js; section scores stay on the About page.
+export const cvTestScores = testScores.map((test) => ({
+  name: test.name,
+  score: `${test.value.toFixed(test.decimals)}/${test.max.toFixed(test.decimals)}`,
+  date: formatCvDate(test.date),
+}));
 
 // Only these project scales appear on the CV (see SCALES in projects.js).
 // Flagship projects print first, then standard ones; within a scale the order
@@ -90,7 +77,7 @@ const CV_SCALES = ["flagship", "standard"];
 // Optional condensed wording, keyed by project slug. `role` replaces the
 // broader role string in projects.js; `bullets` replace the automatic text;
 // `links` lists the project links to print, keyed by projects.js `links`
-// (default: repository, demo and report).
+// (default: every available project link).
 const cvProjectWording = {
   "astronomical-multi-catalog-identifier-matcher": {
     role: "Developer · CS50x capstone project",
@@ -121,8 +108,6 @@ const cvProjectWording = {
   },
 };
 
-const DEFAULT_PROJECT_LINKS = ["repo", "demo", "document"];
-
 // Fallback for a project with no condensed wording: its own CV lines from
 // projects.js, or its summary if it has none.
 function automaticBullets(project) {
@@ -147,7 +132,7 @@ export const cvProjects = CV_SCALES.flatMap((scale) =>
     title: project.title,
     dateRange: project.dateRange,
     role: wording.role ?? project.role,
-    links: (wording.links ?? DEFAULT_PROJECT_LINKS)
+    links: (wording.links ?? Object.keys(project.links ?? {}))
       .map((key) => ({ key, url: project.links?.[key] }))
       .filter((link) => link.url),
     bullets: wording.bullets ?? automaticBullets(project),
@@ -159,6 +144,7 @@ export const LINK_LABELS = {
   demo: "Demo",
   presentation: "Presentation",
   document: "Report",
+  video: "Video",
 };
 
 // Newest first. `group` entries are rendered under one organisation heading
@@ -233,11 +219,11 @@ export const cvAwards = awards
   .sort((a, b) => b.key - a.key || a.index - b.index)
   .map(({ title, detail, date }) => ({ title, detail, date }));
 
-export const cvCertification = {
-  label: "Selected certification",
-  text: "AI Agent for Data Analysis — Hacktiv8 × IBM",
-  date: "July 2026",
-};
+const cvCertifications = certifications.filter((certification) => certification.onCV);
+if (cvCertifications.length !== 1) {
+  throw new Error(`cv.js: expected exactly one certification with onCV: true, found ${cvCertifications.length}`);
+}
+export const cvCertification = cvCertifications[0];
 
 // Plain groups, no proficiency levels. Only technologies with practical use in
 // the portfolio projects are listed.

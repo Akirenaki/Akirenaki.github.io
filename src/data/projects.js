@@ -284,7 +284,7 @@ export const projects = [
     },
     featured: true,
     priority: false,
-    highlight: "Top 5 finalist out of about 200 teams, M-Fest 2026 STEM Competition",
+    highlight: "Top 5 finalist out of ~200 teams",
     links: { repo: null, demo: null, presentation: "https://canva.link/p34z80qun2pxlha", document: null, video: null },
     summary:
       "CORGEIN is a household-scale electrostatic-precipitator prototype developed by a three-person team for M-Fest 2026. It was designed to ionise particulate matter in smoke and collect charged particles on plates. The team reached the top five among approximately 200 teams and presented the prototype to an expert panel at ITB.",
@@ -339,6 +339,7 @@ export const projects = [
       framework: [],
       language: [],
     },
+    highlight: "Silver Tier, Ranked 26th, Level III international Falcon Rocket challenge",
     featured: true,
     priority: false,
     scaleNote: "A focused simulation project with a clear question: how close can pre-timed burns alone get to a soft landing? Made for the BIRST 2026 Level 3 challenge.",

@@ -26,6 +26,7 @@ export function WritingCard({ entry, variant = "row", size = "md" }) {
             {entry.title}
           </Link>
         </h3>
+        {entry.highlight && <p className="text-sm font-medium text-accent-deep">{entry.highlight}</p>}
         <p className={`mt-3 text-sm leading-relaxed text-ink-soft ${isLarge ? "md:max-w-3xl" : "line-clamp-5"}`}>
           {entry.summary}
         </p>
@@ -44,6 +45,7 @@ export function WritingCard({ entry, variant = "row", size = "md" }) {
           {entry.title}
         </Link>
       </h3>
+      {entry.highlight && <p className="mt-2 text-sm font-medium text-accent-deep">{entry.highlight}</p>}
       <p className="mt-2 max-w-[680px] leading-relaxed text-ink-soft">{entry.summary}</p>
       <Link to={to} className="mt-3 inline-block text-accent-deep hover:underline">
         Read the piece →

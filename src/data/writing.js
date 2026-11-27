@@ -18,6 +18,7 @@
 //   featured     true = also listed under "Featured writing" on Home
 //   priority     optional; with `featured`, takes the large first slot on Home,
 //                exactly as for projects
+//   highlight    optional; one line of recognition shown on cards and the entry page
 //   wordCount    integer for the body of the piece: headings included; the
 //                title, tab names, the reference list and URLs in it excluded.
 //                Counted from the supplied document as whitespace-separated
@@ -169,6 +170,7 @@ export const writing = [
     status: "finished",
     featured: false,
     priority: false,
+    highlight: "Scholar's Laureate — 50% partial scholarship for an essay in the Philosophy category of the Immerse Education Essay Competition",
     wordCount: 539,
     language: "English",
     summary:

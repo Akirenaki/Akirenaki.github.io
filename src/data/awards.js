@@ -68,6 +68,8 @@ export const awards = [
     image: "/assets/credentials/award-new-primagama.jpg",
     credentialId: "",
     credentialUrl: "",
+    detail:
+      "Semifinalist in the Physics category of the New Primagama Mencari Juara competition.",
     cv: {
       title: "Semifinalist",
       detail: "New Primagama Mencari Juara — Physics Category",
@@ -85,16 +87,94 @@ export const awards = [
       detail: "Immerse Education Essay Competition",
     },
   },
+  {
+    title: "Finalist of New Primagama Mencari Juara Physics Category",
+    issuer: "New Primagama",
+    date: "Jan 2025",
+    image: "/assets/credentials/award-new-primagama-finalist.jpg",
+    credentialId: "",
+    credentialUrl: "",
+    cv: {
+      title: "Finalist",
+      detail: "New Primagama Mencari Juara — Physics Category",
+    },
+  }
 ];
 
+// Set `onCV` to true for the single certification selected for the printable CV.
 export const certifications = [
-  { title: "AI Agent for Data Analysis", issuer: "Hacktiv8 x IBM", date: "Jul 2026", image: "/assets/credentials/certification-ai-agent-data-analysis.jpg", credentialId: "00918/H8/CSR/ISUE/V/2026", credentialUrl: "https://students.hacktiv8.com/certificates/3bafb54b-78ee-42e7-aae4-19faf2505ec6" },
-  { title: "AI Literacy", issuer: "IBM", date: "May 2026", image: "/assets/credentials/certification-ai-literacy.jpg", credentialId: "7522a184-3d1b-4667-82ee-c0e7e0072669", credentialUrl: "https://www.credly.com/badges/7522a184-3d1b-4667-82ee-c0e7e0072669/" },
-  { title: "Getting Started with Data", issuer: "IBM", date: "May 2026", image: "/assets/credentials/certification-getting-started-with-data.jpg", credentialId: "bfc792bf-500c-4f2a-b6af-e907e2d940f6", credentialUrl: "https://www.credly.com/badges/bfc792bf-500c-4f2a-b6af-e907e2d940f6" },
-  { title: "Intro to Data Analytics", issuer: "RevoU", date: "May 2026", image: "/assets/credentials/certification-intro-to-data-analytics.jpg", credentialId: "DAMC-110526-01-1-00178", credentialUrl: "https://drive.google.com/file/d/1aeAPANmi7liEMRlyydGqnS8lrhoMY2ep/view?pli=1" },
-  { title: "Introduction to Software Engineering", issuer: "RevoU", date: "May 2026", image: "/assets/credentials/certification-introduction-to-software-engineering.jpg", credentialId: "CCSE 270426-01-1-00009", credentialUrl: "https://drive.google.com/file/d/1JCPZAtDwT-EUjwUjE8x12bnEj64OrleU/view?pli=1" },
-  { title: "Intro to SQL", issuer: "Kaggle", date: "Mar 2026", image: "/assets/credentials/certification-intro-to-sql.jpg", credentialId: "", credentialUrl: "https://www.kaggle.com/learn/certification/reneeastraea/intro-to-sql" },
-  { title: "Python", issuer: "Kaggle", date: "Mar 2026", image: "/assets/credentials/certification-python.jpg", credentialId: "", credentialUrl: "https://www.kaggle.com/learn/certification/reneeastraea/python" },
+  {
+    title: "LLM-Based Tools & Gemini API Integration for Data Scientists",
+    issuer: "Hacktiv8 x AVPN",
+    date: "Sept 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-llm-based-tools-gemini-api-integration.jpg",
+    credentialId: "09904/H8/CSR/MBA2/IX/2026",
+    credentialUrl: "https://students.hacktiv8.com/certificates/5278ee5d-3179-4ded-878a-f4b0f87c4eca",
+  },
+  {
+    title: "AI Agent for Data Analysis",
+    issuer: "Hacktiv8 x IBM",
+    date: "Jul 2026",
+    onCV: true,
+    image: "/assets/credentials/certification-ai-agent-data-analysis.jpg",
+    credentialId: "00918/H8/CSR/ISUE/V/2026",
+    credentialUrl: "https://students.hacktiv8.com/certificates/3bafb54b-78ee-42e7-aae4-19faf2505ec6",
+  },
+  {
+    title: "AI Literacy",
+    issuer: "IBM",
+    date: "May 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-ai-literacy.jpg",
+    credentialId: "7522a184-3d1b-4667-82ee-c0e7e0072669",
+    credentialUrl: "https://www.credly.com/badges/7522a184-3d1b-4667-82ee-c0e7e0072669/",
+  },
+  {
+    title: "Getting Started with Data",
+    issuer: "IBM",
+    date: "May 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-getting-started-with-data.jpg",
+    credentialId: "bfc792bf-500c-4f2a-b6af-e907e2d940f6",
+    credentialUrl: "https://www.credly.com/badges/bfc792bf-500c-4f2a-b6af-e907e2d940f6",
+  },
+  {
+    title: "Intro to Data Analytics",
+    issuer: "RevoU",
+    date: "May 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-intro-to-data-analytics.jpg",
+    credentialId: "DAMC-110526-01-1-00178",
+    credentialUrl: "https://drive.google.com/file/d/1aeAPANmi7liEMRlyydGqnS8lrhoMY2ep/view?pli=1",
+  },
+  {
+    title: "Introduction to Software Engineering",
+    issuer: "RevoU",
+    date: "May 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-introduction-to-software-engineering.jpg",
+    credentialId: "CCSE 270426-01-1-00009",
+    credentialUrl: "https://drive.google.com/file/d/1JCPZAtDwT-EUjwUjE8x12bnEj64OrleU/view?pli=1",
+  },
+  {
+    title: "Intro to SQL",
+    issuer: "Kaggle",
+    date: "Mar 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-intro-to-sql.jpg",
+    credentialId: "",
+    credentialUrl: "https://www.kaggle.com/learn/certification/reneeastraea/intro-to-sql",
+  },
+  {
+    title: "Python",
+    issuer: "Kaggle",
+    date: "Mar 2026",
+    onCV: false,
+    image: "/assets/credentials/certification-python.jpg",
+    credentialId: "",
+    credentialUrl: "https://www.kaggle.com/learn/certification/reneeastraea/python",
+  },
 ];
 
 // Technical stack for the About page - "daily" vs "worked with", drawn from

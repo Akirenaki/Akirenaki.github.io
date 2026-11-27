@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { profile } from "../data/profile";
-import { testScores } from "../data/awards";
 import {
   cvProfile,
   cvEducation,
-  cvTests,
+  cvTestScores,
   cvProjects,
   cvExperience,
   cvAwards,
@@ -29,6 +28,7 @@ function PrinterIcon({ className = "h-4 w-4" }) {
 
 // Links are absolute so they stay clickable in the saved PDF.
 const caseStudyUrl = (slug) => `${SITE_URL}work/${slug}/`;
+const portfolioLabel = new URL(SITE_URL).host;
 const linkedinLabel = profile.contact.linkedin.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 const githubLabel = `github.com/${profile.contact.github.label}`;
 
@@ -87,16 +87,8 @@ export function PrintCV() {
     }
   }, [searchParams]);
 
-  const testLine = cvTests
-    .map(({ name, showMax }) => {
-      const test = testScores.find((entry) => entry.name === name);
-      if (!test) return null;
-      const score = showMax
-        ? `${test.value.toFixed(test.decimals)}/${test.max.toFixed(test.decimals)}`
-        : test.value.toFixed(test.decimals);
-      return `${test.name} ${score} (${formatCvDate(test.date)})`;
-    })
-    .filter(Boolean)
+  const testLine = cvTestScores
+    .map((test) => `${test.name} ${test.score} (${test.date})`)
     .join(" · ");
 
   return (
@@ -183,7 +175,7 @@ export function PrintCV() {
               GitHub: <a href={profile.contact.github.url}>{githubLabel}</a>
             </span>
             <span>
-              Portfolio: <a href={SITE_URL}>{cvProfile.portfolioLabel}</a>
+              Portfolio: <a href={SITE_URL}>{portfolioLabel}</a>
             </span>
           </p>
         </header>
@@ -276,9 +268,9 @@ export function PrintCV() {
           </ul>
           <div className="cv-head" style={{ marginTop: "5pt", breakInside: "avoid" }}>
             <p>
-              <strong>{cvCertification.label}:</strong> {cvCertification.text}
+              <strong>Selected certification:</strong> {cvCertification.title} — {cvCertification.issuer}
             </p>
-            <p className="cv-date">{cvCertification.date}</p>
+            <p className="cv-date">{formatCvDate(cvCertification.date)}</p>
           </div>
         </section>
 

@@ -96,6 +96,7 @@ export function WritingEntry() {
         </p>
 
         <h1 className="mt-2 font-display text-4xl font-medium leading-[1.15] text-ink md:text-[44px] print:mt-0 print:text-[22pt]!">{entry.title}</h1>
+        {entry.highlight && <p className="mt-4 font-medium text-accent-deep print:hidden">{entry.highlight}</p>}
         <p className="mt-5 text-lg leading-relaxed text-ink-soft print:hidden">{entry.summary}</p>
 
         {tagRows.length > 0 && (
