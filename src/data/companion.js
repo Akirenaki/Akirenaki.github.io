@@ -206,7 +206,7 @@ export const COMPANION_QUESTIONS = [
     question: "What is the reference for Heimarmene?",
     related: ["heimarmene-what", "about-tools", "contact-how"],
     answer: () => ({
-      text: "Heimarmene is the predetermined, inescapable destiny of Teyvat imposed by the Heavenly Principles. The name is used for thie portfolio's Heimarmene because she can only answer prewritten answers",
+      text: "Heimarmene is the predetermined, inescapable destiny of Teyvat imposed by the Heavenly Principles. Renee granted me this name because I can only answer prewritten answers",
       links: [
         { label: "Genshin Page on Heimarmene", href: "https://genshin-impact.fandom.com/wiki/Fate" },
       ],

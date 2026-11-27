@@ -274,7 +274,7 @@ export const projects = [
     slug: "corgein",
     title: "CORGEIN: Household-Scale Incinerator Filter Prototype Based on Electrostatic Precipitation",
     dateRange: "Jan 2026 - May 2026",
-    role: "Team lead (3-person team)",
+    role: "Research & Prototype Contributor · Three-person team",
     scale: "standard",
     filters: {
       domain: ["Engineering", "Environmental Science"],
@@ -292,7 +292,7 @@ export const projects = [
       problem:
         "Burning household waste is routine in my area, and the smoke and fly ash from incomplete combustion drift into neighbouring homes. A fix that depends on everyone stopping is unlikely to work, so the aim was to make the burning less harmful.",
       approach:
-        "Led a three-person team researching, designing, and building a household-scale electrostatic-precipitator prototype. Contributed to prototype testing, prepared the demonstration and presentation, and primarily answered the judges' questions during the final presentation at ITB. The demonstration was qualitative rather than a quantified emissions test.",
+        "Contributed to research, construction, and testing of a household-scale electrostatic-precipitator prototype. Prepared the demonstration and presentation, and primarily answered the judges' questions during the final presentation at ITB. The demonstration was qualitative rather than a quantified emissions test.",
       impact:
         "Reached the top five among approximately 200 teams in the M-Fest 2026 national STEM competition and presented to an expert panel at ITB. The prototype demonstrated the electrostatic-precipitation concept qualitatively; no quantitative particulate-capture efficiency or emissions-reduction result was established.",
     },
@@ -319,7 +319,7 @@ export const projects = [
       },
       {
         heading: "M-Fest 2026",
-        text: "We built the prototype as a 3-person team for M-Fest 2026, the national STEM competition run by HMM ITB. The preliminary round was a proctored nationwide elimination on mathematics and physics mechanics, and the final asked each team to develop a solution with a Design Thinking framework. Out of about 200 teams across Indonesia we reached the top 5, pitched CORGEIN to a panel of expert judges at the ITB Ganesha campus and answered their questions on the spot.",
+        text: "We built the prototype as a three-person team for M-Fest 2026, the national STEM competition run by HMM ITB. The preliminary round was a proctored nationwide elimination on mathematics and physics mechanics, and the final asked each team to develop a solution with a Design Thinking framework. The team reached the top five out of about 200 teams across Indonesia. I contributed to construction and testing, prepared the demonstration and presentation, and primarily answered the expert panel's questions at ITB Ganesha.",
       },
       {
         heading: "Impact and what comes next",

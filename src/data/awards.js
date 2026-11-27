@@ -41,7 +41,7 @@ export const awards = [
     credentialId: "",
     credentialUrl: "",
     detail:
-      "Top 5 national finalist out of ~200 teams; led a 3-person team through a Design Thinking challenge addressing SDG-aligned clean energy, sanitation, and infrastructure problems, presented before an expert panel at ITB Ganesha.",
+      "Top-five national finalist among approximately 200 teams. Contributed to a three-person team's Design Thinking project: researched, helped construct and test a household-scale electrostatic-precipitator prototype, prepared its demonstration and presentation, and primarily answered the expert panel's questions at ITB Ganesha.",
     cv: {
       title: "Top-five finalist",
       detail: "HMM ITB Mechanical Festival STEM Competition — among approximately 200 teams",

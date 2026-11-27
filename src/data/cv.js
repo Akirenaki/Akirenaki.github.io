@@ -101,9 +101,9 @@ const cvProjectWording = {
     ],
   },
   corgein: {
-    role: "Team Lead · Three-person team",
+    role: "Research & Prototype Contributor",
     bullets: [
-      "Led a three-person team in designing and demonstrating a household-scale electrostatic-precipitator prototype; prepared the presentation and presented the concept to an expert panel at ITB.",
+      "Contributed to research, construction, and testing of a household-scale electrostatic-precipitator prototype; prepared the demonstration and presentation, and primarily answered the expert panel's questions at ITB.",
     ],
   },
 };
